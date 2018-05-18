@@ -1,0 +1,5 @@
+https://scotch.io/tutorials/using-sass-with-the-angular-cli
+
+angular webworker how to:
+https://stackoverflow.com/questions/43276044/angular-cli-generated-app-with-web-workers
+unfortunetly it doesnot yet work wiht angular-cli 6, 

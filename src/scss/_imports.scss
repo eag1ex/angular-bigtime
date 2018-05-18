@@ -1,0 +1,9 @@
+//@import 'compass';
+@charset "UTF-8";
+//@import '~compass-mixins/lib/compass/reset';
+//@import '~compass-mixins/lib/compass/reset-legacy';
+@import 'global.variables';
+@import './node_modules/bootstrap/scss/bootstrap.scss';
+@import '~compass-mixins/lib/compass';
+@import '~compass-mixins/lib/compass/layout';
+

@@ -1,9 +1,14 @@
-@import 'global.variables';
-@import '_bootstrap';
 
+@import '_imports';
 /* You can add global styles to this file, and also import other style files */
 
 
 body{
    
 }
+
+p{
+    @include contrasted(#5f1210);
+}
+
+@include sticky-footer(72px, "#wrap", "#wrap_footer", "#footer");

@@ -14,7 +14,11 @@
         },
        "@schematics/welcome:component": {
         "styleext": "scss"
+        },
+      "~compass": {
+        "styleext": "scss"
         }
+
       },
       "architect": {
         "build": {
