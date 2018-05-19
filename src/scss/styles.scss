@@ -11,5 +11,54 @@ p{
    // @include contrasted(#5f1210);
 }
 
+home{
+
+}
+
+products{
+    /// make custom column layout for the products page
+    .product-container{
+          width: 800px;
+            @include make-container();
+    }
+
+    .product-row {
+        @include make-row();
+    }
+
+     .product-col-content{
+                @include make-col-ready();
+                    
+                     @include media-breakpoint-up(xs) {
+                        @include make-col(6);
+                    }
+                    @include media-breakpoint-up(sm) {
+                        @include make-col(5);
+                    }
+
+                     @include media-breakpoint-up(md) {
+                        @include make-col(3);
+                    }
+                    @include media-breakpoint-up(lg) {
+                        @include make-col(2.2);
+                    }
+     }
+
+    .product-wrap{
+        .card{
+            img{
+                  min-height: 100px;
+            }
+          
+        }
+    }
+
+}
+
+
+product-item{
+
+}
+
 
 @include sticky-footer(72px, "#wrap", "#wrap_footer", "#footer");

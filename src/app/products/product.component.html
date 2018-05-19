@@ -3,28 +3,60 @@
   <a [routerLink]="['/products', 1]">goto product 1</a>
 </p>
 
+<div class='product-container'>
 
-<div class="row justify-content-md-center my-5">
-  <div class="col-2 col-md-2 col-sm-6" *ngFor="let count of [0,1,2,3,4];">
-    count> {{count}}
-    <div class="card" class="w-100 my-2">
-      <img class="card-img-top" src=".../100px180/?text=Image cap" alt="Card image cap">
-      <div class="card-body px-1">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-      </div>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item">Cras justo odio</li>
-        <li class="list-group-item">Dapibus ac facilisis in</li>
-        <li class="list-group-item">Vestibulum at eros</li>
-      </ul>
-      <div class="d-flex card-body px-1 justify-content-cente">
-    <button type="button" class="btn btn-dark card-link px-5" (click)="goto(count)">Dark</button>
-  
+  <div *ngIf="beersDataLoaded===false">
+    <div class="alert alert-primary" role="alert">
+      Data loading..
+    </div>
+  </div>
+
+  <div *ngIf="beersDataLoaded===null">
+    <div class="alert alert-primary" role="alert">
+      Error loading data!
+    </div>
+  </div>
+
+  <div class="product-row justify-content-md-center my-5" *ngIf='beersDataLoaded===true'>
+
+    <div indexchange (currinx)='getIndex($event)' [indexNow]="i" 
+    class="product-col-content product-wrap item-inx-{{i}} px-1"
+      *ngFor="let item of beersData; let i = index;"
+      >
+      <div class="card w-100 my-2 p-2">
+        <img class="card-img-top " [src]='item.image_url' [alt]="item.tagline" [title]='item.description'>
+
+        <div class="card-body px-1">
+          <h5 class="card-title">{{item.name}}</h5>
+          <p class="card-text">{{descLimit(item.description)}}</p>
+        </div>
+
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">{{item.tagline}}</li>
+        </ul>
+
+        <div class="d-flex card-body px-1 justify-content-center">
+          <button type="button" class="btn btn-dark card-link px-4" (click)="goto(niceName(item.name));">View</button>
+        </div>
       </div>
     </div>
 
   </div>
-
+  <!-- row-->
 </div>
+<!-- product-container-->
+<div class="cf"></div>
 
+<div class="row justify-content-md-center">
+  <div class="col-10">
+    <nav class="float-right">
+      <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
