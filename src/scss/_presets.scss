@@ -1,0 +1,14 @@
+/// only add global style markup here
+
+.tc{
+    text-align: center;
+}
+
+p.small{
+   // font-size: smaller;
+}
+
+.clf, .cf{
+    @include clearfix;
+    @include  pie-clearfix;
+}

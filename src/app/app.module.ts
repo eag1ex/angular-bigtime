@@ -4,14 +4,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
-import { WelcomeComponent } from './welcome/welcome.component';
-import { WelcomeModule } from './welcome/welcome.module';
+import { ProductComponent } from './products/product.component';
+import { ProductModule } from './products/product.module';
 import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    WelcomeComponent
+    ProductComponent
   ],
   imports: [
     HttpClientModule,
@@ -28,7 +28,7 @@ import { HomeComponent } from './home/home.component';
  
     ]),
     HomeModule,
-    WelcomeModule
+    ProductModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,3 +1,8 @@
+<p>
+  welcome works!
+  <a [routerLink]="['/products', 1]">goto product 1</a>
+</p>
+
 
 <div class="row justify-content-md-center my-5">
   <div class="col-2 col-md-2 col-sm-6" *ngFor="let count of [0,1,2,3,4];">
@@ -14,7 +19,7 @@
         <li class="list-group-item">Vestibulum at eros</li>
       </ul>
       <div class="d-flex card-body px-1 justify-content-cente">
-          <button type="button" class="btn btn-dark card-link px-5">Dark</button>
+    <button type="button" class="btn btn-dark card-link px-5" (click)="goto(count)">Dark</button>
   
       </div>
     </div>
@@ -22,3 +27,4 @@
   </div>
 
 </div>
+

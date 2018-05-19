@@ -4,6 +4,11 @@
 //@import '~compass-mixins/lib/compass/reset-legacy';
 @import 'global.variables';
 @import './node_modules/bootstrap/scss/bootstrap.scss';
+
+// compassimports
 @import '~compass-mixins/lib/compass';
 @import '~compass-mixins/lib/compass/layout';
+@import '~compass-mixins/lib/compass/utilities/general/clearfix';
+
+@import "presets";
 

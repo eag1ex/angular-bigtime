@@ -1,7 +1,27 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" [routerLink]="['/app/home']">{{appName}}</a>
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07"
+            aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-  <!--
+        <div class="navbar-collapse collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Latest <span class="sr-only">(current)</span></a>
+                </li>
+
+
+            </ul>
+            <form class="form-inline my-2 my-md-0">
+                <input class="form-control" placeholder="Search" aria-label="Search" type="text">
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!--
         <nav class='navbar navbar-default'>
             <div class='container-fluid'>
                 <a class='navbar-brand'>{{pageTitle}}</a>
@@ -12,7 +32,24 @@
             </div>
         </nav>
           -->
-        <div class='container'>
-           <router-outlet></router-outlet>
+<div class='container'>
+    <router-outlet></router-outlet>
+
+    <div class="cf"></div>
+
+    <div class="row justify-content-md-center">
+        <div class="col-10">
+            <nav class="float-right">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
         </div>
-     </div>
+    </div>
+
+
+</div>

@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 
 })
 export class AppComponent {
-  title = 'app';
+  appName = 'Time Out App';
 }
 
 
