@@ -20,7 +20,7 @@ export class ProductComponent implements OnInit {
     text:'',
     inx:0
   }
-
+  
   public PAGE_DEFAULTS = {
     pageTitle:'Beers.. Drink! Get drunk!',
     perPage:10,
