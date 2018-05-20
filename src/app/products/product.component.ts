@@ -81,6 +81,15 @@ export class ProductComponent implements OnInit {
 
   }
     
+  /**
+   * 
+   * search items and negotiate between events 'keydown' and 'focusout'
+   * added some user experience logic to delay loading on frequent search event/requests
+   * 
+   * @param event 
+   * @param val 
+   * @param type 
+   */
   searchItems(event: any = false, val: string,type) {
 
     if (this.exec_search === true) {
@@ -91,7 +100,6 @@ export class ProductComponent implements OnInit {
 
     var exec = () => {
      return this.whichSearch(type, event, () => {
-  
       
         var search_val = (val.length > 2) ? { search_by_name: this.niceName(val.toLowerCase()) } : false;
         //  
@@ -141,6 +149,11 @@ export class ProductComponent implements OnInit {
   //  console.log('current indexPerRow',this.indexPerRow)
    
   }
+
+  /**
+   * current component logic for route.param values
+   * it returns the correct value for the "getBeers" api request from ngOnInit() call
+   */
  
    fetchEvent(): Promise<object> {
      var paged:any = this._route.snapshot.paramMap.get('paged');
