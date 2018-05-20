@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ProductComponent } from './product.component';
 import { RouterModule } from '@angular/router';
 import { ProductItemComponent } from './product-item/product-item.component';
+import { PipeNumber } from '../_shared/pipe.number';
 
 
 
@@ -14,13 +15,17 @@ import { ProductItemComponent } from './product-item/product-item.component';
    
      RouterModule.forChild([
         { path: 'products', component: ProductComponent },
-         { path: 'products/:id',
+        { path: 'products/paged/:paged',
        //   canActivate: [ ProductGuardService ],
-          component: ProductItemComponent }
+          component: ProductComponent },
+        { path: 'products/:id',
+       //   canActivate: [ ProductGuardService ],
+          component: ProductItemComponent },  
+        { path: 'products/paged', redirectTo: 'products', pathMatch: 'full'},
     ]),
 
   ],
-  declarations: [ProductItemComponent]
+  declarations: [PipeNumber,ProductComponent,ProductItemComponent]
 })
 export class ProductModule { }
 

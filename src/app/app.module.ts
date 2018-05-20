@@ -10,18 +10,24 @@ import { HomeModule } from './home/home.module';
 import { ProductComponent } from './products/product.component';
 import { ProductModule } from './products/product.module';
 import { HomeComponent } from './home/home.component';
-import {DataService} from './services/data.service';
-import { LoggerService } from './services/logger.service';
-import { indexChangeDirective } from './services/directives';
+//import {DataService} from './services/data.service';
+//import { LoggerService } from './services/logger.service';
+//import { indexChangeDirective } from './services/directives';
+import { SharedModule } from './_shared/shared.module';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    ProductComponent,
-    indexChangeDirective
+
+   // ProductComponent,
+   // indexChangeDirective
   ],
   imports: [
+    // custom modules
+    SharedModule,
+
+    // angular modules
     HttpClientModule,
     HttpModule,
     FormsModule,
@@ -33,18 +39,15 @@ import { indexChangeDirective } from './services/directives';
           //  { path: 'home', component: HomeComponent },
      //   ]
       },
-      { path: 'app', redirectTo: 'home', pathMatch: 'full'},
-      { path: '**', redirectTo: 'home', pathMatch: 'full'}
+      { path: 'app', redirectTo: 'products', pathMatch: 'full'},
+      { path: '**', redirectTo: 'products', pathMatch: 'full'}
  
     ]),
     HomeModule,
     ProductModule
   ],
 
-   providers: [
-    DataService,
-    LoggerService
-  ],
+   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

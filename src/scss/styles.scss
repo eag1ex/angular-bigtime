@@ -42,6 +42,7 @@ products{
                     @include media-breakpoint-up(lg) {
                         @include make-col(2.2);
                     }
+                    
      }
 
     .product-wrap{
@@ -51,6 +52,11 @@ products{
             }
           
         }
+    }
+
+
+    .pagination{
+        //li.current-paged, .active{}
     }
 
 }
