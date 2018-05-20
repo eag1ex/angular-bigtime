@@ -2,7 +2,6 @@
 
 //////////////////////////////////////////////////////////
 // color scheme generator
-// http://paletton.com/#uid=1300u0kPFtSPFtSPFtS5Nf45Nf4
 // SASS style sheet */
 // Palette color codes */
 // Palette URL: http://paletton.com/#uid=1300u0kPFtSPFtSPFtS5Nf45Nf4 */
@@ -11,6 +10,7 @@
 
 
 // As hex codes */
+
 
 $color-primary-0: #00A752;	// Main Primary color */
 $color-primary-1: #00A752;
@@ -38,6 +38,9 @@ $rgba-primary-4: rgba( 69, 84, 77,1);
 $primary:$color-primary-0 !default;
 $dark:  $color-primary-4 !default;
 $success: $rgba-primary-2 !default;
+
+//$body-bg:                   $white !default;
+//$body-color:                $gray-900 !default;
 /////////////////////////
 
 // compass variable presets

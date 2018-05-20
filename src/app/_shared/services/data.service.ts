@@ -45,6 +45,11 @@ export class DataService {
         case 'paged':
           output.good = `${this.apiURL}?page=${_obj.paged}&per_page=${_obj.perPage}`;
           break;
+
+        case 'search_by_name':
+          output.good = `${this.apiURL}?beer_name=${_obj.search_by_name}&per_page=${_obj.perPage}`;
+          break;
+
         case 'byName':
           output.good = `${this.apiURL}?beer_name=${_obj.byName}`;
           break;

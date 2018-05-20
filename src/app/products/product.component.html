@@ -5,6 +5,10 @@
 
 <div class='product-container'>
 
+  <div class='product-row justify-content-md-center'>
+    <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="mt-3"></page-title>
+  </div>
+
   <div *ngIf="beersDataLoaded===false">
     <div class="alert alert-primary" role="alert">
       Data loading..
@@ -17,7 +21,7 @@
     </div>
   </div>
 
-  <div class="product-row justify-content-md-center my-5" *ngIf='beersDataLoaded===true'>
+  <div class="product-row justify-content-md-center mt-3 mb-4" *ngIf='beersDataLoaded===true'>
 
     <div indexchange (currinx)='getIndex($event)' [indexNow]="i" 
     class="product-col-content product-wrap item-inx-{{i}} px-1"
@@ -47,7 +51,7 @@
 <!-- product-container-->
 <div class="cf"></div>
 
-<div class="row justify-content-md-center">
+<div class="row justify-content-md-center mb-2">
   <div class="col-10">
     <nav class="">
 
@@ -79,6 +83,19 @@
 
     </nav>
 
+    <!--
+    <input [(ngModel)]="query">
+      <div *ngFor="let item of items | search:'id,text':query">{{item.text}}</div>
+    -->
+     <input  [(ngModel)]="searchtext.txt" #search placeholder="search text goes here" 
+     (keydown)="searchItems($event,search.value,'keydown');" 
+     (focusout)="searchItems($event,search.value,'focusout');">
+
+      <ul> 
+        <li *ngFor="let c of testItems | search :'name, description' :searchtext.txt">
+          {{c|json}} 
+        </li>
+      </ul>
 
   </div>
 </div>

@@ -12,14 +12,13 @@ import { ProductModule } from './products/product.module';
 import { HomeComponent } from './home/home.component';
 //import {DataService} from './services/data.service';
 //import { LoggerService } from './services/logger.service';
-//import { indexChangeDirective } from './services/directives';
+
 import { SharedModule } from './_shared/shared.module';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-
    // ProductComponent,
    // indexChangeDirective
   ],

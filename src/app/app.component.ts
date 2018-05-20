@@ -7,7 +7,10 @@ import { Component } from '@angular/core';
 
 })
 export class AppComponent {
-  appName = 'Time Out App';
+  appName = {
+    a:'[ BigTime ]',
+    b:'App'
+  };
 }
 
 

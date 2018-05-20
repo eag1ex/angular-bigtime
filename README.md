@@ -1,5 +1,4 @@
-# AngularBigtime
-
+# Angular 6 BigTime
 
 
 
@@ -27,6 +26,7 @@ $/ ng g service new-service # new service
 #!python
 $/ npm start # alternativly `ng serve`
 ```
+
 * open you browser in `localhost:4200` 
 * sometimes node.js will lock the port, you need to kill it with `taskkill /f /im node.exe` or linux `killall node`
 
@@ -35,6 +35,12 @@ $/ npm start # alternativly `ng serve`
 *  how to implement punkapi.com: `https://punkapi.com/documentation/v2`
 *  example: `https://api.punkapi.com/v2/beers?page=2&per_page=80`
 
+
+
+#### TECHNOLOGY/STACK
+* Bootstrap 4 `https://getbootstrap.com/`
+* Angular CLI `https://github.com/angular/angular-cli`
+* Compass/Sass `http://compass-style.org/reference/compass/`
 
 ## Angular CLI V 6.0
 

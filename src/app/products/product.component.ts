@@ -15,28 +15,126 @@ export class ProductComponent implements OnInit {
   public beersData:BeersModel[];
   public beersDataLoaded = false;
   public routeName:any;
+  public exec_search = false;
+  public searchtext:any = {
+    text:'',
+    inx:0
+  }
+
   public PAGE_DEFAULTS = {
+    pageTitle:'Beers.. Drink! Get drunk!',
     perPage:10,
     paged:10,
     currentPaged:1
   }
+  public testItems = [
+   {description:'first time go',name:'mike'},
+    {description:'second time no',name:'andy'},
+     {description:'tird time fuck you',name:'jack'}
+  ];
 
   constructor(private _route: ActivatedRoute,
     private _router: Router,
     private dataService: DataService,
     private logger:LoggerService
   ) {
+
+
   }
 
+  /**
+   * have decided to use 2 events on enter, 
+   * and focusout for ease of use, so we do not have to add the search button
+   * 
+   * @param event 
+   * @param val 
+   * @param type 
+   */
+
+  whichSearch(type, event, cb) {
+
+    switch (type as string) {
+      case 'keydown':
+
+        if (event.keyCode == 13 && this.searchtext.inx < 1) {
+          cb();
+          setTimeout(() => {
+            this.searchtext.inx++;
+          }, 500)
+        }
+        break;
+
+      case 'focusout':
+
+        if (this.searchtext.inx < 1) {
+          cb()
+          this.searchtext.inx++;
+        }
+         break;
+
+     // default:
+    }
+
+    if (this.searchtext.inx >= 1) {
+      this.searchtext.inx = 0;
+    }
+
+  }
+    
+  searchItems(event: any = false, val: string,type) {
+
+    if (this.exec_search === true) {
+      console.log('--wait! Still executing')
+      return;
+    }
+
+
+    var exec = () => {
+     return this.whichSearch(type, event, () => {
   
+      
+        var search_val = (val.length > 2) ? { search_by_name: this.niceName(val.toLowerCase()) } : false;
+        //  
+        if (search_val) {
+          this.getBeers(search_val);
+          console.log('-- searching for ', search_val.search_by_name)
+        }else{
+            console.log('-- you entered no search value, defauling to paged ')    
+          this.getBeers({paged:this.PAGE_DEFAULTS.currentPaged });
+        }
+
+        this.exec_search=true;  
+        
+      })
+    }
+
+    if (type == 'focusout' && val.length>2) {
+       // slow down requests to 2 seconds
+      setTimeout(() => {
+        exec();
+        this.exec_search = false;
+
+      }, 2500);
+    }
+
+    if(type=='keydown'){
+       setTimeout(() => {
+        exec();
+        this.exec_search = false;
+       },500)
+      
+    }
+
+         
+  }
 
   goto(nr: any) {
-
     if (nr === '' || nr === undefined) return;
     if (nr === 0) nr = 1
     this._router.navigate(['/products' + '/' + nr]);
   }
-  
+
+  // not using this at moment
   getIndex(i){
     var perRow = 4;
     this.indexPerRow = i;
@@ -46,7 +144,18 @@ export class ProductComponent implements OnInit {
  
    fetchEvent(): Promise<object> {
      var paged:any = this._route.snapshot.paramMap.get('paged');
-     paged = (paged)? {paged}:false;    
+    /// update curent paged for accuricy
+    this.PAGE_DEFAULTS.currentPaged = paged||this.PAGE_DEFAULTS.currentPaged;
+
+     paged = (paged)? {paged}:false;
+     
+     /// check against maximum paged allowed
+      if(paged){
+        if(paged.paged > this.PAGE_DEFAULTS.paged){
+           paged.paged = this.PAGE_DEFAULTS.paged;
+        }
+      }
+
      var singlePage:any = this._route.snapshot.paramMap.get('id');
      singlePage = (singlePage)? {singlePage}:false;
      var parent_page = {parent_page:true};
@@ -101,6 +210,7 @@ export class ProductComponent implements OnInit {
   }
 
   getBeers(routeName:any) {
+
     this.beersDataLoaded = false;
     console.log('Getting beers ...');
 
@@ -112,7 +222,11 @@ export class ProductComponent implements OnInit {
         params.parent_page = routeName.parent_page;
        // we are all good, already set defaults
         console.log('we are at parent_page')
-      }  
+      }
+
+      else if(routeName.search_by_name){
+         params.search_by_name = routeName.search_by_name;   
+      }
 
       else if(routeName.paged){
         params.paged = routeName.paged;   
@@ -127,6 +241,7 @@ export class ProductComponent implements OnInit {
         return false
       }
      
+
 
     this.dataService.getBeers(params).subscribe( // Observable version
       data => {
