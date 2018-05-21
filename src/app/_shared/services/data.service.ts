@@ -19,9 +19,8 @@ import { LoggerService } from './logger.service';
 
 
 @Injectable({
-  providedIn: 'root'
+providedIn: 'root'
 })
-
 export class DataService {
   private apiURL = 'https://api.punkapi.com/v2/beers';
   public beersData: Array<any>;

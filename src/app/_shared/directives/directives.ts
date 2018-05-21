@@ -27,7 +27,6 @@ export class indexChangeDirective implements OnInit {
     setTimeout(() => {
       this.currinx.emit(this.indexNow + 1);
     }, 50);
-
   }
 
   ngOnInit() {
@@ -49,7 +48,7 @@ export class PageTitleDirective implements OnInit {
   titleDisplay:number;
   constructor(private elm: ElementRef) {
 
-    console.log('PageTitleDirective loaded!')
+    //console.log('PageTitleDirective loaded!')
   }
 
   @Input()
@@ -64,11 +63,7 @@ export class PageTitleDirective implements OnInit {
  ngOnInit() {
   this.titleName = this.title;
   this.titleDisplay = this.display;
-  console.log('what is this.titleName ',this.titleName )
-    //if(this.indexNow>5){
-    //  this.currinx.emit(this.indexNow+1);
-    //console.log('emitting...')
-    // }
+  //console.log('what is this.titleName ',this.titleName )
 
   }
 }

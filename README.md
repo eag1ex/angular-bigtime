@@ -27,7 +27,7 @@ $/ ng g service new-service # new service
 $/ npm start # alternativly `ng serve`
 ```
 
-* open you browser in `localhost:4200` 
+* open you browser in `http://localhost:4200` 
 * sometimes node.js will lock the port, you need to kill it with `taskkill /f /im node.exe` or linux `killall node`
 
 
@@ -41,6 +41,7 @@ $/ npm start # alternativly `ng serve`
 * Bootstrap 4 `https://getbootstrap.com/`
 * Angular CLI `https://github.com/angular/angular-cli`
 * Compass/Sass `http://compass-style.org/reference/compass/`
+
 
 ## Angular CLI V 6.0
 

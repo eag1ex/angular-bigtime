@@ -75,16 +75,34 @@ app-root{
         font-weight: 100;
     }
 
-    .form-inline {
-        .form-control{
-            &[placeholder]{
-                color:rgba(255,255,255,.5)!important
-            }
-            color:#fff!important;
-            background-color: rgba(255,255,255,.1)
+    nav{
+        a.navbar-brand{
+            font-size: 1.8rem;
         }
     }
+   
 
 }
+ 
+search-input{
+    @include border-radius(5px);
+    background-color:rgba( 255,255,255,.1);
+     .search-wrap {
+        input.form-control{
+            &[placeholder]{
+                color:rgba(255,255,255,.3)!important
+            }
+            color:#fff!important;
+            background-color: rgba(255,255,255,.3);
+        }
+    }
+      p.search-api-check{
+            font-size:0.7rem;
+            color:#fff;
+            letter-spacing: 1px;
+        }
+}
+
+//$rgba-primary-3: rgba( 69, 84, 77,1);
 
 @include sticky-footer(72px, "#wrap", "#wrap_footer", "#footer");

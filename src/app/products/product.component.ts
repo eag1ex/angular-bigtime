@@ -1,8 +1,12 @@
-import { Component, OnInit,Input,Output} from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../_shared/services/data.service';
 import { LoggerService } from '../_shared/services/logger.service';
 import { BeersModel } from '../_shared/services/models';
+import { Globals } from '../_shared/Globals';
+import { EventEmitService } from '../_shared/services/eventEmmiter.service';
+import * as _ from "lodash";
+
 
 @Component({
   selector: 'products',
@@ -11,45 +15,131 @@ import { BeersModel } from '../_shared/services/models';
 })
 
 export class ProductComponent implements OnInit {
-  public indexPerRow:number = 0;
-  public beersData:BeersModel[];
+  public indexPerRow: number = 0;
+  public beersData: BeersModel[];
   public beersDataLoaded = false;
-  public routeName:any;
+  public routeName: any;
   public exec_search = false;
-  public searchtext:any = {
-    text:'',
-    inx:0
+  private searchSubscription: any;
+  private searchModel: string;
+  private searchtext = {
+    inx: 0
   }
-  
+
   public PAGE_DEFAULTS = {
-    pageTitle:'Beers.. Drink! Get drunk!',
-    perPage:10,
-    paged:10,
-    currentPaged:1
+    pageTitle: 'Beers.. Drink! Get drunk!',
+    perPage: 10,
+    paged: 10,
+    currentPaged: 1,
+    searchAPIcheck: false
   }
   public testItems = [
-   {description:'first time go',name:'mike'},
-    {description:'second time no',name:'andy'},
-     {description:'tird time fuck you',name:'jack'}
+    { description: 'first time go', name: 'mike' },
+    { description: 'second time no', name: 'andy' },
+    { description: 'tird time fuck you', name: 'jack' }
   ];
 
   constructor(private _route: ActivatedRoute,
     private _router: Router,
     private dataService: DataService,
-    private logger:LoggerService
+    private logger: LoggerService,
+    private globals: Globals,
+    private searchEmmiter: EventEmitService
+
   ) {
 
+    this.searchSubscription = searchEmmiter.subscribe(msg => {
+
+      if (_.isObject(msg)) {
+
+        this.PAGE_DEFAULTS.searchAPIcheck = msg.searchAPIcheck;
+        this.searchItems(msg.event, msg.searchVal, msg.type, msg.searchAPIcheck);
+      }
+
+    }, (err) => {
+         this.logger.log(`what is the err ${err}`,true); 
+    }, (complete) => {
+      console.log('what is the complete', complete)
+    });
+
+    globals.glob.searchSubscription= this.searchSubscription;
 
   }
 
+
   /**
-   * have decided to use 2 events on enter, 
-   * and focusout for ease of use, so we do not have to add the search button
+   * 
+   * search items and negotiate between events 'keydown' and 'focusout'
+   * added some user experience logic to delay loading on frequent search event/requests
    * 
    * @param event 
    * @param val 
    * @param type 
    */
+  searchItems(event: any = false, val: string, type = '', searchAPI: false) {
+
+    if (this.exec_search === true) {
+      console.log('--wait! Still executing')
+      return;
+    }
+
+    if (!searchAPI) {
+
+      this.searchModel = val; /// to use for redifinding search results
+    }
+
+    var exec = () => {
+      return this.whichSearch(type, event, () => {
+
+        var search_val = (val.length > 2) ? { search_by_name: this.niceName(val.toLowerCase()) } : false;
+        //  
+
+        if (search_val && searchAPI) {
+          this.getBeers(search_val);
+          this.logger.log(`searching api results with: ${search_val.search_by_name}`)
+
+        } else if (!search_val && searchAPI) {
+          this.logger.log(`you entered no search value, defauling to paged`)
+          this.getBeers({ paged: this.PAGE_DEFAULTS.currentPaged });
+        }
+
+        this.exec_search = true;
+
+      })
+    }
+
+
+    if (type == 'focusout' && val.length > 2) {
+
+      setTimeout(() => {
+        exec();
+        this.exec_search = false;
+
+      }, 2500);
+
+      // slow down requests to 2 seconds
+
+    }
+
+    if (type == 'keydown') {
+      setTimeout(() => {
+        exec();
+        this.exec_search = false;
+      }, 500)
+
+    }
+
+  }
+
+  /**
+  * have decided to use 2 events on enter, 
+  * and focusout for ease of use, so we do not have to add the search button
+  * 
+  * @param event 
+  * @param val 
+  * @param type 
+  */
+
 
   whichSearch(type, event, cb) {
 
@@ -70,9 +160,9 @@ export class ProductComponent implements OnInit {
           cb()
           this.searchtext.inx++;
         }
-         break;
+        break;
 
-     // default:
+      // default:
     }
 
     if (this.searchtext.inx >= 1) {
@@ -80,61 +170,8 @@ export class ProductComponent implements OnInit {
     }
 
   }
-    
-  /**
-   * 
-   * search items and negotiate between events 'keydown' and 'focusout'
-   * added some user experience logic to delay loading on frequent search event/requests
-   * 
-   * @param event 
-   * @param val 
-   * @param type 
-   */
-  searchItems(event: any = false, val: string,type) {
-
-    if (this.exec_search === true) {
-      console.log('--wait! Still executing')
-      return;
-    }
 
 
-    var exec = () => {
-     return this.whichSearch(type, event, () => {
-      
-        var search_val = (val.length > 2) ? { search_by_name: this.niceName(val.toLowerCase()) } : false;
-        //  
-        if (search_val) {
-          this.getBeers(search_val);
-          console.log('-- searching for ', search_val.search_by_name)
-        }else{
-            console.log('-- you entered no search value, defauling to paged ')    
-          this.getBeers({paged:this.PAGE_DEFAULTS.currentPaged });
-        }
-
-        this.exec_search=true;  
-        
-      })
-    }
-
-    if (type == 'focusout' && val.length>2) {
-       // slow down requests to 2 seconds
-      setTimeout(() => {
-        exec();
-        this.exec_search = false;
-
-      }, 2500);
-    }
-
-    if(type=='keydown'){
-       setTimeout(() => {
-        exec();
-        this.exec_search = false;
-       },500)
-      
-    }
-
-         
-  }
 
   goto(nr: any) {
     if (nr === '' || nr === undefined) return;
@@ -143,124 +180,121 @@ export class ProductComponent implements OnInit {
   }
 
   // not using this at moment
-  getIndex(i){
+  getIndex(i) {
     var perRow = 4;
     this.indexPerRow = i;
-  //  console.log('current indexPerRow',this.indexPerRow)
-   
+    //  console.log('current indexPerRow',this.indexPerRow)
+
   }
 
   /**
    * current component logic for route.param values
    * it returns the correct value for the "getBeers" api request from ngOnInit() call
    */
- 
-   fetchEvent(): Promise<object> {
-     var paged:any = this._route.snapshot.paramMap.get('paged');
+
+  fetchEvent(): Promise<object> {
+    var paged: any = this._route.snapshot.paramMap.get('paged');
     /// update curent paged for accuricy
-    this.PAGE_DEFAULTS.currentPaged = paged||this.PAGE_DEFAULTS.currentPaged;
+    this.PAGE_DEFAULTS.currentPaged = paged || this.PAGE_DEFAULTS.currentPaged;
 
-     paged = (paged)? {paged}:false;
-     
-     /// check against maximum paged allowed
-      if(paged){
-        if(paged.paged > this.PAGE_DEFAULTS.paged){
-           paged.paged = this.PAGE_DEFAULTS.paged;
-        }
+    paged = (paged) ? { paged } : false;
+
+    /// check against maximum paged allowed
+    if (paged) {
+      if (paged.paged > this.PAGE_DEFAULTS.paged) {
+        paged.paged = this.PAGE_DEFAULTS.paged;
       }
+    }
 
-     var singlePage:any = this._route.snapshot.paramMap.get('id');
-     singlePage = (singlePage)? {singlePage}:false;
-     var parent_page = {parent_page:true};
+    var singlePage: any = this._route.snapshot.paramMap.get('id');
+    singlePage = (singlePage) ? { singlePage } : false;
+    var parent_page = { parent_page: true };
 
-     var whichOrder = paged||singlePage||parent_page||false;
-     return (whichOrder) ? Promise.resolve(whichOrder):Promise.reject('param are null!');
- }
+    var whichOrder = paged || singlePage || parent_page || false;
+    return (whichOrder) ? Promise.resolve(whichOrder) : Promise.reject('param are null!');
+  }
 
- gotoPaged(nr:any){
-   if(nr){
-     
-     this.routeName = {paged:parseInt(nr)};
-     this.PAGE_DEFAULTS.currentPaged =nr;
+  gotoPaged(nr: any) {
+    if (nr) {
 
-     this.getBeers(this.routeName);
-   }else{
-     this.getBeers(false);
-   }
- }
+      this.routeName = { paged: parseInt(nr) };
+      this.PAGE_DEFAULTS.currentPaged = nr;
+
+      this.getBeers(this.routeName);
+    } else {
+      this.getBeers(false);
+    }
+  }
 
   ngOnInit() {
-     //PAGE_DEFAULTS
-  
-   /// get page param  
-    this.fetchEvent().then((whichOrder:any)=>{
-      if(whichOrder===false){
+    //PAGE_DEFAULTS
+
+    /// get page param  
+    this.fetchEvent().then((whichOrder: any) => {
+      if (whichOrder === false) {
         return Promise.reject('no route found!');
       }
-      if(whichOrder.paged){
-        this.PAGE_DEFAULTS.currentPaged =parseInt(whichOrder.paged);
+      if (whichOrder.paged) {
+        this.PAGE_DEFAULTS.currentPaged = parseInt(whichOrder.paged);
       }
-    
+
       this.routeName = whichOrder;
       this.getBeers(this.routeName);
 
-    },(err)=>{
-      this.logger.log(err,true)
-      this.routeName=false;
+    }, (err) => {
+      this.logger.log(err, true)
+      this.routeName = false;
       this.getBeers(this.routeName);
     })
   }
 
 
-  niceName(str){
-    return (str) ? str.replace(/ /g,"_"):'';
+  niceName(str) {
+    return (str) ? str.replace(/ /g, "_") : '';
   }
-  updateIndex(inx){
-    console.log('what is the uipdated index ',inx)
+  updateIndex(inx) {
+    //console.log('what is the uipdated index ', inx)
   }
-  descLimit(str){
-    return (str) ? str.substring(0, 100):'';
+  descLimit(str) {
+    return (str) ? str.substring(0, 100) : '';
   }
 
-  getBeers(routeName:any) {
+  getBeers(routeName: any) {
 
     this.beersDataLoaded = false;
     console.log('Getting beers ...');
 
-       var params:any = {
-         perPage:this.PAGE_DEFAULTS.perPage
-       }
-      
-      if(routeName.parent_page){
-        params.parent_page = routeName.parent_page;
-       // we are all good, already set defaults
-        console.log('we are at parent_page')
-      }
+    var params: any = {
+      perPage: this.PAGE_DEFAULTS.perPage
+    }
 
-      else if(routeName.search_by_name){
-         params.search_by_name = routeName.search_by_name;   
-      }
+    if (routeName.parent_page) {
+      params.parent_page = routeName.parent_page;
+    }
 
-      else if(routeName.paged){
-        params.paged = routeName.paged;   
-      }
+    else if (routeName.search_by_name) {
+      params.search_by_name = routeName.search_by_name;
+    }
 
-      else if(routeName.singlePage){
-        params.byName = routeName.singlePage
-        delete params.perPage;
-      }else{
-         this.logger.log('no singlePage or paged params defind',true)
-        this.beersDataLoaded = null;
-        return false
-      }
-     
+    else if (routeName.paged) {
+      params.paged = routeName.paged;
+    }
+
+    else if (routeName.singlePage) {
+      params.byName = routeName.singlePage
+      delete params.perPage;
+    } else {
+      this.logger.log('no singlePage or paged params defind', true)
+      this.beersDataLoaded = null;
+      return false
+    }
+
 
 
     this.dataService.getBeers(params).subscribe( // Observable version
       data => {
         this.beersDataLoaded = true;
-        console.log('got data from this.dataService.getBeers',data)
-       this.beersData = data;
+        this.beersData = data;
       },
       (errorMsg: string) => {
         this.beersDataLoaded = null;

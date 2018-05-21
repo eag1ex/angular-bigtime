@@ -1,13 +1,19 @@
 import { Component, OnChanges, Input, EventEmitter, Output } from '@angular/core';
+//import { LoggerService } from './services/logger.service';
+//import { DataService } from './services/data.service';
 
 @Component({
     selector: 'shared',
      template:'<ng-content></ng-content>',
+     providers:[]
   //  templateUrl: './shared.component.html',
   //  styleUrls: ['./shared.component.scss']
 })
 export class SharedComponent implements OnChanges {
 
+  constructor(){
+
+  }
    // @Input() someVal: number;
 
 
@@ -17,7 +23,7 @@ export class SharedComponent implements OnChanges {
     ngOnChanges(): void {
       //  this.someVal 
     }
-
+ 
     onClick(): void {       
     }
 }

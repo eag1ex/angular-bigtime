@@ -6,7 +6,7 @@
           <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="navbar-collapse collapse">
+        <div class="navbar-collapse collapse"> 
            
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
@@ -16,8 +16,8 @@
 
             </ul>
              
-            <form class="form-inline my-2 my-md-0">
-                <input class="form-control" placeholder="search your beer!" aria-label="Search" type="text">
+            <form class="form-inline">
+                 <search-input class="my-1 p-1" (onSearch)="onSearch($event);"></search-input>             
             </form>
         </div>
     </div>

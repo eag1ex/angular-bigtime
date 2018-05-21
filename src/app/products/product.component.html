@@ -25,7 +25,7 @@
 
     <div indexchange (currinx)='getIndex($event)' [indexNow]="i" 
     class="product-col-content product-wrap item-inx-{{i}} px-1"
-      *ngFor="let item of beersData; let i = index;"
+      *ngFor="let item of beersData | search:'name' :searchModel; let i = index;"
       >
       <div class="card w-100 my-2 p-2">
         <img class="card-img-top " [src]='item.image_url' [alt]="item.tagline" [title]='item.description'>
@@ -64,7 +64,7 @@
         <li *ngIf='PAGE_DEFAULTS.currentPaged>1' class="page-item">
           <a (click)='gotoPaged(PAGE_DEFAULTS.currentPaged-1)' class="page-link" [routerLink]="['/products/paged', PAGE_DEFAULTS.currentPaged-1]">Previous</a>
         </li>
- 
+       
         <li *ngFor='let paged of PAGE_DEFAULTS.paged | PipeNumber; let inx = index;' class="page-item" [ngClass]="{'current-paged active':PAGE_DEFAULTS.currentPaged==paged}">
           <a (click)='gotoPaged(paged)' class="page-link btn-primary" 
           [routerLink]="['/products/paged', paged]">
@@ -82,11 +82,8 @@
       </ul>
 
     </nav>
-
+   
     <!--
-    <input [(ngModel)]="query">
-      <div *ngFor="let item of items | search:'id,text':query">{{item.text}}</div>
-    -->
      <input  [(ngModel)]="searchtext.txt" #search placeholder="search text goes here" 
      (keydown)="searchItems($event,search.value,'keydown');" 
      (focusout)="searchItems($event,search.value,'focusout');">
@@ -96,6 +93,6 @@
           {{c|json}} 
         </li>
       </ul>
-
+      -->
   </div>
 </div>
