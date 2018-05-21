@@ -1,108 +1,93 @@
+    @import '_imports';
+    /* You can add global styles to this file, and also import other style files */
 
-@import '_imports';
-/* You can add global styles to this file, and also import other style files */
+    body {}
 
+    p {
+        // @include contrasted(#5f1210);
+    }
 
-body{
-   
-}
+    home {}
 
-p{
-   // @include contrasted(#5f1210);
-}
+    product-item {
+        .item-container {
+            img.product-img,
+                {
+                max-width: 70% !important;
+            }
+            .product-card {}
+        }
+    }
 
-home{
-
-}
-
-products{
-    /// make custom column layout for the products page
-    .product-container{
-          width: 800px;
+    products {
+        /// make custom column layout for the products page
+        .products-container {
+            width: 800px;
             @include make-container();
-    }
-
-    .product-row {
-        @include make-row();
-    }
-
-     .product-col-content{
-                @include make-col-ready();
-                    
-                     @include media-breakpoint-up(xs) {
-                        @include make-col(6);
-                    }
-                    @include media-breakpoint-up(sm) {
-                        @include make-col(5);
-                    }
-
-                     @include media-breakpoint-up(md) {
-                        @include make-col(3);
-                    }
-                    @include media-breakpoint-up(lg) {
-                        @include make-col(2.2);
-                    }
-                    
-     }
-
-    .product-wrap{
-        .card{
-            img{
-                  min-height: 100px;
+        }
+        .product-row {
+            @include make-row();
+        }
+        .product-col-content {
+            @include make-col-ready();
+            @include media-breakpoint-up(xs) {
+                @include make-col(6);
             }
-          
-        }
-    }
-
-
-    .pagination{
-        //li.current-paged, .active{}
-    }
-
-}
-
-
-product-item{
-
-}
-
-// root of all above classes, can be used to overight classes
-app-root{
-    .t-strong{
-        font-weight: 800;
-    }
-    .t-light{
-        font-weight: 100;
-    }
-
-    nav{
-        a.navbar-brand{
-            font-size: 1.8rem;
-        }
-    }
-   
-
-}
- 
-search-input{
-    @include border-radius(5px);
-    background-color:rgba( 255,255,255,.1);
-     .search-wrap {
-        input.form-control{
-            &[placeholder]{
-                color:rgba(255,255,255,.3)!important
+            @include media-breakpoint-up(sm) {
+                @include make-col(5);
             }
-            color:#fff!important;
-            background-color: rgba(255,255,255,.3);
+            @include media-breakpoint-up(md) {
+                @include make-col(3);
+            }
+            @include media-breakpoint-up(lg) {
+                @include make-col(2.2);
+            }
+        }
+        .product-wrap {
+            .card {
+                img {
+                    min-height: 100px;
+                }
+            }
+        }
+        .pagination {
+            //li.current-paged, .active{}
         }
     }
-      p.search-api-check{
-            font-size:0.7rem;
-            color:#fff;
+
+    product-item {}
+
+    // root of all above classes, can be used to overight classes
+    app-root {
+        .t-strong {
+            font-weight: 800;
+        }
+        .t-light {
+            font-weight: 100;
+        }
+        nav {
+            a.navbar-brand {
+                font-size: 1.8rem;
+            }
+        }
+    }
+
+    search-input {
+        @include border-radius(5px);
+        background-color: rgba( 255, 255, 255, .1);
+        .search-wrap {
+            input.form-control {
+                &[placeholder] {
+                    color: rgba(255, 255, 255, .3) !important
+                }
+                color:#fff !important;
+                background-color: rgba(255, 255, 255, .3);
+            }
+        }
+        p.search-api-check {
+            font-size: 0.7rem;
+            color: #fff;
             letter-spacing: 1px;
         }
-}
-
-//$rgba-primary-3: rgba( 69, 84, 77,1);
-
-@include sticky-footer(72px, "#wrap", "#wrap_footer", "#footer");
+    } //$rgba-primary-3: rgba( 69, 84, 77,1);
+    @include sticky-footer(72px, "#wrap", "#wrap_footer", "#footer");

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import { BeersModel } from '../../_shared/services/models';
 @Component({
   selector: 'product-item',
   templateUrl: './product-item.component.html',
@@ -8,12 +8,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class ProductItemComponent implements OnInit {
 
-    routName: string;
-  
-  constructor(private _route: ActivatedRoute,
+  routName: string;
+   public PAGE_DEFAULTS = {
+    pageTitle: 'Beer!',
+  }
+  productData:BeersModel;
+  productdataPairs:Array<any>
+
+  constructor(private _route: ActivatedRoute, 
     private _router: Router) {
   }
-
+  
 
    ngOnInit() {
     const param = this._route.snapshot.paramMap.get('id');
@@ -22,6 +27,33 @@ export class ProductItemComponent implements OnInit {
       const id = +param;
       
     }
+     
+    var prod = this._route.snapshot.data['product'];
+    console.log('-- what is product',prod)
+    if(prod.length>0){
+       this.productData = prod[0];
+
+        // update title
+       this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.pageTitle +' | '+ this.productData.name;
+      // generate pairs
+       this.productdataPairs=this.generateKeyArray(this.productData);
+      console.log('what are the pairs!!',this.productdataPairs)
+    }else{
+       this._router.navigate(['/products']);
+    } 
+
+  }
+
+
+  generateKeyArray(obj:object){
+    var arr_pair =[];
+      for(var key in obj){
+          if(obj.hasOwnProperty(key)){
+            arr_pair.push([key,obj[key]])
+          }
+      }
+
+      return arr_pair ||null
   }
 
 }

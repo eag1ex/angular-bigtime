@@ -19,7 +19,7 @@ import { ProductComponent } from './products/product.component';
 import { SharedComponent } from './_shared/shared.component';
 import { ProductModule } from './products/product.module';
 import { HomeComponent } from './home/home.component';
-
+import { ProductItemComponent } from './products/product-item/product-item.component';
 
 // pipes
 import { PipeNumber } from './_shared/pipe.number';
@@ -31,11 +31,11 @@ import { indexChangeDirective } from './_shared/directives/directives';
 import { SearchInputDirective } from './_shared/directives/searchInput.directive';
 
 // services
-import { Globals } from './_shared/Globals';
+import { MyGlobals } from './_shared/myglobals';
 import { DataService } from './_shared/services/data.service';
 import { LoggerService } from './_shared/services/logger.service';
 import { EventEmitService } from './_shared/services/eventEmmiter.service';
-
+import { TransactionResolver } from './_shared/services/transaction.resolver';
 
 @NgModule({
   declarations: [
@@ -47,6 +47,7 @@ import { EventEmitService } from './_shared/services/eventEmmiter.service';
     PageTitleDirective,
     PipeNumber, 
     ProductComponent, 
+    ProductItemComponent
   ],
   imports: [
     // custom modules
@@ -72,7 +73,7 @@ import { EventEmitService } from './_shared/services/eventEmmiter.service';
     ProductModule
   ],
 
-   providers: [Globals,LoggerService,DataService,EventEmitService],
+   providers: [MyGlobals,LoggerService,TransactionResolver,DataService,EventEmitService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

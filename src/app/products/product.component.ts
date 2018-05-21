@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../_shared/services/data.service';
 import { LoggerService } from '../_shared/services/logger.service';
 import { BeersModel } from '../_shared/services/models';
-import { Globals } from '../_shared/Globals';
+import { MyGlobals } from '../_shared/myglobals';
 import { EventEmitService } from '../_shared/services/eventEmmiter.service';
 import * as _ from "lodash";
 
@@ -43,7 +43,7 @@ export class ProductComponent implements OnInit {
     private _router: Router,
     private dataService: DataService,
     private logger: LoggerService,
-    private globals: Globals,
+    private _globals: MyGlobals,
     private searchEmmiter: EventEmitService
 
   ) {
@@ -62,7 +62,7 @@ export class ProductComponent implements OnInit {
       console.log('what is the complete', complete)
     });
 
-    globals.glob.searchSubscription= this.searchSubscription;
+    _globals.glob.searchSubscription= this.searchSubscription;
 
   }
 
@@ -173,10 +173,15 @@ export class ProductComponent implements OnInit {
 
 
 
-  goto(nr: any) {
+  goto(nr: any) { 
+   
     if (nr === '' || nr === undefined) return;
-    if (nr === 0) nr = 1
-    this._router.navigate(['/products' + '/' + nr]);
+    if (nr === 0) nr = 1;
+
+      setTimeout(()=>{
+         this._router.navigate(['/product' + '/' + nr]);
+      },300)
+      
   }
 
   // not using this at moment
@@ -290,14 +295,15 @@ export class ProductComponent implements OnInit {
     }
 
 
-
     this.dataService.getBeers(params).subscribe( // Observable version
       data => {
         this.beersDataLoaded = true;
         this.beersData = data;
+        this._globals.glob.beers = this.beersData;
       },
       (errorMsg: string) => {
         this.beersDataLoaded = null;
+        this._globals.glob.beers = this.beersDataLoaded;
         console.error(errorMsg); // Don't use alert!
       }
     );

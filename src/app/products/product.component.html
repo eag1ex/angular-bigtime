@@ -1,9 +1,4 @@
-<p>
-  what is the rout name {{routeName|json }}
-  <a [routerLink]="['/products', 1]">goto product 1</a>
-</p>
-
-<div class='product-container'>
+<div class='products-container'>
 
   <div class='product-row justify-content-md-center'>
     <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="mt-3"></page-title>
@@ -21,29 +16,31 @@
     </div>
   </div>
 
+
+
+
   <div class="product-row justify-content-md-center mt-3 mb-4" *ngIf='beersDataLoaded===true'>
 
-    <div indexchange (currinx)='getIndex($event)' [indexNow]="i" 
-    class="product-col-content product-wrap item-inx-{{i}} px-1"
-      *ngFor="let item of beersData | search:'name' :searchModel; let i = index;"
-      >
-      <div class="card w-100 my-2 p-2">
-        <img class="card-img-top " [src]='item.image_url' [alt]="item.tagline" [title]='item.description'>
+    <div indexchange (currinx)='getIndex($event)' [indexNow]="i" class="product-col-content product-wrap item-inx-{{i}} px-1"
+      *ngFor="let item of beersData | search:'name' :searchModel; let i = index;">
 
-        <div class="card-body px-1">
-          <h5 class="card-title">{{item.name}}</h5>
+      <div class="card bg-light my-2  card w-100">
+        <img class="card-img-top p-3 " [src]='item.image_url' [alt]="item.tagline" [title]='item.description'>
+
+        <h5 class="card-header p-2 text-center">{{item.name}}</h5>
+         <div class="card-body">
           <p class="card-text">{{descLimit(item.description)}}</p>
-        </div>
+          <h6 class="card-title">{{item.tagline}}</h6>
 
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">{{item.tagline}}</li>
-        </ul>
-
-        <div class="d-flex card-body px-1 justify-content-center">
-          <button type="button" class="btn btn-dark card-link px-4" (click)="goto(niceName(item.name));">View</button>
         </div>
+         <div class="d-flex card-body px-1 justify-content-center pt-0">
+        <button type="button" class="btn btn-dark card-link px-4" (click)="goto(niceName(item.name));">View</button>
       </div>
+      </div>
+
+     
     </div>
+
 
   </div>
   <!-- row-->
