@@ -16,7 +16,7 @@ import 'rxjs/add/operator/toPromise';
 import * as _ from "lodash";
 import { BeersModel } from './models';
 import { LoggerService } from './logger.service';
-
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
 providedIn: 'root'
@@ -26,14 +26,14 @@ export class DataService {
   public beersData: Array<any>;
   constructor(
     private http: Http,
-    private logger:LoggerService
+    private logger:LoggerService,
+    private lStorage:LocalStorageService
   ) { }
 
   routeParamsReturn(obj):string{
     var results:string;
     if(_.isEmpty(obj)) return '';
     
-     console.log('what is Object',obj)
       
     var _switch= (item, _obj):object=> {
       var output: any={}
@@ -53,7 +53,7 @@ export class DataService {
           output.good = `${this.apiURL}?beer_name=${_obj.byName}`;
           break;
         default:
-          this.logger.log('checkRouteParams did not match returning defaults', true);
+          
           output.default = `${this.apiURL}?page=1&per_page=${_obj.perPage}`;     
       }
 
@@ -64,42 +64,123 @@ export class DataService {
     var objKeys = Object.keys(obj)
     for (var i=0; i<objKeys.length;i++){
       var item = objKeys[i];
-      console.log('what is the key for switch',item)
+
         if(item){
           var s:any= _switch(item, obj);
-            console.log('what is the switch',s)
+         
              if(s.default){
-                console.log('what is default',s.default)
+                //console.log('what is default',s.default)
                 not_found_default = s.default;
                 continue;
              }
             if(s.good){
-              console.log('what is good',s.good)
+             // console.log('what is good',s.good)
               results = s.good;
               break;
             }
             
         }
     } 
-
+      if(!results){
+        this.logger.log('checkRouteParams did not match returning defaults', true);
+      }
+        
       return results||not_found_default;    
   }
-  getBeers(params:object): Observable<BeersModel[]> {
 
-  
+
+///check if we have avaialble localstorage first
+/**
+ * LocalStorageService ids
+    beers:paged:1 
+    beers:item:name:Paradox_Islay 
+ */ 
+
+checkLocalstorage(params:any):any{
+    if(!params) return null;
+    var getStorage:any=null;
+
+    //beers:paged:1  << always first page
+    if(params.parent_page){
+     getStorage = this.lStorage.getItem(`beers:paged:${1}`);
+    }
+    // beers:paged:${paged}
+    if(params.paged){
+     getStorage = this.lStorage.getItem(`beers:paged:${params.paged}`);
+    }
+
+    // beers:item:name:search_by_name
+    // beers:item:name:byName
+    console.log('what are we searching for for buz',params)
+    if(params.byName || params.search_by_name){
+        var searchBy = params.byName || params.search_by_name || false;
+       getStorage = this.lStorage.getItem(`beers:item:name:${searchBy}`);
+    }
+    return getStorage;
+  }
+
+
+/**
+ * this will set local storage for any sub-sequent calls to the same item/data
+ * @param params 
+ * @param data 
+ */  
+setLocalStorage(params:any,data:BeersModel[]):boolean{
+
+    if(!params && !data) return false;
+    var setStorage:any=false;
+
+    //beers:paged:1  << always first page
+    if(params.parent_page){
+     setStorage = this.lStorage.setItem(`beers:paged:${1}`,data);
+    }
+    // beers:paged:${paged}
+    if(params.paged){
+     setStorage = this.lStorage.setItem(`beers:paged:${params.paged}`,data);
+    }
+    // beers:item:name:search_by_name
+    if(params.search_by_name){
+       setStorage = this.lStorage.setItem(`beers:item:name:${params.search_by_name}`,data);
+    }
+    // beers:item:name:byName
+    if(params.byName){
+       setStorage = this.lStorage.setItem(`beers:item:name:${params.byName}`,data);
+    }
+    return setStorage;
+  }
+
+
+
+
+  getBeers(params:object): Observable<BeersModel[]> {
+    // remove all storage
+    this.lStorage.removeAll()
+
+    var checkLocalstorage = this.checkLocalstorage(params);
+    if(checkLocalstorage!==false){
+      this.logger.log('getting beers from localstorage!!')
+      return checkLocalstorage;
+    }
     var _paramsReturn = this.routeParamsReturn(params);
-    console.log('what is params',params)
 
     return this.http.get(_paramsReturn)
-      .map((response) =>{
-        this.logger.log('got getBeers respons')
+      .map((response:any) =>{
+        // check for empty respons
+        var checker = response.json();
+        if(checker.length===0|| !checker){
+          throw('no results returned!') as any;
+        }
+     
+       // this.logger.log('got getBeers respons')
         return response.json() as BeersModel[]
       }) 
       .do((beers) => {
+        
+        this.setLocalStorage(params,beers); // magic happens!
         return beers;
       })
       .catch((error: any) => {
-        this.logger.log(error,true)
+        //this.logger.log(error,true)
         return Observable.throw('Something bad happened with customers; please check the console');
       });
 

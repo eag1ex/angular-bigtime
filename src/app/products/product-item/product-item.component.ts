@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BeersModel } from '../../_shared/services/models';
+import { MyGlobals } from '../../_shared/myglobals';
 @Component({
   selector: 'product-item',
   templateUrl: './product-item.component.html',
@@ -9,18 +10,25 @@ import { BeersModel } from '../../_shared/services/models';
 export class ProductItemComponent implements OnInit {
 
   routName: string;
+
    public PAGE_DEFAULTS = {
     pageTitle: 'Beer!',
+    pageName:'single-product'
   }
+
   productData:BeersModel;
-  productdataPairs:Array<any>
+  productdataPairs:any = false;
 
   constructor(private _route: ActivatedRoute, 
-    private _router: Router) {
+    private _router: Router,
+    private _globals:MyGlobals) {
+      _globals.glob.current_page = this.PAGE_DEFAULTS.pageName; 
   }
   
 
    ngOnInit() {
+    
+    
     const param = this._route.snapshot.paramMap.get('id');
     if (param) {
       this.routName = param;
@@ -39,6 +47,7 @@ export class ProductItemComponent implements OnInit {
        this.productdataPairs=this.generateKeyArray(this.productData);
       console.log('what are the pairs!!',this.productdataPairs)
     }else{
+      this.productdataPairs=null;
        this._router.navigate(['/products']);
     } 
 

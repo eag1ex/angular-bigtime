@@ -4,12 +4,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { HttpModule }    from '@angular/http'; 
+import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
 
 // app modules
-import { HomeModule } from './home/home.module';
+
 import { SharedModule } from './_shared/shared.module';
 
 
@@ -18,7 +18,7 @@ import { AppComponent } from './app.component';
 import { ProductComponent } from './products/product.component';
 import { SharedComponent } from './_shared/shared.component';
 import { ProductModule } from './products/product.module';
-import { HomeComponent } from './home/home.component';
+
 import { ProductItemComponent } from './products/product-item/product-item.component';
 
 // pipes
@@ -36,6 +36,8 @@ import { DataService } from './_shared/services/data.service';
 import { LoggerService } from './_shared/services/logger.service';
 import { EventEmitService } from './_shared/services/eventEmmiter.service';
 import { TransactionResolver } from './_shared/services/transaction.resolver';
+import { LocalStorageService } from './_shared/services/local-storage.service';
+
 
 @NgModule({
   declarations: [
@@ -45,8 +47,8 @@ import { TransactionResolver } from './_shared/services/transaction.resolver';
     SearchInputDirective,
     SearchPipe,
     PageTitleDirective,
-    PipeNumber, 
-    ProductComponent, 
+    PipeNumber,
+    ProductComponent,
     ProductItemComponent
   ],
   imports: [
@@ -58,22 +60,19 @@ import { TransactionResolver } from './_shared/services/transaction.resolver';
     HttpModule,
     FormsModule,
     BrowserModule,
-      RouterModule.forRoot([
-        { path: 'app', component: AppComponent ,
-     //   children: [
-    //        { path: 'welcome', component: WelcomeComponent },
-          //  { path: 'home', component: HomeComponent },
-     //   ]
+    RouterModule.forRoot([
+      {
+        path: 'app', component: AppComponent,
       },
-      { path: 'app', redirectTo: 'products', pathMatch: 'full'},
-      { path: '**', redirectTo: 'products', pathMatch: 'full'}
- 
+      { path: 'app', redirectTo: 'products', pathMatch: 'full' },
+      { path: '**', redirectTo: 'products', pathMatch: 'full' }
+
     ]),
-    HomeModule,
+
     ProductModule
   ],
 
-   providers: [MyGlobals,LoggerService,TransactionResolver,DataService,EventEmitService],
+  providers: [MyGlobals, LoggerService, LocalStorageService, TransactionResolver, DataService, EventEmitService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

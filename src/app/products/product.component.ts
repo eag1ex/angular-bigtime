@@ -19,6 +19,7 @@ export class ProductComponent implements OnInit {
   public beersData: BeersModel[];
   public beersDataLoaded = false;
   public routeName: any;
+  public badSearch:any=false;
   public exec_search = false;
   private searchSubscription: any;
   private searchModel: string;
@@ -28,6 +29,7 @@ export class ProductComponent implements OnInit {
 
   public PAGE_DEFAULTS = {
     pageTitle: 'Beers.. Drink! Get drunk!',
+    pageName:'products',
     perPage: 10,
     paged: 10,
     currentPaged: 1,
@@ -47,6 +49,8 @@ export class ProductComponent implements OnInit {
     private searchEmmiter: EventEmitService
 
   ) {
+    // set pagename globals
+    _globals.glob.current_page = this.PAGE_DEFAULTS.pageName;
 
     this.searchSubscription = searchEmmiter.subscribe(msg => {
 
@@ -91,16 +95,17 @@ export class ProductComponent implements OnInit {
     var exec = () => {
       return this.whichSearch(type, event, () => {
 
-        var search_val = (val.length > 2) ? { search_by_name: this.niceName(val.toLowerCase()) } : false;
-        //  
+        var search_v = (val.length > 2) ? { search_by_name: this.niceName(val.toLowerCase()) } : false; 
+        var search_val = search_v as  any;
 
         if (search_val && searchAPI) {
+          search_val.originalName = val;
           this.getBeers(search_val);
           this.logger.log(`searching api results with: ${search_val.search_by_name}`)
 
         } else if (!search_val && searchAPI) {
           this.logger.log(`you entered no search value, defauling to paged`)
-          this.getBeers({ paged: this.PAGE_DEFAULTS.currentPaged });
+          this.getBeers({ paged: this.PAGE_DEFAULTS.currentPaged, originalName:val });
         }
 
         this.exec_search = true;
@@ -233,6 +238,7 @@ export class ProductComponent implements OnInit {
 
   ngOnInit() {
     //PAGE_DEFAULTS
+    
 
     /// get page param  
     this.fetchEvent().then((whichOrder: any) => {
@@ -255,7 +261,8 @@ export class ProductComponent implements OnInit {
 
 
   niceName(str) {
-    return (str) ? str.replace(/ /g, "_") : '';
+    var nice = this._globals.nicename(str)
+    return (str) ? nice : '';
   }
   updateIndex(inx) {
     //console.log('what is the uipdated index ', inx)
@@ -265,6 +272,7 @@ export class ProductComponent implements OnInit {
   }
 
   getBeers(routeName: any) {
+    this.badSearch=false;
 
     this.beersDataLoaded = false;
     console.log('Getting beers ...');
@@ -304,6 +312,8 @@ export class ProductComponent implements OnInit {
       (errorMsg: string) => {
         this.beersDataLoaded = null;
         this._globals.glob.beers = this.beersDataLoaded;
+        // show to client
+        this.badSearch = routeName.originalName;
         console.error(errorMsg); // Don't use alert!
       }
     );

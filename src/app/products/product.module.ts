@@ -16,7 +16,7 @@ import { TransactionResolver } from '../_shared/services/transaction.resolver';
       {
         path: 'products/paged/:paged',
         //   canActivate: [ ProductGuardService ],
-        component: ProductComponent
+        component: ProductComponent,
       },
       {
         path: 'product/:id',

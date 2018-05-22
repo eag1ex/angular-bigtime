@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
-        <a class="navbar-brand" [routerLink]="['/app/home']"><span class='t-strong'>{{appName.a}}</span>&nbsp;<span class='t-light'>{{appName.b}}</span></a>
+        <a class="navbar-brand" [routerLink]="['/app/products']"><span class='t-strong'>{{appName.a}}</span>&nbsp;<span class='t-light'>{{appName.b}}</span></a>
         <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07"
             aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -17,7 +17,9 @@
             </ul>
              
             <form class="form-inline">
-                 <search-input class="my-1 p-1" (onSearch)="onSearch($event);"></search-input>             
+                 <search-input 
+                 [ngClass]="{'showMe':displaySearchInput===true && currentPageName==='products', 'hideMe':displaySearchInput===false || currentPageName!=='products'}" 
+                 class="my-1 p-1 anim-f" (onSearch)="onSearch($event);"></search-input>             
             </form>
         </div>
     </div>

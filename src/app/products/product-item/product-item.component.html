@@ -1,29 +1,53 @@
-<div class='item-container'>
+<div class='item-container mb-4'>
 
   <div class='row justify-content-md-center'>
-    <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="m-3"></page-title>
+    <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="m-5 text-center"></page-title>
   </div>
 
-  <div class="row justify-content-md-center my-3">
-    <div class="col-md-3 col-lg-4 col-sm-10">
-      <img class="card-img-top p-3 product-img" 
-      [src]='productData.image_url' 
-      [alt]="productData.tagline" 
-      [title]='productData.description'>
-    </div><!--col-->
+  <div *ngIf="productdataPairs===false" class='anim-f'>
+    <div class="row justify-content-md-center m-5">
+      <div class="spinner"></div>
+    </div>
+  </div> 
 
+  <div *ngIf="productdataPairs!==false" class='anim-f '>
 
-    <div class="col-md-7 col-lg-6 col-sm-10">
-
-      <div class="card w-100 product-card">
-        <div class="card-header p-2">
-         <h4> {{productdataPairs[1][0]}} | {{productdataPairs[1][1]}}</h4>
-        </div>
-        <ul class="list-group list-group-flush;">
-          <li  class="list-group-item" *ngFor="let pair of productdataPairs | slice:1">{{pair[0]}} | {{pair[1]}}</li>
-        </ul>
+    <div class="row justify-content-md-center my-4">
+      <div class="col-md-3 col-lg-4 col-sm-10 text-center">
+        <img class="card-img-top p-5 product-img" [src]='productData.image_url' [alt]="productData.tagline" [title]='productData.description'>
       </div>
+      <!--col-->
 
-    </div><!--col-->
-  </div><!--row-->
+
+      <div class="col-md-7 col-lg-6 col-sm-10">
+
+        <div class="card w-100 product-card">
+          <div class="card-header p-0">
+            <h5 class="p-0"><span class="bg-info  float-left p-3">{{productdataPairs[1][0]}}</span>  
+              <span class="m-3 float-left"> {{productdataPairs[1][1]}}</span></h5>
+          </div>
+          <ul class="list-group list-group-flush;">
+             <li class="list-group-item p-0" ><span class="bg-info  float-left p-2">{{productdataPairs[0][0]}} </span> <span class="m-2 float-left">{{productdataPairs[0][1]}}</span></li>
+            <li class="list-group-item p-0 anim-f " *ngFor="let pair of productdataPairs | slice:1"><span class="bg-info float-left p-2">{{pair[0]}}</span> <span class="m-2 float-left">{{pair[1]|json}}</span></li>
+          </ul>
+        </div>
+
+      </div>
+      <!--col-->
+    </div>
+    <!--row-->
+
+  </div>
+
+  <div class='row justify-content-md-center'>
+    <div class="col-md-3 col-lg-4 col-sm-10">&nbsp;</div>
+    <div class="col-md-7 col-lg-6 col-sm-10">
+      <a class="btn btn-success py-2 px-4" [routerLink]="['/products']">Back</a>
+    </div>
+
+  </div>
+
+  <!--ngIf-->
+
+
 </div>

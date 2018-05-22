@@ -53,6 +53,6 @@ return `
              >
             
     </div>
-     <p class="search-api-check mb-1 p-1 pl-2">Checked to Search API</p>
+     <p class="search-api-check mb-1 p-1 pl-2" [ngClass]="{'show-search-api-check':searchAPIcheck===true}" >Search API!</p>
 `;
 }

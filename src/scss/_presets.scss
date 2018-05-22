@@ -1,5 +1,10 @@
 /// only add global style markup here
 
+body{
+    background:  rgba(  0,167, 82,.1);
+    background-color:rgba(  0,167, 82,.1);
+}
+
 .tc{
     text-align: center;
 }
@@ -23,4 +28,28 @@ p.small{
     font-size: 2.5rem;
     font-weight: 300;
     line-height: 1.1;
+}
+
+ .text-danger{
+    &.error-loading{
+        font-size: 1.5rem;
+        font-weight: 500;
+    }
+ }
+
+ .hideMe{
+     opacity: 0;
+ }
+.showMe{
+    opacity: 1;
+}
+
+.anim-f{
+         -webkit-transition: 0.1s linear all!important;
+         transition: 0.1s linear all!important;
+}
+
+.anim-s{
+         -webkit-transition: 0.5s linear all!important;
+         transition: 0.5s linear all!important;
 }
