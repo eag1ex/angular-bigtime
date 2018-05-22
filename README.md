@@ -55,6 +55,7 @@ $/ npm start # alternativly `ng serve`
 * Angular 6 CLI `https://github.com/angular/angular-cli`
 * Compass/Sass `http://compass-style.org/reference/compass/`
 * RXJS,SASS/COMPASS, Bootstrap 4, Jquery, Lodash, LocalStorage, Rest API
+* Progresive implomentation
 
 
 #### TESTING
@@ -64,6 +65,7 @@ $/ npm start # alternativly `ng serve`
 #### TODOS
 * Integrade more API solutions for testing.
 * Add page login
+* integrate script barrel, for easy loading!
 
 
 #### FINAL THOUGHTS
