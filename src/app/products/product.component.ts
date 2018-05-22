@@ -8,6 +8,8 @@ import { EventEmitService } from '../_shared/services/eventEmmiter.service';
 import * as _ from "lodash";
 
 
+
+
 @Component({
   selector: 'products',
   templateUrl: './product.component.html',
@@ -27,6 +29,7 @@ export class ProductComponent implements OnInit {
     inx: 0
   }
 
+  // default page settings 
   public PAGE_DEFAULTS = {
     pageTitle: 'Beers.. Drink! Get drunk!',
     pageName:'products',
@@ -35,11 +38,7 @@ export class ProductComponent implements OnInit {
     currentPaged: 1,
     searchAPIcheck: false
   }
-  public testItems = [
-    { description: 'first time go', name: 'mike' },
-    { description: 'second time no', name: 'andy' },
-    { description: 'tird time fuck you', name: 'jack' }
-  ];
+
 
   constructor(private _route: ActivatedRoute,
     private _router: Router,
@@ -52,10 +51,14 @@ export class ProductComponent implements OnInit {
     // set pagename globals
     _globals.glob.current_page = this.PAGE_DEFAULTS.pageName;
 
+  
+
+    /**
+     *  this event is received from app.component
+     */
     this.searchSubscription = searchEmmiter.subscribe(msg => {
 
       if (_.isObject(msg)) {
-
         this.PAGE_DEFAULTS.searchAPIcheck = msg.searchAPIcheck;
         this.searchItems(msg.event, msg.searchVal, msg.type, msg.searchAPIcheck);
       }
@@ -63,7 +66,7 @@ export class ProductComponent implements OnInit {
     }, (err) => {
          this.logger.log(`what is the err ${err}`,true); 
     }, (complete) => {
-      console.log('what is the complete', complete)
+     // console.log('what is the complete', complete)
     });
 
     _globals.glob.searchSubscription= this.searchSubscription;
@@ -89,7 +92,7 @@ export class ProductComponent implements OnInit {
 
     if (!searchAPI) {
 
-      this.searchModel = val; /// to use for redifinding search results
+      this.searchModel = val; /// search filtering
     }
 
     var exec = () => {
@@ -103,7 +106,7 @@ export class ProductComponent implements OnInit {
           this.getBeers(search_val);
           this.logger.log(`searching api results with: ${search_val.search_by_name}`)
 
-        } else if (!search_val && searchAPI) {
+        } else if (!search_val) {
           this.logger.log(`you entered no search value, defauling to paged`)
           this.getBeers({ paged: this.PAGE_DEFAULTS.currentPaged, originalName:val });
         }
@@ -120,7 +123,7 @@ export class ProductComponent implements OnInit {
         exec();
         this.exec_search = false;
 
-      }, 2500);
+      }, 2000);
 
       // slow down requests to 2 seconds
 
@@ -137,14 +140,13 @@ export class ProductComponent implements OnInit {
   }
 
   /**
-  * have decided to use 2 events on enter, 
-  * and focusout for ease of use, so we do not have to add the search button
+  * have decided to use 2 events, 
+  * keydownand/enter and focusout for ease of use, so we do not have to add the search button
   * 
   * @param event 
   * @param val 
   * @param type 
   */
-
 
   whichSearch(type, event, cb) {
 
@@ -175,7 +177,6 @@ export class ProductComponent implements OnInit {
     }
 
   }
-
 
 
   goto(nr: any) { 
@@ -237,9 +238,7 @@ export class ProductComponent implements OnInit {
   }
 
   ngOnInit() {
-    //PAGE_DEFAULTS
-    
-
+ 
     /// get page param  
     this.fetchEvent().then((whichOrder: any) => {
       if (whichOrder === false) {
@@ -264,9 +263,11 @@ export class ProductComponent implements OnInit {
     var nice = this._globals.nicename(str)
     return (str) ? nice : '';
   }
+
   updateIndex(inx) {
     //console.log('what is the uipdated index ', inx)
   }
+
   descLimit(str) {
     return (str) ? str.substring(0, 100) : '';
   }
@@ -303,8 +304,9 @@ export class ProductComponent implements OnInit {
     }
 
 
-    this.dataService.getBeers(params).subscribe( // Observable version
+    this.dataService.getBeers(params).subscribe( 
       data => {
+        console.log('what is the beers data???', data)
         this.beersDataLoaded = true;
         this.beersData = data;
         this._globals.glob.beers = this.beersData;
@@ -312,9 +314,11 @@ export class ProductComponent implements OnInit {
       (errorMsg: string) => {
         this.beersDataLoaded = null;
         this._globals.glob.beers = this.beersDataLoaded;
+        console.log('what is the error',errorMsg)
         // show to client
         this.badSearch = routeName.originalName;
-        console.error(errorMsg); // Don't use alert!
+        this.searchModel =''; // reset
+        console.error(errorMsg); //
       }
     );
   }

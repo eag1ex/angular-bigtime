@@ -7,31 +7,40 @@ import { Component, Input, Output, HostBinding, OnInit, ElementRef, EventEmitter
 })
 export class SearchInputDirective implements OnInit {
   searchtext: string;
-  titleDisplay:number;
-  public searchAPIcheck:boolean=false;
+  titleDisplay: number;
+  public searchAPIcheck: boolean = false;
   constructor(private elm: ElementRef) {
 
   }
-
 
   @Input()
   display: number;
 
   @Output()
   onSearch = new EventEmitter<any>();
- 
 
-  searchItems(event,searchVal,type){
-    this.onSearch.emit({event:event,searchVal:searchVal,type:type,searchAPIcheck:this.searchAPIcheck});
-  }  
+  /**
+   * 
+   * bind and return searched values and event handle up to app.component > dispatch > product component
+   * @param event 
+   * @param searchVal 
+   * @param type 
+   */
 
- ngOnInit() {
+  searchItems(event, searchVal, type) {
+    this.onSearch.emit({ event: event, 
+                        searchVal: searchVal, 
+                        type: type, searchAPIcheck: 
+                        this.searchAPIcheck });
+  }
+
+  ngOnInit() {
   }
 }
 
-function template(){
+function template() {
 
-return `
+  return `
 
     <div class="input-group mb-1 search-wrap">
         <div class="input-group-prepend">

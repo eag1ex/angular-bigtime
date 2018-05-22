@@ -12,10 +12,19 @@ import 'rxjs/add/operator/toPromise';
 import { BeersModel } from './models';
 import { LoggerService } from './logger.service';
 
+
 /**
- * LocalStorageService ids
- beers:paged:1 
- beers:item:name:Paradox_Islay 
+ * local storage 
+ *  todo: not yet implemented storage expiry
+ */
+
+
+
+/**
+ *  LocalStorageService ids:
+ * 
+    beers:paged:1 
+    beers:item:name:example_name 
  */
 
 
@@ -24,7 +33,11 @@ import { LoggerService } from './logger.service';
 })
 export class LocalStorageService {
 
-  constructor(private logger: LoggerService) { }
+  constructor(private logger: LoggerService) {
+
+     // this.removeAll() 
+
+   }
 
   get localStorage() {
     return window.localStorage;
@@ -48,24 +61,22 @@ export class LocalStorageService {
     var item_str = this.localStorage.getItem(id);
     var item = JSON.parse(item_str)
 
-    if (!item) {
-      return false;
-    }
+    if (!item) return false;
+
     return Observable.of(item)
       .map((response) => {
          this.logger.log(`received localstorage data for ${id}`)
-
         return response as BeersModel[]
       })
       .do((d) => {
         return d;
       })
       .catch((error: any) => {
-
         return Observable.throw('Something bad happened localstorage getItem;');
       });
 
   }
+
   removeItem(id) {
     var item_removed = false;
     this.localStorage.removeItem(id);

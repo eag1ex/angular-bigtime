@@ -2,6 +2,7 @@
   "name": "angular-bigtime",
   "version": "1.0.0",
   "scripts": {
+    "preinstall": "npm rebuild node-sass",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -55,7 +56,9 @@
     "tslint": "~5.9.1",
     "typescript": "~2.7.2"
   },
-  "engine": {
+
+  "engineStrict": true,
+  "engines": {
     "ruby": ">=2.4.2",
     "@angular/cli": ">=6.0.0",
     "node": ">=9.0.0",

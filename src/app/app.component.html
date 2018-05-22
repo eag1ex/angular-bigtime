@@ -6,39 +6,24 @@
           <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="navbar-collapse collapse"> 
-           
+        <div class="navbar-collapse collapse">
+
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                   <!--<a class="nav-link" href="#">Latest <span class="sr-only">(current)</span></a>-->
+                    <!--<a class="nav-link" href="#">Latest <span class="sr-only">(current)</span></a>-->
                 </li>
 
 
             </ul>
-             
+
             <form class="form-inline">
-                 <search-input 
-                 [ngClass]="{'showMe':displaySearchInput===true && currentPageName==='products', 'hideMe':displaySearchInput===false || currentPageName!=='products'}" 
-                 class="my-1 p-1 anim-f" (onSearch)="onSearch($event);"></search-input>             
+                <search-input  [ngClass]="{'showMe':displaySearchInput===true && currentPageName==='products', 'hideMe':displaySearchInput===false || currentPageName!=='products'}"
+                    class="my-1 p-1 anim-f" (onSearch)="onSearch($event);"></search-input>
             </form>
         </div>
     </div>
 </nav>
 
-<!--
-        <nav class='navbar navbar-default'>
-            <div class='container-fluid'>
-                <a class='navbar-brand'>{{pageTitle}}</a>
-                <ul class='nav navbar-nav'>
-                    <li><a [routerLink]="['/']">welcome</a></li>
-                    <li><a [routerLink]="['/home']">home</a></li>
-                </ul>
-            </div>
-        </nav>
-          -->
 <div class='container'>
     <router-outlet></router-outlet>
-
-
-
 </div>

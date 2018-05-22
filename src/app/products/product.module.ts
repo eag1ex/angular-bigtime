@@ -33,6 +33,7 @@ import { TransactionResolver } from '../_shared/services/transaction.resolver';
     ]),
 
   ],
+  // at app.module
   declarations: [
    // ProductComponent,
     

@@ -1,16 +1,29 @@
 # Angular 6 BigTime
 
 
+#### DESCRIPTION
+This is a simple but cool application for retrieving Beer information and details. It consists of Product page and Product Detail, it is integrated with a search feature to search LIVE `punkapi.com API` by 'beer_name' and stores any subsequent call in LocalStorage! The app uses ^^Angular 6 CLI^^ along with Bootstrap 4 an Compass.
 
 
-## Angular CLI 6, how to:
-
-##### INSTALL NEW Angular CLI 6!
+##### INSTALL NEW Angular 6 CLI and install angular-bigtime!
 #!python
 $/ npm uninstall -g @angular/cli # remove old
 $/ npm cache verify # clear cache 
 $/ npm install -g @angular/cli@next # latest 
+
+$/ npm install # from the application dir
+$/ npm rebuild node-sass # from the application dir
 ```
+* After installing run ^`npm rebuild node-sass`
+* and have a look at the `engine` requirements in `package.json`, for any issues;
+
+##### OPTIONAL I THINK...
+#!python
+$/ gem update --system
+$/ gem install compass
+```
+* im not sure is installing compass is required since im using node_modules package;
+
 
 #### API DOCUMENTATION
 #!python
@@ -21,8 +34,8 @@ $/ ng g service new-service # new service
 
 ```
 
-#### START THE APP
 
+#### START THE APP
 #!python
 $/ npm start # alternativly `ng serve`
 ```
@@ -39,10 +52,32 @@ $/ npm start # alternativly `ng serve`
 
 #### TECHNOLOGY/STACK
 * Bootstrap 4 `https://getbootstrap.com/`
-* Angular CLI `https://github.com/angular/angular-cli`
+* Angular 6 CLI `https://github.com/angular/angular-cli`
 * Compass/Sass `http://compass-style.org/reference/compass/`
+* RXJS,SASS/COMPASS, Bootstrap 4, Jquery, Lodash, LocalStorage, Rest API
 
 
+#### TESTING
+* Tested and works on Firefox and Chrome/Safari, ( Dont care about IE, but should work fine)
+
+
+#### TODOS
+* Integrade more API solutions for testing.
+* Add page login
+
+
+#### FINAL THOUGHTS
+* Thank you, have fun with it.
+
+
+
+**********************
+*
+*
+*
+*
+*
+*
 ## Angular CLI V 6.0
 
 ********************************

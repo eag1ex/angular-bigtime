@@ -5,55 +5,38 @@
 
 
 //////////////// angular preloader
-
-
-/**
- <div class='angular-preloader-wrap'>
-      <div id="angular-preloader" class="bounce-spinner ">
-        <div class="double-bounce1"></div>
-        <div class="double-bounce2"></div>
-      </div>
-      <div class="bk"></div>
-    </div>
-     <app-root id='angular-app' class='hide-angular-app'></app-root>
-        -webkit-transition: 0.1s linear all!important;
-    transition: 0.1s linear all!important;
-*/
-html footer{
-   &.show{
-      opacity: 1!important;
+html footer {
+    &.show {
+        opacity: 1 !important;
     }
 }
 
-app-root{
-  position: relative;
-  z-index: 0!important;
-  
-  &#angular-app{
-    opacity: 0;
-  }
-  &.show{       
-    opacity: 1;
-  }
-  -webkit-transition: 0.1s linear all!important;
-  transition: 0.1s linear all!important;
+app-root {
+    position: relative;
+    z-index: 0 !important;
+    &#angular-app {}
+    &.show {
+        opacity: 1;
+    }
+    -webkit-transition: 0.1s linear all !important;
+    transition: 0.1s linear all !important;
 }
-.angular-preloader-wrap{
-    opacity: 0;
-    &.show{
-       opacity: 1;
-    }
-    &.hide{
-     opacity: 0;
-    }
 
-    &.displayNone{
-      // set tis with timeout
-      opacity: 0;
-      display: none;
+.angular-preloader-wrap {
+    opacity: 0;
+    &.show {
+        opacity: 1;
+    }
+    &.hide {
+        opacity: 0;
+    }
+    &.displayNone {
+        // set tis with timeout
+        opacity: 0;
+        display: none;
     }
     background: #fff;
-    .bk{
+    .bk {
         width: 100%;
         height: auto;
         background: $body-bg;
@@ -67,109 +50,108 @@ app-root{
     top: 0;
     bottom: 0;
     z-index: 2;
-
-    -webkit-transition: 0.1s linear all!important;
-     transition: 0.1s linear all!important;
+    -webkit-transition: 0.1s linear all !important;
+    transition: 0.1s linear all !important;
 }
 
-
-
-
-
-
-
 ///////////////////////////////////
-
-
 //////////////// SPINNER
 // <div class="spinner"></div>
 /////////////////////////////////////////
 .spinner {
-  width: 90px;
-  height: 90px;
-  margin: 100px auto;
-  background-color: $color-primary-0;
-
-  border-radius: 100%;  
-  -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
-  animation: sk-scaleout 1.0s infinite ease-in-out;
+    width: 90px;
+    height: 90px;
+    margin: 100px auto;
+    background-color: $color-primary-0;
+    border-radius: 100%;
+    -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+    animation: sk-scaleout 1.0s infinite ease-in-out;
 }
 
 @-webkit-keyframes sk-scaleout {
-  0% { -webkit-transform: scale(0) }
-  100% {
-    -webkit-transform: scale(1.0);
-    opacity: 0;
-  }
+    0% {
+        -webkit-transform: scale(0)
+    }
+    100% {
+        -webkit-transform: scale(1.0);
+        opacity: 0;
+    }
 }
 
 @keyframes sk-scaleout {
-  0% { 
-    -webkit-transform: scale(0);
-    transform: scale(0);
-  } 100% {
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
-    opacity: 0;
-  }
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    100% {
+        -webkit-transform: scale(1.0);
+        transform: scale(1.0);
+        opacity: 0;
+    }
 }
+
 /////////////////////////////////////////////
 ///////////////////////////
-
-
 //////////////// BOUNCE-SPINNER
 // <div class="bounce-spinner">
 //  <div class="double-bounce1"></div>
 //  <div class="double-bounce2"></div>
 //</div>
 /////////////////////////////////////////
-
 .bounce-spinner {
-  width: 130px;
-  height: 130px;
-
-  position: relative;
-  margin: 150px auto;
+    width: 130px;
+    height: 130px;
+    position: relative;
+    margin: 150px auto;
 }
 
- .double-bounce1{
-      background-color: rgba(  0,167, 82,1);
- }
- .double-bounce2{
-     background-color:rgba(  0,167, 82,.3);
- }   
-.double-bounce1, .double-bounce2 {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-
-  opacity: 0.6;
-  position: absolute;
-  top: 0;
-  left: 0;
-  
-  -webkit-animation: sk-bounce 1.5s infinite ease-in-out;
-  animation: sk-bounce 1.5s infinite ease-in-out;
+.double-bounce1 {
+    background-color: rgba( 0, 167, 82, 1);
 }
 
 .double-bounce2 {
-  -webkit-animation-delay: -1.0s;
-  animation-delay: -1.0s;
+    background-color: rgba( 0, 167, 82, .3);
+}
+
+.double-bounce1,
+.double-bounce2 {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-animation: sk-bounce 1.5s infinite ease-in-out;
+    animation: sk-bounce 1.5s infinite ease-in-out;
+}
+
+.double-bounce2 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
 }
 
 @-webkit-keyframes sk-bounce {
-  0%, 100% { -webkit-transform: scale(0.0) }
-  50% { -webkit-transform: scale(1.0) }
+    0%,
+    100% {
+        -webkit-transform: scale(0.0)
+    }
+    50% {
+        -webkit-transform: scale(1.0)
+    }
 }
 
 @keyframes sk-bounce {
-  0%, 100% { 
-    transform: scale(0.0);
-    -webkit-transform: scale(0.0);
-  } 50% { 
-    transform: scale(1.0);
-    -webkit-transform: scale(1.0);
-  }
+    0%,
+    100% {
+        transform: scale(0.0);
+        -webkit-transform: scale(0.0);
+    }
+    50% {
+        transform: scale(1.0);
+        -webkit-transform: scale(1.0);
+    }
 }
+
 ////////////////////////////////////////
 //////////////////////////////////////

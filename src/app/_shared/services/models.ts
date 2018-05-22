@@ -11,7 +11,7 @@ export class BeersModel {
 
 
 /*
-// BeersModel single output
+// BeersModel single item output
 [
   {
     "id": 1,

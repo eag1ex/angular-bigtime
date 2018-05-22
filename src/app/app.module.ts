@@ -53,13 +53,15 @@ import { LocalStorageService } from './_shared/services/local-storage.service';
   ],
   imports: [
     // custom modules
-    SharedModule,
+    SharedModule, /// not in use at moment
 
     // angular modules
     HttpClientModule,
     HttpModule,
     FormsModule,
     BrowserModule,
+
+    // the routing happens in forChild route, from products module
     RouterModule.forRoot([
       {
         path: 'app', component: AppComponent,
@@ -72,7 +74,14 @@ import { LocalStorageService } from './_shared/services/local-storage.service';
     ProductModule
   ],
 
-  providers: [MyGlobals, LoggerService, LocalStorageService, TransactionResolver, DataService, EventEmitService],
+  providers: [
+    MyGlobals, 
+    LoggerService, 
+    LocalStorageService, 
+    TransactionResolver, 
+    DataService, 
+    EventEmitService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

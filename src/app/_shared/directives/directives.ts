@@ -1,5 +1,7 @@
 import { Component, Input, Output, HostBinding, OnInit, ElementRef, EventEmitter } from '@angular/core';
 
+
+/// not currently used
 /////////////////////////////////////////////////////////////////////
 @Component({
   selector: '[indexchange]',
@@ -8,12 +10,6 @@ import { Component, Input, Output, HostBinding, OnInit, ElementRef, EventEmitter
 export class indexChangeDirective implements OnInit {
   currentIndex: number;
   constructor(private elm: ElementRef) {
-
-    // to get current attr
-    // this.currentIndex = elm.nativeElement.getAttribute('indexchange'); 
-
-    // to set new class
-    //this.renderer.setElementClass(event.target,"opened",true);
   }
 
   @Input()
@@ -30,13 +26,12 @@ export class indexChangeDirective implements OnInit {
   }
 
   ngOnInit() {
-    //if(this.indexNow>5){
-    //  this.currinx.emit(this.indexNow+1);
-    //console.log('emitting...')
-    // }
 
   }
 }
+
+
+// just a neat way to return page title on to any component :))
 //////////////////////////////////////////////////
 
 @Component({
@@ -48,7 +43,6 @@ export class PageTitleDirective implements OnInit {
   titleDisplay:number;
   constructor(private elm: ElementRef) {
 
-    //console.log('PageTitleDirective loaded!')
   }
 
   @Input()
@@ -58,12 +52,9 @@ export class PageTitleDirective implements OnInit {
   display: number;
 
 
-  // 
-
  ngOnInit() {
   this.titleName = this.title;
   this.titleDisplay = this.display;
-  //console.log('what is this.titleName ',this.titleName )
 
   }
 }

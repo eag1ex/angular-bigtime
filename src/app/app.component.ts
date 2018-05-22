@@ -25,6 +25,7 @@ export class AppComponent implements OnInit{
   public APP_LOADED = false;
   private subscription;
   public displaySearchInput=false;
+
   constructor(private _globals: MyGlobals, private emmiter: EventEmitService, 
     private _router: Router, private logger: LoggerService) {
 
@@ -57,6 +58,7 @@ export class AppComponent implements OnInit{
       }
       // 
       // val.constructor.name / val.url
+      // available events
       //  NavigationStart
       // RoutesRecognized
       // GuardsCheckStart
@@ -74,7 +76,7 @@ export class AppComponent implements OnInit{
 
 
   /**
-   * manage animation of angular app on load!
+   * manage animation of angular app on initial load!
    */
  angularOnLoaded(){
 

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from 'rxjs/Observable';
 import { BeersModel } from './services/models';
 import { LoggerService } from './services/logger.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import {Router } from '@angular/router';
 
 import { DataService } from './services/data.service';
 import 'rxjs/add/operator/catch'; //
@@ -16,7 +16,10 @@ import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class MyGlobals {
-
+    
+    /**
+     * collecting data
+     */
     glob = {
         searchSubscription: null,
         beers: null,
@@ -31,6 +34,13 @@ export class MyGlobals {
                  
     }
 
+    /**
+     *  Mocked up an observable data return
+     *  Currently used together with TransactionResolver class to resolve data going to product/:id
+     * 
+     * @param data 
+     * @param params 
+     */
     getData(data: any = false, params:any=false): Observable<BeersModel[]> {
 
 
@@ -67,7 +77,11 @@ export class MyGlobals {
         var nice = str.replace(/ /g, "_");
         return (str) ? nice : '';
     }
-
+    
+    /**
+     *  to use for matching data batch with single item
+     * @param str 
+     */
     stripSpecialChar(str):string{
         if(!str) return '';
        var clean= str.replace(/ /g, "")
