@@ -6,6 +6,8 @@ This is a simple but cool application for retrieving Beer information and detail
 
 
 ##### INSTALL NEW Angular 6 CLI and install angular-bigtime!
+
+```
 #!python
 $/ npm uninstall -g @angular/cli # remove old
 $/ npm cache verify # clear cache 
@@ -17,7 +19,9 @@ $/ npm rebuild node-sass # from the application dir
 * After installing run ^`npm rebuild node-sass`
 * and have a look at the `engine` requirements in `package.json`, for any issues;
 
+
 ##### OPTIONAL I THINK...
+```
 #!python
 $/ gem update --system
 $/ gem install compass
@@ -26,19 +30,21 @@ $/ gem install compass
 
 
 #### API DOCUMENTATION
+```
 #!python
 $/ ng new PROJECT-NAME # NEED TO INSTALL ANGULAR CLI 6, FIRST!
 $/ ng g component new-cmp # new component
 $/ ng g module new-mod # new module
 $/ ng g service new-service # new service
-
 ```
 
 
 #### START THE APP
+```
 #!python
 $/ npm start # alternativly `ng serve`
 ```
+
 
 * open you browser in `http://localhost:4200` 
 * sometimes node.js will lock the port, you need to kill it with `taskkill /f /im node.exe` or linux `killall node`
@@ -47,7 +53,6 @@ $/ npm start # alternativly `ng serve`
 #### API DOCUMENTATION
 *  how to implement punkapi.com: `https://punkapi.com/documentation/v2`
 *  example: `https://api.punkapi.com/v2/beers?page=2&per_page=80`
-
 
 
 #### TECHNOLOGY/STACK
