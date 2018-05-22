@@ -22,7 +22,6 @@ export class TransactionResolver implements Resolve<any> {
      */
     var _id = route.params.id;
     var has_localStorage = this.checkForLocalStorageFirst(_id);
-    console.log('buzz has local storage??', has_localStorage)
     if (has_localStorage !== false) {
       return has_localStorage;
     }

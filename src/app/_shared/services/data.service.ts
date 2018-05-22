@@ -188,7 +188,7 @@ export class DataService {
         return beers;
       })
       .catch((error: any) => {
-        //this.logger.log(error,true)
+        this.logger.log(error,true)
         return Observable.throw('Upps error getting data, api or localstorage!');
       });
 

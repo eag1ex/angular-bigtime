@@ -306,7 +306,7 @@ export class ProductComponent implements OnInit {
 
     this.dataService.getBeers(params).subscribe( 
       data => {
-        console.log('what is the beers data???', data)
+       
         this.beersDataLoaded = true;
         this.beersData = data;
         this._globals.glob.beers = this.beersData;
@@ -314,11 +314,10 @@ export class ProductComponent implements OnInit {
       (errorMsg: string) => {
         this.beersDataLoaded = null;
         this._globals.glob.beers = this.beersDataLoaded;
-        console.log('what is the error',errorMsg)
+  
         // show to client
         this.badSearch = routeName.originalName;
         this.searchModel =''; // reset
-        console.error(errorMsg); //
       }
     );
   }

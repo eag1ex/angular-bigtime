@@ -1,8 +1,32 @@
 {
   "name": "angular-bigtime",
-  "version": "1.0.0",
+  "version": "1.0.1",
+    "description": "Angular 6 CLI Search App, punkapi.com API",
+   "keywords": [
+    "angular 6",
+    "angular 6 cli",
+    "typescript",
+    "OOP",
+    "spa",
+    "Bootstrap 4",
+    "Jquery",
+    "rx/js",
+    "RESTfull API",
+    "compass",
+    "sass/scss",
+    "webpack",
+    "LocalStorage"
+  ],
+  "author": "eaglex.net",
+
+  "engine": {
+    "node": ">=6.9.4",
+    "node-sass": "^3.10.10"
+  },
+
+
   "scripts": {
-    "preinstall": "npm rebuild node-sass",
+    "postinstall": "npm rebuild node-sass",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
