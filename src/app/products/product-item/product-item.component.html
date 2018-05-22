@@ -1,7 +1,7 @@
 <div class='item-container mb-4'>
 
   <div class='row justify-content-md-center'>
-    <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="m-5 text-center"></page-title>
+    <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="m-5 text-center w-100"></page-title>
   </div>
 
   <div *ngIf="productdataPairs===false" class='anim-f'>
@@ -12,9 +12,9 @@
 
   <div *ngIf="productdataPairs!==false" class='anim-f '>
 
-    <div class="row justify-content-md-center my-4">
+    <div class="row justify-content-md-center mt-2 mb-3">
       <div class="col-md-3 col-lg-4 col-sm-10 text-center">
-        <img class="card-img-top p-5 product-img" [src]='productData.image_url' [alt]="productData.tagline" [title]='productData.description'>
+        <img class="card-img-top p-2 product-img mb-4" [src]='productData.image_url' [alt]="productData.tagline" [title]='productData.description'>
       </div>
       <!--col-->
 
@@ -39,10 +39,10 @@
 
   </div>
 
-  <div class='row justify-content-md-center'>
+  <div class='row justify-content-md-center mt-2'>
     <div class="col-md-3 col-lg-4 col-sm-10">&nbsp;</div>
     <div class="col-md-7 col-lg-6 col-sm-10">
-      <a class="btn btn-success py-2 px-4" [routerLink]="['/products']">Back</a>
+      <a class="btn btn-success py-2 px-4 navigate-back" [routerLink]="['/products']">Back</a>
     </div>
 
   </div>

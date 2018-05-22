@@ -1,7 +1,7 @@
 <div class='products-container'>
 
   <div class='product-row justify-content-md-center'>
-    <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="mt-5 text-center"></page-title>
+    <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="mt-5 text-center w-100"></page-title>
   </div>
 
   <div *ngIf="beersDataLoaded===false" class='anim-f'>
@@ -53,31 +53,31 @@
 <div class="cf"></div>
 
 <div class="row justify-content-md-center mb-2 mt-3">
-  <div class="col-10">
+  <div class="col-12">
     <nav class="">
 
       <ul class="pagination justify-content-md-center m-3">
 
-        <li *ngIf='PAGE_DEFAULTS.currentPaged===1' class="page-item disabled">
+        <li *ngIf='PAGE_DEFAULTS.currentPaged===1' class="page-item disabled previous-link">
           <a (click)='gotoPaged(PAGE_DEFAULTS.currentPaged)' class="page-link " [routerLink]="['/products/paged', PAGE_DEFAULTS.currentPaged]">Previous</a>
         </li>
 
-        <li *ngIf='PAGE_DEFAULTS.currentPaged>1' class="page-item">
-          <a (click)='gotoPaged(PAGE_DEFAULTS.currentPaged-1)' class="page-link" [routerLink]="['/products/paged', PAGE_DEFAULTS.currentPaged-1]">Previous</a>
+        <li *ngIf='PAGE_DEFAULTS.currentPaged>1' class="page-item previous-link">
+          <a (click)='gotoPaged(PAGE_DEFAULTS.currentPaged-1)' class="page-link " [routerLink]="['/products/paged', PAGE_DEFAULTS.currentPaged-1]">Previous</a>
         </li>
        
-        <li *ngFor='let paged of PAGE_DEFAULTS.paged | PipeNumber; let inx = index;' class="page-item" [ngClass]="{'current-paged active':PAGE_DEFAULTS.currentPaged==paged}">
+        <li *ngFor='let paged of PAGE_DEFAULTS.paged | PipeNumber; let inx = index;' class="page-item d-none d-sm-block d-sm-none d-md-block" [ngClass]="{'current-paged active':PAGE_DEFAULTS.currentPaged==paged}">
           <a (click)='gotoPaged(paged)' class="page-link btn-primary" 
           [routerLink]="['/products/paged', paged]">
             {{paged}}<span class="sr-only">(current)</span></a>
         </li>
 
-        <li *ngIf='PAGE_DEFAULTS.paged===PAGE_DEFAULTS.currentPaged' class="page-item disabled">
+        <li *ngIf='PAGE_DEFAULTS.paged===PAGE_DEFAULTS.currentPaged' class="page-item disabled next-link">
           <a (click)='gotoPaged(PAGE_DEFAULTS.currentPaged)' class="page-link" [routerLink]="['/products/paged', PAGE_DEFAULTS.paged]">Next</a>
         </li>
 
-        <li *ngIf='(PAGE_DEFAULTS.currentPaged>=1) && (PAGE_DEFAULTS.currentPaged<PAGE_DEFAULTS.paged)'  class="page-item">
-          <a (click)='gotoPaged(PAGE_DEFAULTS.currentPaged + 1)' class="page-link" [routerLink]="['/products/paged', PAGE_DEFAULTS.currentPaged + 1]">Next</a>
+        <li *ngIf='(PAGE_DEFAULTS.currentPaged>=1) && (PAGE_DEFAULTS.currentPaged<PAGE_DEFAULTS.paged)'  class="page-item next-link">
+          <a (click)='gotoPaged(PAGE_DEFAULTS.currentPaged + 1)' class="page-link " [routerLink]="['/products/paged', PAGE_DEFAULTS.currentPaged + 1]">Next</a>
         </li>
 
       </ul>
