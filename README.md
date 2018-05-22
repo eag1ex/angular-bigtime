@@ -2,7 +2,7 @@
 
 
 #### DESCRIPTION
-This is a simple but cool application for retrieving Beer information and details. It consists of Product page and Product Detail, it is integrated with a search feature to search LIVE `punkapi.com API` by 'beer_name' and stores any subsequent call in LocalStorage! The app uses ^^Angular 6 CLI^^ along with Bootstrap 4 an Compass.
+This is a simple but cool application for retrieving Beer information and details. It consists of Product page and Product Detail, it is integrated with a search feature to search LIVE `punkapi.com API` by 'beer_name' and stores any subsequent call in LocalStorage! The app uses ^^Angular 6 CLI^^ RX.js/Observables, along with Bootstrap 4 and Compass.
 
 
 ##### INSTALL NEW Angular 6 CLI and install angular-bigtime!
