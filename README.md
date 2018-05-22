@@ -19,14 +19,14 @@ $/ npm rebuild node-sass # from the application dir
 * After installing run ^`npm rebuild node-sass`
 * and have a look at the `engine` requirements in `package.json`, for any issues;
 
-
+ 
 ##### OPTIONAL I THINK...
 ```
 #!python
 $/ gem update --system
 $/ gem install compass
 ```
-* im not sure is installing compass is required since im using node_modules package;
+* im not sure if installing compass is required since im using node_modules package;
 
 
 #### API DOCUMENTATION
