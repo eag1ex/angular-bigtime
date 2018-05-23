@@ -1,5 +1,5 @@
 # Angular 6 BigTime
-
+#### - [ Developed by Eaglex ](http://eaglex.net)
 
 #### DESCRIPTION
 This is a simple but cool application for retrieving Beer information and details. It consists of Product page and Product Detail, it is integrated with a search feature to search LIVE `punkapi.com API` by 'beer_name' and stores any subsequent call in LocalStorage! The app uses ^^Angular 6 CLI^^ RX.js/Observables, along with Bootstrap 4 and Compass.
@@ -71,10 +71,13 @@ $/ npm start # alternativly `ng serve`
 * Integrade more API solutions for testing.
 * Add page login
 * integrate script barrel, for easy loading!
+* Integrade WebWorkers to streamline style loading, `ng eject` not avaialbe to create webpack.config as yet.
 
 
 #### FINAL THOUGHTS
 * Thank you, have fun with it.
+
+
 
 
 

@@ -17,7 +17,10 @@
     "webpack",
     "LocalStorage"
   ],
-  "author": "eaglex.net",
+
+  "author": "eaglex",
+  "url": "http://eaglex.net",
+  "license": "CC BY",
 
   "engine": {
     "node": ">=6.9.4",
