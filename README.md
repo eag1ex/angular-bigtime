@@ -29,7 +29,7 @@ $/ gem install compass
 * im not sure if installing compass is required since im using node_modules package;
 
 
-#### API DOCUMENTATION
+#### NG CODE
 ```
 #!python
 $/ ng new PROJECT-NAME # NEED TO INSTALL ANGULAR CLI 6, FIRST!
@@ -63,9 +63,9 @@ $/ npm start # alternativly `ng serve`
 * Progresive implomentation
 
 
-#### TESTING
+#### TESTED :)
 * Tested and works on Firefox and Chrome/Safari, ( Dont care about IE, but should work fine)
-
+* Runs on all 6, ready to go.
 
 #### TODOS
 * Integrade more API solutions for testing.
