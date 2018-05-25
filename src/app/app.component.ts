@@ -8,18 +8,22 @@ import { MyGlobals } from './_shared/myglobals';
 import { EventEmitService } from './_shared/services/eventEmmiter.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoggerService } from './_shared/services/logger.service';
+import { fadeInAnimation } from './_shared/animations';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-
+  animations: [fadeInAnimation],
+ 
+    // attach the fade in animation to the host (root) element of this component
+    host: { '[@fadeInAnimation]': '' }
 
 })
 export class AppComponent implements OnInit{
   appName = {
     a: '[ BigTime ]',
-    b: 'App'
+    b: ''
   };
   public currentPageName:string;
   public APP_LOADED = false;
@@ -45,7 +49,7 @@ export class AppComponent implements OnInit{
       }
 
       /// page ready last event
-      if (val.constructor.name === 'NavigationEnd') {
+      if (val.constructor.name === 'NavigationStart') {
 
         setTimeout(() => {
           $(window).scrollTop(0);

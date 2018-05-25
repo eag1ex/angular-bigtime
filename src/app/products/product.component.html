@@ -4,28 +4,28 @@
     <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="mt-5 text-center w-100"></page-title>
   </div>
 
-  <div *ngIf="beersDataLoaded===false" class='anim-f'>
-    <div class="product-row justify-content-md-center mt-3 mb-4">
-      <div class="spinner"></div>
+    <div *ngIf="beersDataLoaded===false" class='anim-f'>
+      <div class="product-row justify-content-md-center mt-3 mb-4">
+        <div class="spinner"></div>
+      </div>
     </div>
-  </div>
 
-  <div *ngIf="beersDataLoaded===null">
+
+
+  <div *ngIf="beersErrorData">
     <div class="product-row justify-content-md-center m-5 anim-f" role="alert">
-      <h3 class='text-center text-danger error-loading'>UPSss... Error.
-        
-        <p *ngIf='badSearch!==false' class='pt-3 badSearch-message'> 
-          For | {{badSearch}}
-        </p>
-
-      </h3>
+      <div class="col-lg-6  col-md-6 col-sm-12">
+        <div class='error-loading bg-info p-2'>
+          <pre><code> {{beersErrorData|json}}</code></pre>
+        </div>
+      </div>
     </div>
   </div>
 
 
   <div class="product-row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='beersDataLoaded===true'>
-
-    <div indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-1"
+   
+    <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-1"
       *ngFor="let item of beersData | search:'name' :searchModel; let i = index;">
 
       <div class="card bg-light my-2  card w-100">

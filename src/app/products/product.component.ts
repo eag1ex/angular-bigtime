@@ -6,25 +6,36 @@ import { BeersModel } from '../_shared/services/models';
 import { MyGlobals } from '../_shared/myglobals';
 import { EventEmitService } from '../_shared/services/eventEmmiter.service';
 import * as _ from "lodash";
-
+import { slideInOutAnimation,moveIn } from '../_shared/animations';
 
 
 
 @Component({
   selector: 'products',
   templateUrl: './product.component.html',
-  styleUrls: ['./product.component.css']
+  styleUrls: ['./product.component.css'],
+     animations: [slideInOutAnimation,moveIn],
+ 
+    // attach the slide in/out animation to the host (root) element of this component
+    host: { '[@slideInOutAnimation]': '' },
+    
+
 })
 
+
+
+
 export class ProductComponent implements OnInit {
+  state: string = 'large';
   public indexPerRow: number = 0;
   public beersData: BeersModel[];
   public beersDataLoaded = false;
   public routeName: any;
-  public badSearch:any=false;
+
   public exec_search = false;
   private searchSubscription: any;
   private searchModel: string;
+  private beersErrorData:any = false;
   private searchtext = {
     inx: 0
   }
@@ -72,6 +83,7 @@ export class ProductComponent implements OnInit {
     _globals.glob.searchSubscription= this.searchSubscription;
 
   }
+
 
 
   /**
@@ -273,8 +285,8 @@ export class ProductComponent implements OnInit {
   }
 
   getBeers(routeName: any) {
-    this.badSearch=false;
 
+    this.beersErrorData = false;
     this.beersDataLoaded = false;
     console.log('Getting beers ...');
 
@@ -311,12 +323,17 @@ export class ProductComponent implements OnInit {
         this.beersData = data;
         this._globals.glob.beers = this.beersData;
       },
-      (errorMsg: string) => {
+      (errorMsg: any) => {
         this.beersDataLoaded = null;
         this._globals.glob.beers = this.beersDataLoaded;
-  
+
+        if(typeof errorMsg!=='string'){
+          (errorMsg as any).badSearch = routeName.originalName
+        }
+        
+        this.beersErrorData =errorMsg;
         // show to client
-        this.badSearch = routeName.originalName;
+        
         this.searchModel =''; // reset
       }
     );

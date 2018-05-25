@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // app modules
 
@@ -37,7 +37,7 @@ import { LoggerService } from './_shared/services/logger.service';
 import { EventEmitService } from './_shared/services/eventEmmiter.service';
 import { TransactionResolver } from './_shared/services/transaction.resolver';
 import { LocalStorageService } from './_shared/services/local-storage.service';
-
+import {ApiManagerService} from './_shared/services/api-manager/api-manager.service';
 
 @NgModule({
   declarations: [
@@ -60,7 +60,7 @@ import { LocalStorageService } from './_shared/services/local-storage.service';
     HttpModule,
     FormsModule,
     BrowserModule,
-
+    BrowserAnimationsModule,
     // the routing happens in forChild route, from products module
     RouterModule.forRoot([
       {
@@ -79,6 +79,7 @@ import { LocalStorageService } from './_shared/services/local-storage.service';
     LoggerService, 
     LocalStorageService, 
     TransactionResolver, 
+    ApiManagerService,
     DataService, 
     EventEmitService
   ],

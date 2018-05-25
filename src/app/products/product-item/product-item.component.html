@@ -4,11 +4,24 @@
     <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="m-5 text-center w-100"></page-title>
   </div>
 
-  <div *ngIf="productdataPairs===false" class='anim-f'>
+  <div *ngIf="productdataPairs===false && productdataPairs!==null" class='anim-f'>
     <div class="row justify-content-md-center m-5">
       <div class="spinner"></div>
     </div>
   </div> 
+
+
+
+  <div *ngIf="productdataPairs===null">
+    <div class="product-row justify-content-md-center m-5 anim-f" role="alert">
+      <div class="col-lg-6  col-md-6 col-sm-12">
+        <div class='error-loading bg-info p-2 text-center'>
+          hhmm.. no data loaded!
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <div *ngIf="productdataPairs!==false" class='anim-f '>
 

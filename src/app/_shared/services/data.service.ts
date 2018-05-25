@@ -14,88 +14,22 @@ import * as _ from "lodash";
 import { BeersModel } from './models';
 import { LoggerService } from './logger.service';
 import { LocalStorageService } from './local-storage.service';
+import {ApiManagerService} from './api-manager/api-manager.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-  private apiURL = 'https://api.punkapi.com/v2/beers';
+ /// private apiURL = 'https://api.punkapi.com/v2/beers'; now using ApiManagerService
   public beersData: Array<any>;
   constructor(
     private http: Http,
     private logger: LoggerService,
-    private lStorage: LocalStorageService
+    private lStorage: LocalStorageService,
+    private apiManager:ApiManagerService
   ) { }
 
-  /**
-   * used to manage what url should be returned to rest service based on the obj/params
-   * obj:
-   *    parent_page:
-   *    paged
-   *    search_by_name
-   *    byName 
-   */
-  routeParamsReturn(obj): string {
-    var results: string;
-    if (_.isEmpty(obj)) return '';
-
-
-    var _switch = (item, _obj): object => {
-      var output: any = {}
-      switch (item as string) {
-        case 'parent_page':
-          output.good = `${this.apiURL}?page=1&per_page=${_obj.perPage}`;
-          break;
-        case 'paged':
-          output.good = `${this.apiURL}?page=${_obj.paged}&per_page=${_obj.perPage}`;
-          break;
-
-        case 'search_by_name':
-          output.good = `${this.apiURL}?beer_name=${_obj.search_by_name}&per_page=${_obj.perPage}`;
-          break;
-
-        case 'byName':
-          output.good = `${this.apiURL}?beer_name=${_obj.byName}`;
-          break;
-        default:
-
-          output.default = `${this.apiURL}?page=1&per_page=${_obj.perPage}`;
-      }
-
-      return output;
-    }
-
-
-
-    var not_found_default: string;
-    var objKeys = Object.keys(obj) //  convers object keys to array
-    // run switch per each key in the objKey to find any match 
-    for (var i = 0; i < objKeys.length; i++) {
-      var item = objKeys[i];
-
-      if (item) {
-        var s: any = _switch(item, obj);
-
-        if (s.default) {
-          //console.log('what is default',s.default)
-          not_found_default = s.default;
-          continue;
-        }
-        if (s.good) {
-          // console.log('what is good',s.good)
-          results = s.good;
-          break;
-        }
-
-      }
-    }
-    if (!results) {
-      this.logger.log('checkRouteParams did not match returning defaults', true);
-    }
-
-    return results || not_found_default;
-  }
-
+  
 
   ///check if we have avaialble localstorage first
   /**
@@ -157,6 +91,24 @@ export class DataService {
   }
 
 
+  errorHandler(errorData:any, apiName:string):object{
+    if(errorData.error){
+      errorData.apiName = apiName
+      return errorData;
+    }
+
+      if (errorData.length === 0) {
+        return {
+          error: true,
+          message: 'data respons as null',
+          apiName: apiName
+        }
+      
+
+    }else{
+      return false as any;
+    }
+  }
 
 
   getBeers(params: object): Observable<BeersModel[]> {
@@ -169,16 +121,20 @@ export class DataService {
       this.logger.log('getting beers from localstorage!!')
       return checkLocalstorage;
     }
-    var _paramsReturn = this.routeParamsReturn(params);
+    var _paramsReturn = this.apiManager.buildRespCall('punkapi', params);
 
+    if(!_paramsReturn || (_paramsReturn as any).error ){
+      return Observable.throw(`api error for punkapi: ${_paramsReturn}`);
+    }
     return this.http.get(_paramsReturn)
       .map((response: any) => {
         // check for empty respons
-        var checker = response.json();
-        if (checker.length === 0 || !checker) {
-          throw ('no results returned!') as any;
+        
+        var checker = this.errorHandler(response.json(),'punkapi');
+        if(checker){    
+           throw checker as any;
         }
-
+         
         // this.logger.log('got getBeers respons')
         return response.json() as BeersModel[]
       })
@@ -189,7 +145,7 @@ export class DataService {
       })
       .catch((error: any) => {
         this.logger.log(error,true)
-        return Observable.throw('Upps error getting data, api or localstorage!');
+        return Observable.throw(error||'Upps error getting data, api or localstorage!');
       });
 
   }
