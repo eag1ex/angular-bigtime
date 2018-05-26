@@ -8,6 +8,10 @@ import { EventEmitService } from '../_shared/services/eventEmmiter.service';
 import * as _ from "lodash";
 import { slideInOutAnimation,moveIn } from '../_shared/animations';
 
+// interfaces
+import { IRouteName } from '../_shared/interfaces';
+
+
 
 
 @Component({
@@ -21,10 +25,6 @@ import { slideInOutAnimation,moveIn } from '../_shared/animations';
     
 
 })
-
-
-
-
 export class ProductComponent implements OnInit {
   state: string = 'large';
   public indexPerRow: number = 0;
@@ -42,9 +42,10 @@ export class ProductComponent implements OnInit {
 
   // default page settings 
   public PAGE_DEFAULTS = {
+    apiName:'punkapi',
     pageTitle: 'Beers.. Drink! Get drunk!',
     pageName:'products',
-    perPage: 10,
+    per_page: 10,
     paged: 10,
     currentPaged: 1,
     searchAPIcheck: false
@@ -67,12 +68,15 @@ export class ProductComponent implements OnInit {
     /**
      *  this event is received from app.component
      */
+    
     this.searchSubscription = searchEmmiter.subscribe(msg => {
-
-      if (_.isObject(msg)) {
-        this.PAGE_DEFAULTS.searchAPIcheck = msg.searchAPIcheck;
-        this.searchItems(msg.event, msg.searchVal, msg.type, msg.searchAPIcheck);
+      if (msg.eventType == 'onSearch') {
+        if (_.isObject(msg)) {
+          this.PAGE_DEFAULTS.searchAPIcheck = msg.searchAPIcheck;
+          this.searchItems(msg.event, msg.searchVal, msg.type, msg.searchAPIcheck);
+        }
       }
+     
 
     }, (err) => {
          this.logger.log(`what is the err ${err}`,true); 
@@ -84,6 +88,14 @@ export class ProductComponent implements OnInit {
 
   }
 
+  /**
+   * we need this to send data back to directive to reset the field to onpty on loaded data to page
+   * @param data 
+   */
+  onSearchQBackToDirective(data) {
+    data.eventType = 'BackToDirective';
+    this.searchEmmiter.next(data);
+  }
 
 
   /**
@@ -115,12 +127,12 @@ export class ProductComponent implements OnInit {
 
         if (search_val && searchAPI) {
           search_val.originalName = val;
-          this.getBeers(search_val);
+          this.getBeers(search_val,this.PAGE_DEFAULTS.apiName);
           this.logger.log(`searching api results with: ${search_val.search_by_name}`)
 
         } else if (!search_val) {
           this.logger.log(`you entered no search value, defauling to paged`)
-          this.getBeers({ paged: this.PAGE_DEFAULTS.currentPaged, originalName:val });
+          this.getBeers({ paged: this.PAGE_DEFAULTS.currentPaged, originalName:val } as any,this.PAGE_DEFAULTS.apiName);
         }
 
         this.exec_search = true;
@@ -218,7 +230,8 @@ export class ProductComponent implements OnInit {
   fetchEvent(): Promise<object> {
     var paged: any = this._route.snapshot.paramMap.get('paged');
     /// update curent paged for accuricy
-    this.PAGE_DEFAULTS.currentPaged = paged || this.PAGE_DEFAULTS.currentPaged;
+    
+    this.PAGE_DEFAULTS.currentPaged = parseInt(paged) || this.PAGE_DEFAULTS.currentPaged;
 
     paged = (paged) ? { paged } : false;
 
@@ -243,9 +256,9 @@ export class ProductComponent implements OnInit {
       this.routeName = { paged: parseInt(nr) };
       this.PAGE_DEFAULTS.currentPaged = nr;
 
-      this.getBeers(this.routeName);
+      this.getBeers(this.routeName,this.PAGE_DEFAULTS.apiName);
     } else {
-      this.getBeers(false);
+      this.getBeers(false as any,this.PAGE_DEFAULTS.apiName);
     }
   }
 
@@ -261,12 +274,12 @@ export class ProductComponent implements OnInit {
       }
 
       this.routeName = whichOrder;
-      this.getBeers(this.routeName);
+      this.getBeers(this.routeName,this.PAGE_DEFAULTS.apiName);
 
     }, (err) => {
       this.logger.log(err, true)
       this.routeName = false;
-      this.getBeers(this.routeName);
+      this.getBeers(this.routeName,this.PAGE_DEFAULTS.apiName);
     })
   }
 
@@ -284,44 +297,29 @@ export class ProductComponent implements OnInit {
     return (str) ? str.substring(0, 100) : '';
   }
 
-  getBeers(routeName: any) {
+
+  getBeers(routeName:IRouteName, apiName:string) {
 
     this.beersErrorData = false;
     this.beersDataLoaded = false;
     console.log('Getting beers ...');
 
-    var params: any = {
-      perPage: this.PAGE_DEFAULTS.perPage
-    }
+    routeName.per_page = this.PAGE_DEFAULTS.per_page as any;
 
-    if (routeName.parent_page) {
-      params.parent_page = routeName.parent_page;
-    }
-
-    else if (routeName.search_by_name) {
-      params.search_by_name = routeName.search_by_name;
-    }
-
-    else if (routeName.paged) {
-      params.paged = routeName.paged;
-    }
-
-    else if (routeName.singlePage) {
-      params.byName = routeName.singlePage
-      delete params.perPage;
-    } else {
+     if(!routeName) {
       this.logger.log('no singlePage or paged params defind', true)
       this.beersDataLoaded = null;
       return false
     }
 
-
-    this.dataService.getBeers(params).subscribe( 
+    this.dataService.getBeers(routeName,apiName).subscribe( 
       data => {
        
         this.beersDataLoaded = true;
         this.beersData = data;
         this._globals.glob.beers = this.beersData;
+
+        this.onSearchQBackToDirective({reset:true}) 
       },
       (errorMsg: any) => {
         this.beersDataLoaded = null;
@@ -335,6 +333,7 @@ export class ProductComponent implements OnInit {
         // show to client
         
         this.searchModel =''; // reset
+        this.onSearchQBackToDirective({reset:true}) 
       }
     );
   }

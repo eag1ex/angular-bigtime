@@ -1,5 +1,6 @@
 
-export class BeersModel {
+export class BeersModel { //punkapi single output
+  // BeersModel single item output
   id: number;
   name: string;
   tagline: string;
@@ -9,9 +10,61 @@ export class BeersModel {
   ///...
 }
 
+export class FlickrPhotoModel {
+    // in flickr.photos.search
+    // photos:{...
+    page:number;
+    pages:number;
+    total:number;
+    photo:[{
+      id:string,
+      title:string,
+      ownername:string,
+      tags:string,
+      url_s:string,
+      url_m:string
+    }]
+}
+
+
+
+/**
+ * // FlickrModel single item output
+ {
+    "photos": {
+        "page": 1,
+        "pages": 480019,
+        "perpage": 1,
+        "total": "480019",
+        "photo": [
+            {
+                "id": "41460977975",
+                 "dateupload": "1526698056",
+                "lastupdate": "1526699078",
+                "datetaken": "2018-05-18 19:44:54",
+                "owner": "143239797@N06",
+                "title": "Lycoris Radiata",
+                "ownername": "Fran Tambasco",
+                "tags": "she portrait face softportrait visage",
+
+                "url_s": "https://farm2.staticflickr.com/1723/41460977975_5f0c820776_m.jpg",
+                "height_s": "240",
+                "width_s": "240",
+                "url_m": "https://farm1.staticflickr.com/823/27327193877_7a06d91b86.jpg",
+                "height_m": "500",
+                "width_m": "500"
+            }
+        ]
+    },
+    "stat": "ok"
+}
+ */
+
+
+
 
 /*
-// BeersModel single item output
+ // BeersModel single item output
 [
   {
     "id": 1,

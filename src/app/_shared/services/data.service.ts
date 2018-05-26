@@ -16,6 +16,11 @@ import { LoggerService } from './logger.service';
 import { LocalStorageService } from './local-storage.service';
 import {ApiManagerService} from './api-manager/api-manager.service';
 
+// interfaces
+import { IRouteName } from '../interfaces';
+
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -80,13 +85,11 @@ export class DataService {
       setStorage = this.lStorage.setItem(`beers:paged:${params.paged}`, data);
     }
     // beers:item:name:search_by_name
-    if (params.search_by_name) {
-      setStorage = this.lStorage.setItem(`beers:item:name:${params.search_by_name}`, data);
+    if (params.search_by_name || params.byName) {
+      var byName = params.search_by_name || params.byName || false;
+      setStorage = this.lStorage.setItem(`beers:item:name:${byName}`, data);
     }
-    // beers:item:name:byName
-    if (params.byName) {
-      setStorage = this.lStorage.setItem(`beers:item:name:${params.byName}`, data);
-    }
+
     return setStorage;
   }
 
@@ -111,7 +114,7 @@ export class DataService {
   }
 
 
-  getBeers(params: object): Observable<BeersModel[]> {
+  getBeers(params: IRouteName, apiName:string='punkapi'): Observable<BeersModel[]> {
 
     // remove all storage / for testing
     //this.lStorage.removeAll()
@@ -121,7 +124,7 @@ export class DataService {
       this.logger.log('getting beers from localstorage!!')
       return checkLocalstorage;
     }
-    var _paramsReturn = this.apiManager.buildRespCall('punkapi', params);
+    var _paramsReturn = this.apiManager.buildRespCall(apiName, params);
 
     if(!_paramsReturn || (_paramsReturn as any).error ){
       return Observable.throw(`api error for punkapi: ${_paramsReturn}`);
@@ -130,7 +133,7 @@ export class DataService {
       .map((response: any) => {
         // check for empty respons
         
-        var checker = this.errorHandler(response.json(),'punkapi');
+        var checker = this.errorHandler(response.json(),apiName);
         if(checker){    
            throw checker as any;
         }

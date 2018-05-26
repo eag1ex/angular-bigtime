@@ -6,6 +6,8 @@ declare var $ :any;
 import { Component, Input, Output, OnInit, EventEmitter  } from '@angular/core';
 import { MyGlobals } from './_shared/myglobals';
 import { EventEmitService } from './_shared/services/eventEmmiter.service';
+
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoggerService } from './_shared/services/logger.service';
 import { fadeInAnimation } from './_shared/animations';
@@ -56,10 +58,16 @@ export class AppComponent implements OnInit{
         }, 500)
 
         // set current page name value
-        this.currentPageName =_globals.glob.current_page;
+       
 
          //console.log('--- what is the current page name ',this.currentPageName)
       }
+
+      if (val.constructor.name === 'NavigationEnd') {
+        this.currentPageName =_globals.glob.current_page;
+      }
+
+       
       // 
       // val.constructor.name / val.url
       // available events
@@ -103,10 +111,13 @@ export class AppComponent implements OnInit{
 
  }
  
+
   /// broadcast this message to product component
   onSearch(data) {
+    data.eventType = 'onSearch';
     this.emmiter.next(data);
   }
+  
   ngOnInit() {
     this.angularOnLoaded();
    

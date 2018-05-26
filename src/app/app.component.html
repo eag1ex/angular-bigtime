@@ -17,6 +17,7 @@
             </ul>
 
             <form class="form-inline">
+ 
                 <search-input  [ngClass]="{'showMe':displaySearchInput===true && currentPageName==='products', 'hideMe':displaySearchInput===false || currentPageName!=='products'}"
                     class="my-1 p-1 anim-f" (onSearch)="onSearch($event);"></search-input>
             </form>

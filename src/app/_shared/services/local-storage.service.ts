@@ -35,7 +35,7 @@ export class LocalStorageService {
 
   constructor(private logger: LoggerService) {
 
-     // this.removeAll() 
+      this.removeAll() 
 
    }
 
@@ -54,7 +54,7 @@ export class LocalStorageService {
       this.logger.log('local data not saved, you are missing id/data ?', true)
     }
     return data_set;
-  }
+  } 
 
   getItem(id): any{
     if(!id) return false

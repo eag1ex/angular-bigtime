@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { BeersModel } from './services/models';
 import { LoggerService } from './services/logger.service';
 import {Router } from '@angular/router';
-
+ 
 import { DataService } from './services/data.service';
 import 'rxjs/add/operator/catch'; //
 import 'rxjs/add/operator/do';
@@ -11,7 +11,9 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/share';
-import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/toPromise'; 
+
+
 
 
 @Injectable()
@@ -72,6 +74,7 @@ export class MyGlobals {
     }
 
 
+    /// to moveto new global exportable
     nicename(str):string{
         if(!str) return '';
         var nice = str.replace(/ /g, "_");
@@ -82,6 +85,7 @@ export class MyGlobals {
      *  to use for matching data batch with single item
      * @param str 
      */
+    /// to moveto new global exportable 
     stripSpecialChar(str):string{
         if(!str) return '';
        var clean= str.replace(/ /g, "")
@@ -94,3 +98,4 @@ export class MyGlobals {
     }
 
 }
+

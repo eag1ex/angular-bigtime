@@ -1,5 +1,7 @@
 import { Component, Input, Output, HostBinding, OnInit, ElementRef, EventEmitter } from '@angular/core';
+import { EventEmitService } from '../services/eventEmmiter.service';
 
+//private emmiter: EventEmitService, 
 
 @Component({
   selector: 'search-input',
@@ -8,9 +10,24 @@ import { Component, Input, Output, HostBinding, OnInit, ElementRef, EventEmitter
 export class SearchInputDirective implements OnInit {
   searchtext: string;
   titleDisplay: number;
+  searchAction:any;
   public searchAPIcheck: boolean = false;
-  constructor(private elm: ElementRef) {
+  constructor(private elm: ElementRef,private onSearchAction: EventEmitService) {
 
+    this.searchAction = onSearchAction.subscribe(msg => {
+      if (msg.eventType == 'BackToDirective') {
+        if(msg.reset){
+          this.searchtext='';
+        }
+        //
+      //  console.log('did the directive receive onSearchAction?? ', msg)
+      }
+       
+      }, (err) => {
+         console.error('--- onSearchAction error', err)
+    }, (complete) => {
+     // console.log('what is the complete', complete)
+    });
   }
 
   @Input()
@@ -28,6 +45,9 @@ export class SearchInputDirective implements OnInit {
    */
 
   searchItems(event, searchVal, type) {
+    if(this.searchtext==''){
+      searchVal='';
+    }
     this.onSearch.emit({ event: event, 
                         searchVal: searchVal, 
                         type: type, searchAPIcheck: 
