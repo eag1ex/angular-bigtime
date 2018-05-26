@@ -119,10 +119,8 @@ export class ApiManagerService extends GlobalReuse {
 
   }
 
-  switchCase(_key: string, itemApi: ApiModel, _obj): object {
+  matchOutput(_key: string, itemApi: ApiModel, _obj): object {
     var output: any = {}
-
-
 
     if (itemApi.name === 'punkapi') {
 
@@ -184,7 +182,7 @@ export class ApiManagerService extends GlobalReuse {
       var item = objKeys[i];
 
       if (item) {
-        var s: any = this.switchCase(item, _api, obj);
+        var s: any = this.matchOutput(item, _api, obj);
         if (!s) {
           api_error = true;
           break
