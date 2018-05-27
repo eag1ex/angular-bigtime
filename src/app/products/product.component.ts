@@ -42,7 +42,7 @@ export class ProductComponent implements OnInit {
 
   // default page settings 
   public PAGE_DEFAULTS = {
-    apiName:'flickr',
+    apiName:'punkapi',
     pageTitle: 'Beers.. Drink! Get drunk!',
     pageName:'products',
     per_page: 10,

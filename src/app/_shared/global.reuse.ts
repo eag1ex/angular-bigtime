@@ -21,7 +21,9 @@ export class GlobalReuse  {
     }
 
     removeEmptyParam(sourceURL) {
-
+        if(sourceURL.indexOf('?')==-1){
+            sourceURL = "?"+sourceURL;
+        }
         var rtn = sourceURL.split("?")[0],
             param, 
             params_arr = [],
@@ -31,7 +33,6 @@ export class GlobalReuse  {
             for (var i = params_arr.length - 1; i >= 0; i -= 1) {
                 param = params_arr[i].split("=")[0];
                 var is_empty = params_arr[i].split("=")[1].length==0;
-                
                 if (is_empty) {      
                   params_arr.splice(i, 1);
                 }
