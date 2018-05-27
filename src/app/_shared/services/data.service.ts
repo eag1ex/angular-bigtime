@@ -11,7 +11,7 @@ import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/toPromise';
 
 import * as _ from "lodash";
-import { BeersModel } from './models';
+import { BeersModel,FlickrPhotoModel,Models } from './models';
 import { LoggerService } from './logger.service';
 import { LocalStorageService } from './local-storage.service';
 import {ApiManagerService} from './api-manager/api-manager.service';
@@ -114,7 +114,7 @@ export class DataService {
   }
 
 
-  getBeers(params: IRouteName, apiName:string='punkapi'): Observable<BeersModel[]> {
+  getHttpRequest(params: IRouteName, apiName: string = 'punkapi',globs): Observable<any[]> {
 
     // remove all storage / for testing
     //this.lStorage.removeAll()
@@ -124,31 +124,44 @@ export class DataService {
       this.logger.log('getting beers from localstorage!!')
       return checkLocalstorage;
     }
-    var _paramsReturn = this.apiManager.buildRespCall(apiName, params);
 
-    if(!_paramsReturn || (_paramsReturn as any).error ){
-      return Observable.throw(`api error for punkapi: ${_paramsReturn}`);
+    var _paramsReturn = this.apiManager.buildRespCall(apiName, params,globs);
+    
+    if (!_paramsReturn || (_paramsReturn as any).error) {
+      var nice_print = ( (_paramsReturn as any).error ) ? JSON.stringify(_paramsReturn):_paramsReturn;
+     // console.log('what is _paramsReturn!!!!!',nice_print)
+      return Observable.throw(`api error for ${apiName}: ${nice_print}`);
     }
-    return this.http.get(_paramsReturn)
-      .map((response: any) => {
-        // check for empty respons
-        
-        var checker = this.errorHandler(response.json(),apiName);
-        if(checker){    
-           throw checker as any;
-        }
-         
-        // this.logger.log('got getBeers respons')
-        return response.json() as BeersModel[]
-      })
-      .do((beers) => {
 
-        this.setLocalStorage(params, beers); // magic happens!
-        return beers;
+
+    if (apiName == 'punkapi') {
+      return this.httpRequest(params, _paramsReturn, apiName) as Observable<BeersModel[]>;
+    }
+
+    if (apiName == 'flickr') {
+      return this.httpRequest(params, _paramsReturn, apiName) as Observable<FlickrPhotoModel[]>;
+    }
+
+  }
+
+  httpRequest(originalParams: IRouteName, paramsReturn: string, _apiName: string): Observable<any[]> {
+    return this.http.get(paramsReturn)
+      .map((response: any) => {
+
+        var checker = this.errorHandler(response.json(), _apiName);
+        if (checker) {
+          throw checker as any;
+        }
+        return response.json() as Models[]
+      })
+      .do((dat) => {
+        console.log('what is the new data here',dat)
+        this.setLocalStorage(originalParams, dat); // magic happens!
+        return dat;
       })
       .catch((error: any) => {
-        this.logger.log(error,true)
-        return Observable.throw(error||'Upps error getting data, api or localstorage!');
+        this.logger.log(error, true)
+        return Observable.throw(error || 'Upps error getting data, api or localstorage!');
       });
 
   }

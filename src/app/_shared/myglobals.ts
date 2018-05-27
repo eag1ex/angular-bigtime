@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Observable } from 'rxjs/Observable';
-import { BeersModel } from './services/models';
+import { BeersModel,FlickrPhotoModel,Models } from './services/models';
 import { LoggerService } from './services/logger.service';
 import {Router } from '@angular/router';
  
@@ -12,12 +12,13 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/toPromise'; 
+import {ApiList} from '../api-list';
 
-
-
+/// interface 
+import { IMyGlobals } from './interfaces';
 
 @Injectable()
-export class MyGlobals {
+export class MyGlobals implements IMyGlobals{
     
     /**
      * collecting data
@@ -29,12 +30,16 @@ export class MyGlobals {
         current_page:'',
     };
 
-    
+    api_support:Array<any> =  new ApiList().list().reduce((outp,val,inx)=>{       
+            if(val.name) outp.push(val.name);
+            return outp;
+    },[]);
+
     constructor(private logger: LoggerService,
             private _router: Router,
-            private dataService:DataService) {
-                 
-    }
+            private dataService:DataService) {             
+                console.log('-- api_support for',this.api_support.toString());
+    } 
 
     /**
      *  Mocked up an observable data return
@@ -43,7 +48,7 @@ export class MyGlobals {
      * @param data 
      * @param params 
      */
-    getData(data: any = false, params:any=false): Observable<BeersModel[]> {
+    getData(data: any = false, params:any=false): Observable<Models[]> {
 
 
         var _data = data || this.glob.beers;
@@ -56,7 +61,7 @@ export class MyGlobals {
         return Observable.of(data)
             .map((response) => {
                 //this.logger.log(`received local data beers in globals`);
-                return response as BeersModel[]
+                return response as Models[];
             })
             .do((d) => {
 

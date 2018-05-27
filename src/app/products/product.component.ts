@@ -42,7 +42,7 @@ export class ProductComponent implements OnInit {
 
   // default page settings 
   public PAGE_DEFAULTS = {
-    apiName:'punkapi',
+    apiName:'flickr',
     pageTitle: 'Beers.. Drink! Get drunk!',
     pageName:'products',
     per_page: 10,
@@ -127,12 +127,12 @@ export class ProductComponent implements OnInit {
 
         if (search_val && searchAPI) {
           search_val.originalName = val;
-          this.getBeers(search_val,this.PAGE_DEFAULTS.apiName);
+          this.getHttpRequest(search_val,this.PAGE_DEFAULTS.apiName);
           this.logger.log(`searching api results with: ${search_val.search_by_name}`)
 
         } else if (!search_val) {
           this.logger.log(`you entered no search value, defauling to paged`)
-          this.getBeers({ paged: this.PAGE_DEFAULTS.currentPaged, originalName:val } as any,this.PAGE_DEFAULTS.apiName);
+          this.getHttpRequest({ paged: this.PAGE_DEFAULTS.currentPaged, originalName:val } as any,this.PAGE_DEFAULTS.apiName);
         }
 
         this.exec_search = true;
@@ -224,7 +224,7 @@ export class ProductComponent implements OnInit {
 
   /**
    * current component logic for route.param values
-   * it returns the correct value for the "getBeers" api request from ngOnInit() call
+   * it returns the correct value for the "getHttpRequest" api request from ngOnInit() call
    */
 
   fetchEvent(): Promise<object> {
@@ -256,9 +256,9 @@ export class ProductComponent implements OnInit {
       this.routeName = { paged: parseInt(nr) };
       this.PAGE_DEFAULTS.currentPaged = nr;
 
-      this.getBeers(this.routeName,this.PAGE_DEFAULTS.apiName);
+      this.getHttpRequest(this.routeName,this.PAGE_DEFAULTS.apiName);
     } else {
-      this.getBeers(false as any,this.PAGE_DEFAULTS.apiName);
+      this.getHttpRequest(false as any,this.PAGE_DEFAULTS.apiName);
     }
   }
 
@@ -274,12 +274,12 @@ export class ProductComponent implements OnInit {
       }
 
       this.routeName = whichOrder;
-      this.getBeers(this.routeName,this.PAGE_DEFAULTS.apiName);
+      this.getHttpRequest(this.routeName,this.PAGE_DEFAULTS.apiName);
 
     }, (err) => {
       this.logger.log(err, true)
       this.routeName = false;
-      this.getBeers(this.routeName,this.PAGE_DEFAULTS.apiName);
+      this.getHttpRequest(this.routeName,this.PAGE_DEFAULTS.apiName);
     })
   }
 
@@ -298,7 +298,7 @@ export class ProductComponent implements OnInit {
   }
 
 
-  getBeers(routeName:IRouteName, apiName:string) {
+  getHttpRequest(routeName:IRouteName, apiName:string) {
 
     this.beersErrorData = false;
     this.beersDataLoaded = false;
@@ -312,7 +312,7 @@ export class ProductComponent implements OnInit {
       return false
     }
 
-    this.dataService.getBeers(routeName,apiName).subscribe( 
+    this.dataService.getHttpRequest(routeName,apiName,this._globals).subscribe( 
       data => {
        
         this.beersDataLoaded = true;

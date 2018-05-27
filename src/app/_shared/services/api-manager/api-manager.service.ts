@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ApiList } from './api-list';
+import { ApiList } from '../../../api-list';
 import { ApiModel } from './api.model';
 import { GlobalReuse } from '../../global.reuse';
 import * as _ from "lodash";
+
+import {IMyGlobals} from "../../interfaces";
 
 //encodeQueryData
 @Injectable({
@@ -15,27 +17,39 @@ export class ApiManagerService extends GlobalReuse {
   }
 
   /// available api/s
-  apis(): ApiModel[] {
+  get apis(): ApiModel[] {
     return new ApiList().list();
   }
 
 
 
 
-  checkRequirementsModifyOutput(api: ApiModel, _obj) {
+  checkRequirementsModifyOutput(api: ApiModel, _obj, globs) {
+
+    if (api.prefix) {
+      /// some logic here todo
+       api.apiURL = api.api + "/" +api.prefix + "/";
+    }
+
     if (api.auth === true) {
       /// some logic here todo
     }
+
     if (api.api_key) {
       /// some logic here todo
+        api.apiURL = api.api + "/?api_key=" +api.api_key;
+
     }
+
     if (api.token) {
       /// some logic here todo
+       api.apiURL = api.api + "/?token=" +api.token;
+       
     }
-
-    if (api.name == 'punkapi') {
-
-      /// update query_params for output
+ 
+    if (api.name == 'flickr') {
+      console.log('what is _obj for flicker',_obj)
+       api.apiURL = api.apiURL+'&';
       for (var key in _obj) {
         if (_obj.hasOwnProperty(key)) {
 
@@ -60,9 +74,37 @@ export class ApiManagerService extends GlobalReuse {
           }
         }
       }
+    }// flickr
 
-      console.log('what is api.query_params', api.query_params)
-      api.apiURL = api.api + "/" + api.prefix + "/";
+    if (api.name == 'punkapi') {
+      api.apiURL = api.apiURL+'?';
+      /// update query_params for output
+      for (var key in _obj) {
+        if (_obj.hasOwnProperty(key)) {
+
+          if (key == 'search_by_name' || key == 'byName') {
+            (api.query_params as any).beer_name = _obj[key];
+            continue;
+          }
+
+          if (key == 'parent_page') {
+            (api.query_params as any).page = 1;
+            continue;
+          }
+
+          // to ignore
+          if (key == 'originalName') {
+            continue;
+          }
+
+          else {
+            api.query_params[key] = _obj[key];
+            continue;
+          }
+        }
+      } // punkapi
+
+      
     }
 
     else if (api.free) {
@@ -82,21 +124,25 @@ export class ApiManagerService extends GlobalReuse {
 
     //var q = _.mergeWith(api.query_params,_obj,customizer); 
 
+    //console.log('what is api.query_params', api.query_params)
     if (!api.query_params) {
       console.error('something went wrong with checkRequirementsModifyOutput');
-      return false;
+      return false;       
     }
     var query = this.encodeQueryData(api.query_params); // create url
-    var _url = api.apiURL + '?' + query;
-    var clean_url = this.removeEmptyParam(_url); // remove any empty params from url just in case
+    var q = this.removeEmptyParam(query);
+    var _url = api.apiURL + q;
+    console.log('what is the _url',_url) 
+    var clean_url =_url; // remove any empty params from url just in case
 
     return clean_url;
   }
 
-  buildRespCall(apiName: string, paramData: object): string {
+  buildRespCall(apiName: string, paramData: object, glob): string {
 
     var required_params = ['prefix', 'api', 'query_params'];
-    var _api = this.apis();
+    var _api = this.apis;
+    //console.log('what are the kick ass _apis ',_api)
 
     var get_api = _api.reduce((out, item, inx) => {
       if (item.name === apiName) {
@@ -114,109 +160,50 @@ export class ApiManagerService extends GlobalReuse {
       console.error('--- what is missing? ', missing)
       return false as any;
     }
-    var _output = this.mathingResult(get_api, paramData);
+
+    var _output = this.matchOutput(get_api, paramData, glob) as any;
+
+    if(_output.error ){
+        //console.error('--- what is missing? ', _output.error)
+       return _output;
+    }
+
     return _output;
 
   }
 
-  matchOutput(_key: string, itemApi: ApiModel, _obj): object {
+  matchOutput(itemApi: ApiModel, _obj, glob:IMyGlobals): object {
     var output: any = {}
+    var result;
 
-    if (itemApi.name === 'punkapi') {
+    // check for supprted apis
+    if (glob.api_support.indexOf(itemApi.name )!==-1) {
 
       //// prepend query with 
-      var _url_ = this.checkRequirementsModifyOutput(itemApi, _obj);
+      var _url_ = this.checkRequirementsModifyOutput(itemApi, _obj, glob);
       console.log('-- checkRequirementsModifyOutput url: ', _url_);
       if (_url_) {
         output.good = _url_
       } else {
         output.bad = true
       }
+    } 
 
-      // itemApi.apiURL=itemApi.api + "/" + itemApi.prefix + "/";
-      //var encodeQueryData = new GlobalReuse().encodeQueryData;
-      // var param_q=this.encodeQueryData(_obj);
-      // output.good =itemApi.apiURL+
-
-
-      // constracting query logic
-      /*  
-         switch (_key as string) {
-           case 'parent_page':
-             output.good = `${itemApi.apiURL}?page=1&per_page=${_obj.per_page}`;
-             break;
-           case 'paged':
-             output.good = `${itemApi.apiURL}?page=${_obj.paged}&per_page=${_obj.per_page}`;
-             break;
- 
-           case 'search_by_name':
-             output.good = `${itemApi.apiURL}?beer_name=${_obj.search_by_name}&per_page=${_obj.per_page}`;
-             break;
- 
-             /// there is no byName anymore 
-           case 'byName':
-             output.good = `${itemApi.apiURL}?beer_name=${_obj.byName}`;
-             break;
-           default:
- 
-             output.default = `${itemApi.apiURL}?page=1&per_page=${_obj.per_page}`;
-         }
-           */
-    } else {
-      console.error(`--- currently only supporting apiName: ${itemApi.name}`);
-      return false as any;
-    }
-
-    return output;
-  }
-
-
-
-  mathingResult(_api: ApiModel, obj): string {
-    var results;
-    var not_found_default: string;
-    var api_error = false;
-    var objKeys = Object.keys(obj) //  convers object keys to array
-    // run switch per each key in the objKey to find any match 
-    for (var i = 0; i < objKeys.length; i++) {
-      var item = objKeys[i];
-
-      if (item) {
-        var s: any = this.matchOutput(item, _api, obj);
-        if (!s) {
-          api_error = true;
-          break
-        }
-
-        if (s.bad) {
-          //console.log('what is default',s.default)
-          api_error = true;
-          continue;
-        }
-
-        if (s.default) {
-          //console.log('what is default',s.default)
-          not_found_default = s.default;
-          continue;
-        }
-        if (s.good) {
-          // console.log('what is good',s.good)
-          results = s.good;
-          break;
-        }
-
-      }
-    }
-    if (!results) {
-      console.error('-- checkRouteParams did not match returning defaults');
-
-      //this.logger.log('checkRouteParams did not match returning defaults', true);
-    }
-
-    if (api_error) {
+    if (output.bad) {
       return { error: 'api no found!' } as any;
     }
-    return results || not_found_default;
+
+    if(output.good ){
+      return output.good;
+    }
+
+    else { //api_support 
+      
+     // console.error(`--- currently only supporting apiName: ${glob.api_support}`);
+      var msg = `currently only supporting apiName: ${glob.api_support.toString()}`;
+      return { error: msg } as any;
+    }
   }
+
 
 }

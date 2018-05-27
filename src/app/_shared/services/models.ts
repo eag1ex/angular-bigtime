@@ -27,6 +27,22 @@ export class FlickrPhotoModel {
 }
 
 
+class pair1 extends BeersModel{
+  constructor(){
+    super();
+  }
+}
+
+class pair2 extends pair1{
+  constructor(){
+    super();
+  }
+}
+export class Models extends pair2{
+  constructor(){
+    super();
+  }
+}
 
 /**
  * // FlickrModel single item output
