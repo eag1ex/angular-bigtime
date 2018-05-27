@@ -35,7 +35,7 @@ export class LocalStorageService {
 
   constructor(private logger: LoggerService) {
 
-      this.removeAll() 
+      //this.removeAll() 
 
    }
 
