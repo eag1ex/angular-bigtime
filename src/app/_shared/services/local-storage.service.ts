@@ -23,8 +23,8 @@ import { LoggerService } from './logger.service';
 /**
  *  LocalStorageService ids:
  * 
-    beers:paged:1 
-    beers:item:name:example_name 
+    apiName:paged:1 
+    apiName:item:name:example_name 
  */
 
 
@@ -35,7 +35,7 @@ export class LocalStorageService {
 
   constructor(private logger: LoggerService) {
 
-      this.removeAll() 
+     // this.removeAll() 
 
    }
  

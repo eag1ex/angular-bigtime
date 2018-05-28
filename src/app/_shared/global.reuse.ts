@@ -17,6 +17,7 @@ export class GlobalReuse  {
         let ret = [];
         for (let d in data)
             ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
+            // ret.push(d + '=' + data[d]);
         return ret.join('&');
     }
 
@@ -41,4 +42,12 @@ export class GlobalReuse  {
         }
         return rtn;
     }
+
+   findApiNameFromUrl(api_support){
+    var url = window.location.href;
+    return api_support.filter((item,inx)=>{
+        return url.indexOf(item)!==-1;
+    })[0];
+  }
+
 }

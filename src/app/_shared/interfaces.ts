@@ -2,9 +2,10 @@
 import { Observable } from 'rxjs/Observable';
 import { Models } from './services/models';
 export interface IRouteName{
+  user_id:any,
   parent_page?(flag: any) : boolean,
   search_by_name?(flag: any) : string,
-  paged:number,
+  paged:any,
   singlePage:any,
   per_page: any, 
   originalName:any,

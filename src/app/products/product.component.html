@@ -4,7 +4,7 @@
     <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="mt-5 text-center w-100"></page-title>
   </div>
 
-    <div *ngIf="punkapiDataLoaded===false" class='anim-f'>
+    <div *ngIf="DataLoaded===false" class='anim-f'>
       <div class="product-row justify-content-md-center mt-3 mb-4">
         <div class="spinner"></div>
       </div>
@@ -12,26 +12,25 @@
 
 
 
-  <div *ngIf="beersErrorData">
+  <div *ngIf="ErrorData">
     <div class="product-row justify-content-md-center m-5 anim-f" role="alert">
       <div class="col-lg-6  col-md-6 col-sm-12">
         <div class='error-loading bg-info p-2'>
-          <pre><code> {{beersErrorData|json}}</code></pre>
+          <pre><code> {{ErrorData|json}}</code></pre>
         </div>
       </div>
     </div>   
   </div> 
               
 
-  <div class="product-row justify-content-md-center mt-4 mb-4 anim-f">
+  <div *ngIf='DataLoaded===true' class="product-row justify-content-md-center mt-4 mb-4 anim-f">
     <div class="col-auto available_apis"  >                      
-      <button (click)="clicked=i;" [ngClass]='{"btn-primary active": i==clicked, "btn-outline-info":i!=clicked }' *ngFor="let api of available_apis; let i=index;" type="button" class="m-1 btn-sm" >{{api}}</button>
+      <button  (click)="clicked=i; filterTag(api);" [ngClass]='{"btn-primary active": i==clicked || PAGE_DEFAULTS.apiName===api, "btn-outline-info":i!=clicked }' *ngFor="let api of available_apis; let i=index;" type="button" class="m-1 btn-sm" >{{api}}</button>
     </div>
   </div>                                 
  
   <div class="product-row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="punkapi"'>
-   
-    <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-1"
+    <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-2"
       *ngFor="let item of punkapiData | search:'name' :searchModel; let i = index;">
 
       <div class="card bg-light my-2  card w-100">
@@ -39,12 +38,13 @@
 
         <h5 class="card-header p-2 text-center">{{item.name}}</h5>
          <div class="card-body">
-          <p class="card-text">{{descLimit(item.description)}}</p>
+          <p class="card-text">{{descLimit(item.description)}}</p> 
           <h6 class="card-title">{{item.tagline}}</h6>
 
         </div>
          <div class="d-flex card-body px-1 justify-content-center pt-0">
-        <button type="button" class="btn btn-dark card-link px-4" (click)="goto(niceName(item.name));">View</button>
+         
+        <button type="button" class="btn-sm btn btn-dark card-link px-4" (click)="goto(niceName(item.name));">View</button>
       </div>
       </div>
      
@@ -54,25 +54,36 @@
   </div><!--product-row -->
 
 
-
-
-
   <div class="product-row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="flickr"'>
    
     <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-1"
-      *ngFor="let item of punkapiData | search:'name' :searchModel; let i = index;">
+      *ngFor="let item of flickrData | search:'title,tags' :searchModel; let i = index;">
 
       <div class="card bg-light my-2  card w-100">
-        <img class="card-img-top p-5 " [src]='item.image_url' [alt]="item.tagline" [title]='item.description'>
+        <img class="card-img-top p-1 " [src]='item.url_s' [alt]="item.tags" [title]='item.title'>
 
-        <h5 class="card-header p-2 text-center">{{item.name}}</h5>
+        <h5 class="card-header p-2 text-center"><span class="text-info cf">title:</span> {{item.title}}</h5>
          <div class="card-body">
-          <p class="card-text">{{descLimit(item.description)}}</p>
-          <h6 class="card-title">{{item.tagline}}</h6>
-
+           <h6 class="card-title"><span class="text-info cf">ownername:</span> {{item.ownername}}</h6>
+           
+            <p class="card-text"><span class="text-info cf">datetaken:</span> {{item.datetaken}}</p>
+          <p class="card-text"><span class="text-info cf">tags:</span> {{descLimit(mCommas(item.tags))}}</p>
+ 
         </div>
          <div class="d-flex card-body px-1 justify-content-center pt-0">
-        <button type="button" class="btn btn-dark card-link px-4" (click)="goto(niceName(item.name));">View</button>
+         <div class="btn-sm btn card-link px-2" (click)="loadLink(item.owner); clicked=i" 
+         [ngClass]="{'btn-warning':item.flickerLink===undefined,'btn-success':item.flickerLink!==undefined}">
+         <div class="spinner-loading" *ngIf='clicked==i && item.flickerLink===undefined'>
+            <div class="rect1"></div>
+            <div class="rect2"></div>
+            <div class="rect3"></div>
+            <div class="rect4"></div>
+            <div class="rect5"></div>
+          </div>
+              <span  *ngIf='clicked!==i && item.flickerLink===undefined'>flickr</span>
+              <a *ngIf='item.flickerLink!==undefined' href="{{item.flickerLink}}" class="text-white" target="_blank">flickr >></a>
+            </div>
+        <button type="button" class="btn btn-sm btn-dark card-link px-4" (click)="goto(niceName(item.title));">View</button>
       </div>
       </div>
      

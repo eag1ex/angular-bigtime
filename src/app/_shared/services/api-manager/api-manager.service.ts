@@ -48,23 +48,49 @@ export class ApiManagerService extends GlobalReuse {
  
     if (api.name == 'flickr') {
       console.log('what is _obj for flicker',_obj)
+
        api.apiURL = api.apiURL+'&';
+
+       /// reset other query for this search
+      // unset api.query_params.text
+      delete (api.query_params as any).text;
+      
       for (var key in _obj) {
         if (_obj.hasOwnProperty(key)) {
 
+          if(key=='user_id' || key=='owner'){       
+            (api.query_params as any).user_id = _obj[key];
+            continue; 
+          }
+
+          if (key == 'method') {
+            (api.query_params as any).method = _obj[key];
+            continue; 
+          }
+
+
           if (key == 'search_by_name' || key == 'byName') {
-            (api.query_params as any).beer_name = _obj[key];
-            continue;
+            (api.query_params as any).text = _obj[key];
+            continue; 
           }
 
-          if (key == 'parent_page') {
-            (api.query_params as any).page = 1;
-            continue;
+          if (key == 'paged') {
+            (api.query_params as any).page = _obj[key];
+            continue; 
           }
 
+           if (key == 'per_page') {       
+            (api.query_params as any).per_page = _obj[key];
+            continue;
+          }
+          
+           if (key == 'parent_page') {
+             (api.query_params as any).page = _obj[key];
+             continue;
+           }
           // to ignore
           if (key == 'originalName') {
-            continue;
+           
           }
 
           else {
@@ -81,6 +107,13 @@ export class ApiManagerService extends GlobalReuse {
       /// update query_params for output
       for (var key in _obj) {
         if (_obj.hasOwnProperty(key)) {
+
+  
+
+          if (key == 'paged') {
+            (api.query_params as any).page = _obj[key];
+            continue; 
+          }
 
           if (key == 'search_by_name' || key == 'byName') {
             (api.query_params as any).beer_name = _obj[key];

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/toPromise';
 import { MyGlobals } from '../myglobals';
 import { DataService } from './data.service';
-
+import { GlobalReuse } from '../global.reuse';
 
 @Injectable()
 export class TransactionResolver implements Resolve<any> {
@@ -17,24 +17,29 @@ export class TransactionResolver implements Resolve<any> {
 
     var res, final;
 
+    /// this will not work if reloading the page, because the value will be set to preset value for what we are looking for
+    var apiNam= this._globals.glob.selected_apiName;
+    var apiByhref= new GlobalReuse().findApiNameFromUrl(this._globals.api_support);
+
+    var apiName = apiNam || apiByhref;
+
     /**
      * check for localstorage data
      */
     var _id = route.params.id;
-    var has_localStorage = this.checkForLocalStorageFirst(_id);
+    var has_localStorage = this.checkForLocalStorageFirst(apiName,_id);
+
     if (has_localStorage !== false) {
       return has_localStorage;
     }
+     // else continue with the request from fresh response!
 
-    
-    // else continue with the request from fresh response!
-
-    var _match = this._globals.stripSpecialChar(_id); 
-    var selected_api_object = this._globals.glob.selected_apiName+'.data'; 
+    var selected_api_object = this._globals.glob[apiName+'.data']; 
+    var _match = this._globals.stripSpecialChar(_id);   
     var data = selected_api_object || null;
 
     if (data) {
-
+    //  console.log('what is the match',_match)
       final = this.singleItem(data, _match);
 
     } else {
@@ -48,12 +53,13 @@ export class TransactionResolver implements Resolve<any> {
 
   // we can retrieve
   /**
-   * beers:item:name:byName
-   * beers:item:name:search_by_name
+   * {apiName}:item:name:byName
+   * {apiName}:item:name:search_by_name
    */
-  checkForLocalStorageFirst(str: string) {
-    return this.dService.checkLocalstorage({ search_by_name: str, byName: str });
+  checkForLocalStorageFirst(apiName,str: string) {
+    return this.dService.checkLocalstorage(apiName,{ search_by_name: str, byName: str });
   }
+
 
   /**
    * get single item from that batch
@@ -62,7 +68,7 @@ export class TransactionResolver implements Resolve<any> {
    */
   singleItem(data, _match): Array<any> {
     var output = data.reduce((output, item, inx) => {
-      var itm = this._globals.stripSpecialChar(item.name);
+      var itm = this._globals.stripSpecialChar(item.name||item.title);
       if (itm.indexOf(_match) !== -1) {
         output.push(item);
       }

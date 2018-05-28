@@ -75,7 +75,7 @@ function template() {
             (focusout)="searchItems($event,search.value,'focusout');"
       
             [(ngModel)]="searchtext" #search 
-             placeholder="search your beer!"
+             placeholder="search title/name!"
              class="form-control"
              aria-label="Search" 
              type="text"

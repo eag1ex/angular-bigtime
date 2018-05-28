@@ -10,15 +10,19 @@
     product-item {
         display:block;// set as block element
         .item-container {
-            img.product-img,
-                {
+            img.product-img{
                 max-width: 70%;
+                &.image-from-flickr{
+                    max-width: 100%!important;
+                }
             }
             .product-card {}
         }
     }
 
     products {
+
+
         .available_apis{
             button{
                  color: $body-color;

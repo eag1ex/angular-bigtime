@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BeersModel } from '../../_shared/services/models';
+import { BeersModel, Models } from '../../_shared/services/models';
 import { MyGlobals } from '../../_shared/myglobals';
+import { GlobalReuse } from '../../_shared/global.reuse';
 
 
 @Component({
@@ -15,10 +16,11 @@ export class ProductItemComponent implements OnInit {
 
   public PAGE_DEFAULTS = {
     pageTitle: 'Beer!',
-    pageName: 'single-product'
+    pageName: 'single-product',
+    apiName:''
   }
 
-  productData: BeersModel;
+  productData: Models;
   productdataPairs: any = false;
 
   constructor(private _route: ActivatedRoute,
@@ -26,7 +28,11 @@ export class ProductItemComponent implements OnInit {
     private _globals: MyGlobals) {
 
     _globals.glob.current_page = this.PAGE_DEFAULTS.pageName;
-
+    
+    this.PAGE_DEFAULTS.pageTitle = "product: "+_globals.glob.selected_apiName;
+    
+    var apiByhref= new GlobalReuse().findApiNameFromUrl(this._globals.api_support);
+    this.PAGE_DEFAULTS.apiName = apiByhref || _globals.glob.selected_apiName;
   }
 
 
@@ -43,9 +49,25 @@ export class ProductItemComponent implements OnInit {
     var prod = this._route.snapshot.data['product'];
     if (prod.length > 0) {
       this.productData = prod[0];
+      
+      /// check and update data keys
+      if(!this.productData.image_url ){
+         this.productData.image_url = (this.productData as any).url_m;
 
+      }
+
+       if(!this.productData.tagline ){
+         this.productData.tagline = (this.productData as any).tags;
+
+      }
+
+      if(!this.productData.description ){
+         this.productData.description = (this.productData as any).title;
+
+      }
+  
       // update title
-      this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.pageTitle + ' | ' + this.productData.name;
+      this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.pageTitle + ' | ' + (this.productData.name || (this.productData as any).title);
       
       // generate pairs, quick fix
       this.productdataPairs = this.generateKeyArray(this.productData);
@@ -62,6 +84,8 @@ export class ProductItemComponent implements OnInit {
     var arr_pair = [];
     for (var key in obj) {
       if (obj.hasOwnProperty(key)) {
+
+
         arr_pair.push([key, obj[key]])
       }
     }

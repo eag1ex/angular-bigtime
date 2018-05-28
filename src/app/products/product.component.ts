@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../_shared/services/data.service';
 import { LoggerService } from '../_shared/services/logger.service';
-import { BeersModel } from '../_shared/services/models';
+import { BeersModel,FlickrPhotoModel } from '../_shared/services/models';
 import { MyGlobals } from '../_shared/myglobals';
 import { EventEmitService } from '../_shared/services/eventEmmiter.service';
 import * as _ from "lodash";
@@ -31,11 +31,11 @@ export class ProductComponent implements OnInit {
   public punkapiData: BeersModel[];
   public DataLoaded = false;
   public routeName: any;
-
+  public linkLoaded:any=false;
   public exec_search = false;
   private searchSubscription: any;
   private searchModel: string;
-  private beersErrorData:any = false;
+  private ErrorData:any = false;
   public available_apis:Array<any>;
   private searchtext = {
     inx: 0
@@ -128,17 +128,25 @@ export class ProductComponent implements OnInit {
     var exec = () => {
       return this.whichSearch(type, event, () => {
 
-        var search_v = (val.length > 2) ? { search_by_name: this.niceName(val.toLowerCase()) } : false; 
-        var search_val = search_v as  any;
+        var search_v;
+       // if(!searchAPI){
+           search_v = (val.length > 2) ? { search_by_name: this.niceName(val.toLowerCase()) } : ''; 
+      //  }
 
+      //  if(searchAPI){ // specially formater query
+       //   search_v = (val.length > 2) ? { search_by_name: encodeURIComponent(val) } : false; 
+      //  }
+       
+        var search_val = search_v as  any;
+ 
         if (search_val && searchAPI) {
           search_val.originalName = val;
-          this.getHttpRequest(search_val,this.PAGE_DEFAULTS.apiName);
+          this.getMyHttpRequest(search_val,this.PAGE_DEFAULTS.apiName);
           this.logger.log(`searching api results with: ${search_val.search_by_name}`)
 
         } else if (!search_val) {
           this.logger.log(`you entered no search value, defauling to paged`)
-          this.getHttpRequest({ paged: this.PAGE_DEFAULTS.currentPaged, originalName:val } as any,this.PAGE_DEFAULTS.apiName);
+          this.getMyHttpRequest({ paged: this.PAGE_DEFAULTS.currentPaged, originalName:search_val } as any,this.PAGE_DEFAULTS.apiName);
         }
 
         this.exec_search = true;
@@ -168,6 +176,13 @@ export class ProductComponent implements OnInit {
     }
 
   }
+
+// request flicker artist link
+
+loadLink(owner){
+  this.getFlickerLink({user_id:owner,method:'flickr.urls.getUserPhotos'}as any, this.PAGE_DEFAULTS.apiName);
+}
+
 
   /**
   * have decided to use 2 events, 
@@ -218,7 +233,7 @@ export class ProductComponent implements OnInit {
     if (nr === 0) nr = 1;
 
       setTimeout(()=>{
-         this._router.navigate(['/product' + '/' + nr]);
+         this._router.navigate([`/product/${this.PAGE_DEFAULTS.apiName}` + '/' + nr]);
       },300)
       
   }
@@ -233,7 +248,7 @@ export class ProductComponent implements OnInit {
 
   /**
    * current component logic for route.param values
-   * it returns the correct value for the "getHttpRequest" api request from ngOnInit() call
+   * it returns the correct value for the "getMyHttpRequest" api request from ngOnInit() call
    */
 
   fetchEvent(): Promise<object> {
@@ -265,14 +280,13 @@ export class ProductComponent implements OnInit {
       this.routeName = { paged: parseInt(nr) };
       this.PAGE_DEFAULTS.currentPaged = nr;
 
-      this.getHttpRequest(this.routeName,this.PAGE_DEFAULTS.apiName);
+      this.getMyHttpRequest(this.routeName,this.PAGE_DEFAULTS.apiName);
     } else {
-      this.getHttpRequest(false as any,this.PAGE_DEFAULTS.apiName);
+      this.getMyHttpRequest(false as any,this.PAGE_DEFAULTS.apiName);
     }
   }
 
-  ngOnInit() {
- 
+  dofetch() {
     /// get page param  
     this.fetchEvent().then((whichOrder: any) => {
       if (whichOrder === false) {
@@ -283,16 +297,31 @@ export class ProductComponent implements OnInit {
       }
 
       this.routeName = whichOrder;
-      this.getHttpRequest(this.routeName,this.PAGE_DEFAULTS.apiName);
+      this.getMyHttpRequest(this.routeName, this.PAGE_DEFAULTS.apiName);
 
     }, (err) => {
       this.logger.log(err, true)
       this.routeName = false;
-      this.getHttpRequest(this.routeName,this.PAGE_DEFAULTS.apiName);
+      this.getMyHttpRequest(this.routeName, this.PAGE_DEFAULTS.apiName);
     })
   }
 
+  ngOnInit() {
+      this.dofetch();
+   
+  }
 
+  filterTag(ipName){
+    if(!ipName) return false;
+    this.PAGE_DEFAULTS.apiName =ipName;
+    console.log('-- filterTag to fetch for ipName: ',ipName)
+    this.dofetch(); 
+  }
+
+  mCommas(str){
+    return str.replace(/ /g, ", ");
+  }
+ 
   niceName(str) {
     var nice = this._globals.nicename(str)
     return (str) ? nice : '';
@@ -302,16 +331,21 @@ export class ProductComponent implements OnInit {
     //console.log('what is the uipdated index ', inx)
   }
 
-  descLimit(str) {
-    return (str) ? str.substring(0, 100) : '';
+  niceDate(str){
+    var d = new Date(str);
+    return d.toString();
+  }
+
+  descLimit(str,limit=150,ending='...') {
+    return (str) ? str.substring(0, limit)+ending : '';
   }
 
 
-  getHttpRequest(routeName:IRouteName, apiName:string) {
+  getMyHttpRequest(routeName:IRouteName, apiName:string) {
 
-    this.beersErrorData = false;
+    this.ErrorData = false;
     this.DataLoaded = false;
-    console.log('Getting beers ...');
+    console.log('Getting new data ...');
 
     routeName.per_page = this.PAGE_DEFAULTS.per_page as any;
 
@@ -323,22 +357,24 @@ export class ProductComponent implements OnInit {
 
     this.dataService.getHttpRequest(routeName,apiName,this._globals).subscribe( 
       data => {
-       
+     //  console.log('what is the fucking data',data)
         this.DataLoaded = true;
         this[`${apiName}Data`] = data;
+        //console.log('what is punkapiData',this[apiName+'Data']); 
+
         this._globals.glob[`${apiName}.data`] = data;
 
         this.onSearchQBackToDirective({reset:true}) 
       },
       (errorMsg: any) => {
         this.DataLoaded = null;
-        this._globals.glob['punkapi.data'] = this.DataLoaded;
+        this._globals.glob[`${apiName}.data`] = this.DataLoaded;
 
         if(typeof errorMsg!=='string'){
           (errorMsg as any).badSearch = routeName.originalName
         }
         
-        this.beersErrorData =errorMsg;
+        this.ErrorData =errorMsg;
         // show to client
         
         this.searchModel =''; // reset
@@ -347,5 +383,47 @@ export class ProductComponent implements OnInit {
     );
   }
 
+  getFlickerLink(routeName: IRouteName, apiName: string) {
+    this.linkLoaded = 0;
+    this.dataService.getFlickerLink(routeName, apiName, this._globals).subscribe(
+      data => {
+        this.linkLoaded = 1;
+
+        console.log('getFlickerLink data', data);
+
+        this.updateModelData(data);
+        //  console.log('what is the fucking data',data)
+        //    this.DataLoaded = true;
+        //      this[`${apiName}Data`] = data;
+        //console.log('what is punkapiData',this[apiName+'Data']); 
+
+        //        this._globals.glob[`${apiName}.data`] = data;
+
+      },
+      (errorMsg: any) => {
+        this.linkLoaded = 0;
+        console.log('getFlickerLink errorMsg', errorMsg)
+
+      }
+    );
+  }
+
+  updateModelData(newData){
+   var selected_api =  this.PAGE_DEFAULTS.apiName;
+    
+  var update=this[`${selected_api}Data`].map((item,index)=>{
+      if(item.owner.indexOf(newData.nsid)!==-1){
+        item.flickerLink = newData.url;
+        console.log(`updated user: ${newData.nsid}`)
+      }
+
+      return item;
+    })
+
+    this._globals.glob[`${selected_api}.data`] = this[`${selected_api}Data`]  = update;
+    console.log('what is the updated model',this[`${selected_api}Data`])
+  }
 }
+
+
 

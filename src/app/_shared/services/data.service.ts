@@ -39,29 +39,29 @@ export class DataService {
   ///check if we have avaialble localstorage first
   /**
    * LocalStorageService ids
-      beers:paged:1 
-      beers:item:name:Paradox_Islay 
+      apiName:paged:1 
+      apiName:item:name:Paradox_Islay 
    */
 
  
-  checkLocalstorage(params: any): any {
+  checkLocalstorage(apiName,params: any): any {
     if (!params) return null;
     var getStorage: any = null;
 
-    //beers:paged:1  << always first page
+    //{apiName}:paged:1  << always first page
     if (params.parent_page) {
-      getStorage = this.lStorage.getItem(`beers:paged:${1}`);
+      getStorage = this.lStorage.getItem(`${apiName}:paged:${1}`);
     }
-    // beers:paged:${paged}
+    // {apiName}:paged:${paged}
     if (params.paged) {
-      getStorage = this.lStorage.getItem(`beers:paged:${params.paged}`);
+      getStorage = this.lStorage.getItem(`${apiName}:paged:${params.paged}`);
     }
 
-    // beers:item:name:search_by_name
-    // beers:item:name:byName
+    // {apiName}:item:name:search_by_name
+    // {apiName}:item:name:byName
     if (params.byName || params.search_by_name) {
       var searchBy = params.byName || params.search_by_name || false;
-      getStorage = this.lStorage.getItem(`beers:item:name:${searchBy}`);
+      getStorage = this.lStorage.getItem(`${apiName}:item:name:${searchBy}`);
     }
     return getStorage;
   }
@@ -72,23 +72,23 @@ export class DataService {
    * @param params 
    * @param data 
    */
-  setLocalStorage(params: any, data: BeersModel[]): boolean {
+  setLocalStorage(apiName,params: any, data: Models[]): boolean {
 
     if (!params && !data) return false;
     var setStorage: any = false;
 
-    //beers:paged:1  << always first page
+    //{apiName}:paged:1  << always first page
     if (params.parent_page) {
-      setStorage = this.lStorage.setItem(`beers:paged:${1}`, data);
+      setStorage = this.lStorage.setItem(`${apiName}:paged:${1}`, data);
     }
-    // beers:paged:${paged}
+    // {apiName}:paged:${paged}
     if (params.paged) {
-      setStorage = this.lStorage.setItem(`beers:paged:${params.paged}`, data);
+      setStorage = this.lStorage.setItem(`${apiName}:paged:${params.paged}`, data);
     }
-    // beers:item:name:search_by_name
+    // {apiName}:item:name:search_by_name
     if (params.search_by_name || params.byName) {
       var byName = params.search_by_name || params.byName || false;
-      setStorage = this.lStorage.setItem(`beers:item:name:${byName}`, data);
+      setStorage = this.lStorage.setItem(`${apiName}:item:name:${byName}`, data);
     }
 
     return setStorage;
@@ -97,6 +97,15 @@ export class DataService {
 
   errorHandler(errorData:any, apiName:string):object{
 
+    if(errorData.photos!==undefined){
+      if(errorData.photos.photo.length==0){
+         return {
+          error: true,
+          message: 'no results found',
+          apiName: apiName
+        }
+      }
+    }
   
     if(errorData.stat==='fail'){
       errorData.apiName = apiName
@@ -126,9 +135,9 @@ export class DataService {
     // remove all storage / for testing
     //this.lStorage.removeAll()
 
-    var checkLocalstorage = this.checkLocalstorage(params);
+    var checkLocalstorage = this.checkLocalstorage(apiName,params);
     if (checkLocalstorage !== false) {
-      this.logger.log('getting beers from localstorage!!')
+      this.logger.log(`getting data for ${apiName} from localstorage!!`)
       return checkLocalstorage;
     }
 
@@ -140,6 +149,7 @@ export class DataService {
       return Observable.throw(`api error for ${apiName}: ${nice_print}`);
     }
 
+ 
 
     if ( apiName == 'punkapi') {
       return this.httpRequest(params, _paramsReturn, apiName, 
@@ -156,11 +166,12 @@ export class DataService {
           return DATA.photos.photo;
 
       }) as Observable<FlickrPhotoModel[]>;
-    }            
+    } 
+ 
     
   }           
 
-  httpRequest(originalParams: IRouteName, paramsReturn: string, _apiName: string, dataCallBack): Observable<any[]> {
+  private httpRequest(originalParams: IRouteName, paramsReturn: string, _apiName: string, dataCallBack): Observable<any[]> {
     return this.http.get(paramsReturn)
       .map((response: any) => {
 
@@ -168,13 +179,14 @@ export class DataService {
         if (checker) {
           throw checker as any;
         }
-        return response.json() as any;
+        
+        return dataCallBack(response.json()) as any;
       })
       .do((dat) => {      
-        var r_data = dataCallBack(dat); // manage data output
-        console.log('what is the new data here',r_data)
-       // this.setLocalStorage(originalParams, r_data); // magic happens!
-        return r_data;
+        //var r_data = // manage data output
+      //  console.log('what is the new data here',r_data)
+        this.setLocalStorage(_apiName,originalParams, dat); // magic happens!
+        return dat;
       })
       .catch((error: any) => {
         this.logger.log(error, true)
@@ -182,5 +194,43 @@ export class DataService {
       });
 
   }
+
+
+
+  getFlickerLink(params: IRouteName, apiName: string = 'punkapi', globs: IMyGlobals): Observable<any[]> {
+
+    var _paramsReturn = this.apiManager.buildRespCall(apiName, params, globs);
+
+    if (!_paramsReturn || (_paramsReturn as any).error) {
+      var nice_print = ((_paramsReturn as any).error) ? JSON.stringify(_paramsReturn) : _paramsReturn;
+      // console.log('what is _paramsReturn!!!!!',nice_print)
+      return Observable.throw(`api error for ${apiName}: ${nice_print}`);
+    }
+
+
+    return this.http.get(_paramsReturn)
+      .map((response: any) => {
+
+        var checker = this.errorHandler(response.json(), apiName);
+        if (checker) {
+          throw checker as any;
+        }
+
+        return response.json().user as any;
+      })
+      .do((dat) => {
+        //var r_data = // manage data output
+        console.log('what is the iser_id data: ', dat)
+        // this.setLocalStorage(originalParams, r_data); // magic happens!
+        return dat;
+      })
+      .catch((error: any) => {
+        this.logger.log(error, true)
+        return Observable.throw(error || 'Upps error getting data, api or localstorage!');
+      });
+
+  }
+
+
 }
 

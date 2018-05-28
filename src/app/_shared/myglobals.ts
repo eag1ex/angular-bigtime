@@ -14,6 +14,7 @@ import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/toPromise'; 
 import {ApiList} from '../api-list';
 
+
 /// interface 
 import { IMyGlobals } from './interfaces';
 
@@ -53,11 +54,11 @@ export class MyGlobals implements IMyGlobals{
      * 
      * @param data 
      * @param params 
-     */
+     */ 
     getData(data: any = false, params:any=false): Observable<Models[]> {
 
 
-        var _data = data || this.glob.selected_apiName+'.data'; 
+        var _data = data || this.glob[this.glob.selected_apiName+'.data']; 
         if (!_data || data.length<1) {
             this._router.navigate(['/products']);
            // this.logger.log('Something bad happened glob.beers, its null',true)
@@ -72,7 +73,7 @@ export class MyGlobals implements IMyGlobals{
             .do((d) => {
 
                 if(params){
-                    this.dataService.setLocalStorage(params,data); // magic happens!
+                    this.dataService.setLocalStorage(this.glob.selected_apiName,params,data); // magic happens!
                 }
                
                 return d;
