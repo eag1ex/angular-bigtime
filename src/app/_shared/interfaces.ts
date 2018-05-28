@@ -12,13 +12,35 @@ export interface IRouteName{
 } 
 
 export interface IMyGlobals{
+
   glob: {
           searchSubscription: any,
-          beers: any,
+         'punkapi.data': any,
+         'flickr.data':any,
           APP_LOADED:any,
           current_page:string,
+          selected_apiName:string
       },
+
    api_support:Array<any>,
+   
    getData(data: any, params : any): Observable<Models[]>;
 
 }
+
+
+export interface IApiModel {
+  name: string;
+  api:string;
+  apiURL:string;
+  prefix:any;
+  api_key:any; 
+  secret:any;
+  token:any;
+  auth:boolean;
+  free:boolean;
+  query_params:object
+  ///...
+}
+
+

@@ -25,15 +25,20 @@ export class MyGlobals implements IMyGlobals{
      */
     glob = {
         searchSubscription: null,
-        beers: null,
+
+        /// stored data before LocalStorage
+        'punkapi.data': null,
+        'flickr.data':null,
+
         APP_LOADED:false,
         current_page:'',
+        selected_apiName:''
     };
 
     api_support:Array<any> =  new ApiList().list().reduce((outp,val,inx)=>{       
             if(val.name) outp.push(val.name);
             return outp;
-    },[]);
+    },[]); 
 
     constructor(private logger: LoggerService,
             private _router: Router,
@@ -44,6 +49,7 @@ export class MyGlobals implements IMyGlobals{
     /**
      *  Mocked up an observable data return
      *  Currently used together with TransactionResolver class to resolve data going to product/:id
+     *  the data is retreived from local variable NOT REST!
      * 
      * @param data 
      * @param params 
@@ -51,7 +57,7 @@ export class MyGlobals implements IMyGlobals{
     getData(data: any = false, params:any=false): Observable<Models[]> {
 
 
-        var _data = data || this.glob.beers;
+        var _data = data || this.glob.selected_apiName+'.data'; 
         if (!_data || data.length<1) {
             this._router.navigate(['/products']);
            // this.logger.log('Something bad happened glob.beers, its null',true)

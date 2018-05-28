@@ -37,7 +37,7 @@ export class GlobalReuse  {
                   params_arr.splice(i, 1);
                 }
             }
-            rtn = rtn + "?" + params_arr.join("&");
+            rtn = rtn  + params_arr.join("&");
         }
         return rtn;
     }

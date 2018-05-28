@@ -12,18 +12,19 @@ export class BeersModel { //punkapi single output
 
 export class FlickrPhotoModel {
     // in flickr.photos.search
-    // photos:{...
-    page:number;
-    pages:number;
-    total:number;
-    photo:[{
-      id:string,
-      title:string,
-      ownername:string,
-      tags:string,
-      url_s:string,
-      url_m:string
-    }]
+    photos:{
+      page:number;
+      pages:number;
+      total:number;
+      photo:[{
+        id:string,
+        title:string,
+        ownername:string,
+        tags:string,
+        url_s:string,
+        url_m:string
+      }]
+    }
 }
 
 

@@ -7,7 +7,7 @@ import { MyGlobals } from '../_shared/myglobals';
 import { EventEmitService } from '../_shared/services/eventEmmiter.service';
 import * as _ from "lodash";
 import { slideInOutAnimation,moveIn } from '../_shared/animations';
-
+ 
 // interfaces
 import { IRouteName } from '../_shared/interfaces';
 
@@ -28,21 +28,22 @@ import { IRouteName } from '../_shared/interfaces';
 export class ProductComponent implements OnInit {
   state: string = 'large';
   public indexPerRow: number = 0;
-  public beersData: BeersModel[];
-  public beersDataLoaded = false;
+  public punkapiData: BeersModel[];
+  public DataLoaded = false;
   public routeName: any;
 
   public exec_search = false;
   private searchSubscription: any;
   private searchModel: string;
   private beersErrorData:any = false;
+  public available_apis:Array<any>;
   private searchtext = {
     inx: 0
   }
 
   // default page settings 
   public PAGE_DEFAULTS = {
-    apiName:'punkapi',
+    apiName:'flickr', //punkapi
     pageTitle: 'Beers.. Drink! Get drunk!',
     pageName:'products',
     per_page: 10,
@@ -60,9 +61,14 @@ export class ProductComponent implements OnInit {
     private searchEmmiter: EventEmitService
 
   ) {
+
+    this.available_apis = _globals.api_support;
+
     // set pagename globals
     _globals.glob.current_page = this.PAGE_DEFAULTS.pageName;
 
+    // preset default api name for current component// same for :paged as well
+    _globals.glob.selected_apiName = this.PAGE_DEFAULTS.apiName;
   
 
     /**
@@ -204,7 +210,10 @@ export class ProductComponent implements OnInit {
 
 
   goto(nr: any) { 
-   
+    
+    // preset default api name for current component// same for paged as well
+    this._globals.glob.selected_apiName = this.PAGE_DEFAULTS.apiName;
+
     if (nr === '' || nr === undefined) return;
     if (nr === 0) nr = 1;
 
@@ -301,29 +310,29 @@ export class ProductComponent implements OnInit {
   getHttpRequest(routeName:IRouteName, apiName:string) {
 
     this.beersErrorData = false;
-    this.beersDataLoaded = false;
+    this.DataLoaded = false;
     console.log('Getting beers ...');
 
     routeName.per_page = this.PAGE_DEFAULTS.per_page as any;
 
      if(!routeName) {
       this.logger.log('no singlePage or paged params defind', true)
-      this.beersDataLoaded = null;
+      this.DataLoaded = null;
       return false
     }
 
     this.dataService.getHttpRequest(routeName,apiName,this._globals).subscribe( 
       data => {
        
-        this.beersDataLoaded = true;
-        this.beersData = data;
-        this._globals.glob.beers = this.beersData;
+        this.DataLoaded = true;
+        this[`${apiName}Data`] = data;
+        this._globals.glob[`${apiName}.data`] = data;
 
         this.onSearchQBackToDirective({reset:true}) 
       },
       (errorMsg: any) => {
-        this.beersDataLoaded = null;
-        this._globals.glob.beers = this.beersDataLoaded;
+        this.DataLoaded = null;
+        this._globals.glob['punkapi.data'] = this.DataLoaded;
 
         if(typeof errorMsg!=='string'){
           (errorMsg as any).badSearch = routeName.originalName

@@ -29,8 +29,9 @@ export class TransactionResolver implements Resolve<any> {
     
     // else continue with the request from fresh response!
 
-    var _match = this._globals.stripSpecialChar(_id);
-    var data = this._globals.glob.beers || null;
+    var _match = this._globals.stripSpecialChar(_id); 
+    var selected_api_object = this._globals.glob.selected_apiName+'.data'; 
+    var data = selected_api_object || null;
 
     if (data) {
 
@@ -39,7 +40,7 @@ export class TransactionResolver implements Resolve<any> {
     } else {
       final = false;
     }
-
+    // the data is retreived from local variable NOT REST!
     res = this._globals.getData(final, { byName: _id });
     return res
 

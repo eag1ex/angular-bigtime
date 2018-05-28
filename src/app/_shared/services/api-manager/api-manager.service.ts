@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiList } from '../../../api-list';
-import { ApiModel } from './api.model';
+import { IApiModel } from '../../interfaces';
 import { GlobalReuse } from '../../global.reuse';
 import * as _ from "lodash";
 
@@ -14,22 +14,21 @@ export class ApiManagerService extends GlobalReuse {
 
   constructor() {
     super()
-  }
-
+  }  
+     
   /// available api/s
-  get apis(): ApiModel[] {
+  get apis(): IApiModel[] {
     return new ApiList().list();
   }
+      
 
 
-
-
-  checkRequirementsModifyOutput(api: ApiModel, _obj, globs) {
+  checkRequirementsModifyOutput(api: IApiModel, _obj, globs) {
 
     if (api.prefix) {
       /// some logic here todo
        api.apiURL = api.api + "/" +api.prefix + "/";
-    }
+    }   
 
     if (api.auth === true) {
       /// some logic here todo
@@ -69,6 +68,7 @@ export class ApiManagerService extends GlobalReuse {
           }
 
           else {
+            
             api.query_params[key] = _obj[key];
             continue;
           }
@@ -96,8 +96,9 @@ export class ApiManagerService extends GlobalReuse {
           if (key == 'originalName') {
             continue;
           }
-
+     
           else {
+           
             api.query_params[key] = _obj[key];
             continue;
           }
@@ -131,6 +132,7 @@ export class ApiManagerService extends GlobalReuse {
     }
     var query = this.encodeQueryData(api.query_params); // create url
     var q = this.removeEmptyParam(query);
+
     var _url = api.apiURL + q;
     console.log('what is the _url',_url) 
     var clean_url =_url; // remove any empty params from url just in case
@@ -172,7 +174,7 @@ export class ApiManagerService extends GlobalReuse {
 
   }
 
-  matchOutput(itemApi: ApiModel, _obj, glob:IMyGlobals): object {
+  matchOutput(itemApi: IApiModel, _obj, glob:IMyGlobals): object {
     var output: any = {}
     var result;
 

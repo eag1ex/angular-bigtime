@@ -19,6 +19,17 @@
     }
 
     products {
+        .available_apis{
+            button{
+                 color: $body-color;
+                &.active{
+                    color: #fff!important;
+                }
+                cursor: pointer!important;
+               
+            }
+        }
+
         display:block;// set as block element
         /// make custom column layout for the products page
         .products-container {

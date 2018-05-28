@@ -17,7 +17,7 @@ import { LocalStorageService } from './local-storage.service';
 import {ApiManagerService} from './api-manager/api-manager.service';
 
 // interfaces
-import { IRouteName } from '../interfaces';
+import { IRouteName, IMyGlobals} from '../interfaces';
 
 
 
@@ -26,7 +26,7 @@ import { IRouteName } from '../interfaces';
 })
 export class DataService {
  /// private apiURL = 'https://api.punkapi.com/v2/beers'; now using ApiManagerService
-  public beersData: Array<any>;
+  public punkapiData: Array<any>;
   constructor(
     private http: Http,
     private logger: LoggerService,
@@ -43,6 +43,7 @@ export class DataService {
       beers:item:name:Paradox_Islay 
    */
 
+ 
   checkLocalstorage(params: any): any {
     if (!params) return null;
     var getStorage: any = null;
@@ -95,6 +96,12 @@ export class DataService {
 
 
   errorHandler(errorData:any, apiName:string):object{
+
+  
+    if(errorData.stat==='fail'){
+      errorData.apiName = apiName
+      return errorData; 
+    }
     if(errorData.error){
       errorData.apiName = apiName
       return errorData;
@@ -114,7 +121,7 @@ export class DataService {
   }
 
 
-  getHttpRequest(params: IRouteName, apiName: string = 'punkapi',globs): Observable<any[]> {
+  getHttpRequest(params: IRouteName, apiName: string = 'punkapi',globs:IMyGlobals): Observable<any[]> {
 
     // remove all storage / for testing
     //this.lStorage.removeAll()
@@ -134,17 +141,26 @@ export class DataService {
     }
 
 
-    if (apiName == 'punkapi') {
-      return this.httpRequest(params, _paramsReturn, apiName) as Observable<BeersModel[]>;
+    if ( apiName == 'punkapi') {
+      return this.httpRequest(params, _paramsReturn, apiName, 
+        // MANAGE DATA OUTPUT
+        (DATA:BeersModel[])=>{
+          return DATA;
+        }) as Observable<BeersModel[]>;
     }
 
     if (apiName == 'flickr') {
-      return this.httpRequest(params, _paramsReturn, apiName) as Observable<FlickrPhotoModel[]>;
-    }
+      return this.httpRequest(params, _paramsReturn, apiName,
+        // MANAGE DATA OUTPUT
+        (DATA:FlickrPhotoModel)=>{
+          return DATA.photos.photo;
 
-  }
+      }) as Observable<FlickrPhotoModel[]>;
+    }            
+    
+  }           
 
-  httpRequest(originalParams: IRouteName, paramsReturn: string, _apiName: string): Observable<any[]> {
+  httpRequest(originalParams: IRouteName, paramsReturn: string, _apiName: string, dataCallBack): Observable<any[]> {
     return this.http.get(paramsReturn)
       .map((response: any) => {
 
@@ -152,12 +168,13 @@ export class DataService {
         if (checker) {
           throw checker as any;
         }
-        return response.json() as Models[]
+        return response.json() as any;
       })
-      .do((dat) => {
-        console.log('what is the new data here',dat)
-        this.setLocalStorage(originalParams, dat); // magic happens!
-        return dat;
+      .do((dat) => {      
+        var r_data = dataCallBack(dat); // manage data output
+        console.log('what is the new data here',r_data)
+       // this.setLocalStorage(originalParams, r_data); // magic happens!
+        return r_data;
       })
       .catch((error: any) => {
         this.logger.log(error, true)
