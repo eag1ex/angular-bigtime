@@ -15,14 +15,8 @@ var punkapi = {
 }
 
 /**
- https://api.flickr.com/services/rest/?api_key=1754e3e5724bd7c66c732b835083c8df&method=flickr.photos.search&tags=portrait,mug&content_type=1&media=photos&extras=url_s,url_m,date_upload,date_taken,owner_name,last_update,geo,tags,views&format=json&nojsoncallback=1&orientation=square&per_page=100&text=faces&page=5
- 
 
 https://api.flickr.com/services/rest/?api_key=1754e3e5724bd7c66c732b835083c8df&method=flickr.photos.search&tags=portrait%2Cmug&content_type=1&media=photos&extras=extras%3Durl_s%2Curl_m%2Cdate_upload%2Cdate_taken%2Cowner_name%2Clast_update%2Ctags%2Cviews%2Ctitle&format=json&nojsoncallback=1&orientation=square&per_page=10&page=1
-
-
-
-
  */
    
 var flickr = {
@@ -47,10 +41,35 @@ var flickr = {
   }
 }
 
+
+/**
+ * GETTYIMAGES
+https://api.gettyimages.com/v3/search/images?phrase=dogs&page=1&page_size=1&fields=comp,id,title,collection_name,caption,detail_set
+ */
+
+var gettyimages = {
+
+  'name': 'gettyimages',
+  'apiURL': '',
+  'api': 'https://api.gettyimages.com/v3/search',
+  'prefix':'images',
+  'header_params':true,
+  'Api-Key': '734uv72r6de98em86u5rkwe5',
+  'query_params': {                 
+    'phrase': "",// what to search
+    'fields': 'comp,id,title,collection_name,caption,detail_set,',// what to output
+    'page_size': 20,// per page results
+    'page': 1
+  }
+}
+
+
+
 class Presets {
  
   pre(){
     return {
+        'header_params':false,
         'prefix': false,
         'api_key': false,
         'token': false,
@@ -65,8 +84,13 @@ export class ApiList extends Presets{
 constructor(){
   super();
 }
+  /// in case the predefind api's are not available for current user, we need to validate output some how
+  proposedList(){
+    return ['punkapi','flickr', 'gettyimages'];
+  }
+
   list() {
-    return [Object.assign(this.pre(),punkapi),Object.assign(this.pre(),flickr)]}
+    return [Object.assign(this.pre(),punkapi),Object.assign(this.pre(),flickr), Object.assign(this.pre(),gettyimages)]}
   ///...
 }
 

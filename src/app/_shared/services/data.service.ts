@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Headers, Http,RequestOptions } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch'; //
@@ -11,7 +11,7 @@ import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/toPromise';
 
 import * as _ from "lodash";
-import { BeersModel,FlickrPhotoModel,Models } from './models';
+import { BeersModel,FlickrPhotoModel,Models,GettyImages } from './models';
 import { LoggerService } from './logger.service';
 import { LocalStorageService } from './local-storage.service';
 import {ApiManagerService} from './api-manager/api-manager.service';
@@ -97,20 +97,47 @@ export class DataService {
 
   errorHandler(errorData:any, apiName:string):object{
 
-    if(errorData.photos!==undefined){
-      if(errorData.photos.photo.length==0){
-         return {
+    if (apiName == 'gettyimages') {
+      if (errorData.ErrorCode !== undefined) {
+        return errorData;
+      }
+
+      if (errorData.images == undefined) {
+        return {
           error: true,
           message: 'no results found',
           apiName: apiName
+        };
+      }
+
+      if (errorData.images !== undefined) {
+        if (errorData.images.length == 0) {
+          return {
+            error: true,
+            message: 'no results found',
+            apiName: apiName
+          };
         }
       }
     }
-  
-    if(errorData.stat==='fail'){
-      errorData.apiName = apiName
-      return errorData; 
+   
+    if (apiName == 'flickr') {
+      if (errorData.photos !== undefined) {
+        if (errorData.photos.photo.length == 0) {
+          return {
+            error: true,
+            message: 'no results found',
+            apiName: apiName
+          }
+        }
+      }
+
+      if (errorData.stat === 'fail') {
+        errorData.apiName = apiName
+        return errorData;
+      }
     }
+
     if(errorData.error){
       errorData.apiName = apiName
       return errorData;
@@ -143,16 +170,24 @@ export class DataService {
 
     var _paramsReturn = this.apiManager.buildRespCall(apiName, params,globs);
     
-    if (!_paramsReturn || (_paramsReturn as any).error) {
-      var nice_print = ( (_paramsReturn as any).error ) ? JSON.stringify(_paramsReturn):_paramsReturn;
+    if (_paramsReturn.error) {
+      var nice_print = ( _paramsReturn.error ) ? JSON.stringify(_paramsReturn):_paramsReturn;
      // console.log('what is _paramsReturn!!!!!',nice_print)
       return Observable.throw(`api error for ${apiName}: ${nice_print}`);
     }
 
- 
+    if ( apiName == 'gettyimages') {
+      (params as any).header_params = this.apiManager.last_gen_api.headers;
+      return this.httpRequest(params, _paramsReturn.url, apiName, 
+        // MANAGE DATA OUTPUT
+        (DATA:GettyImages[])=>{
+          return (DATA as any).images
+        }) as Observable<GettyImages[]>;
+    }
+    
 
     if ( apiName == 'punkapi') {
-      return this.httpRequest(params, _paramsReturn, apiName, 
+      return this.httpRequest(params, _paramsReturn.url, apiName, 
         // MANAGE DATA OUTPUT
         (DATA:BeersModel[])=>{
           return DATA;
@@ -160,19 +195,27 @@ export class DataService {
     }
 
     if (apiName == 'flickr') {
-      return this.httpRequest(params, _paramsReturn, apiName,
+      return this.httpRequest(params, _paramsReturn.url, apiName,
         // MANAGE DATA OUTPUT
-        (DATA:FlickrPhotoModel)=>{
-          return DATA.photos.photo;
+        (DATA:FlickrPhotoModel[])=>{
+          return (DATA as any).photos.photo;
 
       }) as Observable<FlickrPhotoModel[]>;
     } 
- 
-    
+   
   }           
 
+
+
   private httpRequest(originalParams: IRouteName, paramsReturn: string, _apiName: string, dataCallBack): Observable<any[]> {
-    return this.http.get(paramsReturn)
+
+    var with_headers = this.generateHeaderOptions(originalParams);
+
+    if(!with_headers){ // if no headers available pass empty headers :)
+      with_headers = new RequestOptions({}); 
+    }
+    console.log('what are the with_headers: ',with_headers)
+    return this.http.get(paramsReturn,with_headers)
       .map((response: any) => {
 
         var checker = this.errorHandler(response.json(), _apiName);
@@ -180,12 +223,14 @@ export class DataService {
           throw checker as any;
         }
         
+        console.log('what is the response.json()',response.json())
+
         return dataCallBack(response.json()) as any;
       })
       .do((dat) => {      
         //var r_data = // manage data output
       //  console.log('what is the new data here',r_data)
-        this.setLocalStorage(_apiName,originalParams, dat); // magic happens!
+        //this.setLocalStorage(_apiName,originalParams, dat); // magic happens!
         return dat;
       })
       .catch((error: any) => {
@@ -201,14 +246,14 @@ export class DataService {
 
     var _paramsReturn = this.apiManager.buildRespCall(apiName, params, globs);
 
-    if (!_paramsReturn || (_paramsReturn as any).error) {
-      var nice_print = ((_paramsReturn as any).error) ? JSON.stringify(_paramsReturn) : _paramsReturn;
+    if (_paramsReturn.error) {
+      var nice_print = (_paramsReturn.error) ? JSON.stringify(_paramsReturn) : _paramsReturn;
       // console.log('what is _paramsReturn!!!!!',nice_print)
       return Observable.throw(`api error for ${apiName}: ${nice_print}`);
     }
 
 
-    return this.http.get(_paramsReturn)
+    return this.http.get(_paramsReturn.url)
       .map((response: any) => {
 
         var checker = this.errorHandler(response.json(), apiName);
@@ -231,6 +276,22 @@ export class DataService {
 
   }
 
+  generateHeaderOptions(header_val: any):RequestOptions {
+    if (!header_val.header_params) return false as any;
+
+    var hData = header_val.header_params
+    var headers = new Headers();
+    var options;
+
+    for (var key in hData) {
+      if (hData.hasOwnProperty(key)) {
+        headers.append(key, hData[key]);
+      }
+    }
+    if (!headers) return false as any;
+    options = new RequestOptions({ headers: headers });
+    return options
+  }
 
 }
 

@@ -6,11 +6,21 @@ import * as _ from "lodash";
 
 import {IMyGlobals} from "../../interfaces";
 
+import {IbuildRespCall} from "../../interfaces";
+
+
+
 //encodeQueryData
 @Injectable({
   providedIn: 'root'
 })
 export class ApiManagerService extends GlobalReuse {
+
+  last_gen_api = {
+    headers:Object,
+    'Api-Key':false,
+    'api_key':false
+  }
 
   constructor() {
     super()
@@ -23,7 +33,44 @@ export class ApiManagerService extends GlobalReuse {
       
 
 
-  checkRequirementsModifyOutput(api: IApiModel, _obj, globs) {
+  buildRespCall(apiName: string, paramData: object, glob): IbuildRespCall {
+
+    var required_params = ['prefix', 'api', 'query_params'];
+    var _api = this.apis;
+    //console.log('what are the kick ass _apis ',_api)
+
+    var get_api = _api.reduce((out, item, inx) => {
+      if (item.name === apiName) {
+        out.push(item)
+      }
+      return out;
+    }, [])[0];
+
+
+    var missing = required_params.filter((val, inx) => {
+      return Object.keys(get_api).indexOf(val) == -1;
+    })
+
+    if (missing.length > 0) {
+
+      return {error:true,message:`missing required_params: ${missing}`}as any
+    }
+
+    var _output = this.matchOutput(get_api, paramData, glob) as any;
+
+    if(_output.error ){
+        //console.error('--- what is missing? ', _output.error)
+       return {error:true,message:`${_output.error.toString()}`}as any;
+    }
+
+    return {url:_output} as any;
+
+  }
+
+
+
+
+ private checkRequirementsModifyOutput(api: IApiModel, _obj, globs) {
 
     if (api.prefix) {
       /// some logic here todo
@@ -34,18 +81,80 @@ export class ApiManagerService extends GlobalReuse {
       /// some logic here todo
     }
 
-    if (api.api_key) {
+    if (api.api_key && !api.header_params) {
       /// some logic here todo
         api.apiURL = api.api + "/?api_key=" +api.api_key;
 
     }
+
+    if (api['Api-Key'] && api.header_params) {
+      ///// some logic here todo
+      //  api.apiURL =  api.apiURL +"?";
+
+        (this.last_gen_api as any).headers={
+          'Api-Key':api['Api-Key']
+        }
+    }
+
 
     if (api.token) {
       /// some logic here todo
        api.apiURL = api.api + "/?token=" +api.token;
        
     }
- 
+    
+    /**
+    'phrase': "",// what to search
+    'fields': 'comp,id,title,collection_name,caption,detail_set',// what to output
+    'page_size': 20,// per page results
+    'page': 1
+     */
+
+
+    if (api.name == 'gettyimages') {
+
+      api.apiURL = api.apiURL + '?';
+
+      for (var key in _obj) {
+        if (_obj.hasOwnProperty(key)) {
+          
+          // to ignore
+          if (key == 'originalName') {
+            continue;
+          }
+
+          if (key == 'parent_page') {
+            (api.query_params as any).page = 1;
+            continue;
+          }
+
+
+          if (key == 'search_by_name' || key == 'byName') {
+            (api.query_params as any).phrase = _obj[key];
+            continue;
+          }
+
+          if (key == 'paged') {
+            (api.query_params as any).page = _obj[key];
+            continue;
+          }
+          if (key == 'per_page') {
+            (api.query_params as any).page_size = _obj[key];
+            continue;
+          }
+
+          else {          
+            api.query_params[key] = _obj[key];
+            continue;
+          }
+
+
+        }
+      }
+
+    }
+
+
     if (api.name == 'flickr') {
       console.log('what is _obj for flicker',_obj)
 
@@ -85,16 +194,16 @@ export class ApiManagerService extends GlobalReuse {
           }
           
            if (key == 'parent_page') {
-             (api.query_params as any).page = _obj[key];
+             (api.query_params as any).page = 1;
              continue;
            }
+
           // to ignore
           if (key == 'originalName') {
-           
+           continue;
           }
 
-          else {
-            
+          else {          
             api.query_params[key] = _obj[key];
             continue;
           }
@@ -105,6 +214,9 @@ export class ApiManagerService extends GlobalReuse {
     if (api.name == 'punkapi') {
       api.apiURL = api.apiURL+'?';
       /// update query_params for output
+      // reset
+      delete (api.query_params as any).beer_name;
+
       for (var key in _obj) {
         if (_obj.hasOwnProperty(key)) {
 
@@ -173,41 +285,11 @@ export class ApiManagerService extends GlobalReuse {
     return clean_url;
   }
 
-  buildRespCall(apiName: string, paramData: object, glob): string {
-
-    var required_params = ['prefix', 'api', 'query_params'];
-    var _api = this.apis;
-    //console.log('what are the kick ass _apis ',_api)
-
-    var get_api = _api.reduce((out, item, inx) => {
-      if (item.name === apiName) {
-        out.push(item)
-      }
-      return out;
-    }, [])[0];
 
 
-    var missing = required_params.filter((val, inx) => {
-      return Object.keys(get_api).indexOf(val) == -1;
-    })
 
-    if (missing.length > 0) {
-      console.error('--- what is missing? ', missing)
-      return false as any;
-    }
 
-    var _output = this.matchOutput(get_api, paramData, glob) as any;
-
-    if(_output.error ){
-        //console.error('--- what is missing? ', _output.error)
-       return _output;
-    }
-
-    return _output;
-
-  }
-
-  matchOutput(itemApi: IApiModel, _obj, glob:IMyGlobals): object {
+ private matchOutput(itemApi: IApiModel, _obj, glob:IMyGlobals): object {
     var output: any = {}
     var result;
 

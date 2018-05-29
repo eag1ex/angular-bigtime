@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BeersModel, Models } from '../../_shared/services/models';
+import { BeersModel, FlickrPhotoModel,Models } from '../../_shared/services/models';
 import { MyGlobals } from '../../_shared/myglobals';
 import { GlobalReuse } from '../../_shared/global.reuse';
 
@@ -20,7 +20,7 @@ export class ProductItemComponent implements OnInit {
     apiName:''
   }
 
-  productData: Models;
+  productData: FlickrPhotoModel & BeersModel;
   productdataPairs: any = false;
 
   constructor(private _route: ActivatedRoute,
@@ -52,22 +52,22 @@ export class ProductItemComponent implements OnInit {
       
       /// check and update data keys
       if(!this.productData.image_url ){
-         this.productData.image_url = (this.productData as any).url_m;
+         this.productData.image_url = this.productData.url_m;
 
       }
 
        if(!this.productData.tagline ){
-         this.productData.tagline = (this.productData as any).tags;
+         this.productData.tagline = this.productData.tags;
 
       }
 
       if(!this.productData.description ){
-         this.productData.description = (this.productData as any).title;
+         this.productData.description = this.productData.title;
 
       }
   
       // update title
-      this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.pageTitle + ' | ' + (this.productData.name || (this.productData as any).title);
+      this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.pageTitle + ' | ' + (this.productData.name || this.productData.title);
       
       // generate pairs, quick fix
       this.productdataPairs = this.generateKeyArray(this.productData);

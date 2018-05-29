@@ -9,6 +9,7 @@ export interface IRouteName{
   singlePage:any,
   per_page: any, 
   originalName:any,
+  header_params:any,
   perpage:any // or perpage
 } 
 
@@ -40,8 +41,14 @@ export interface IApiModel {
   token:any;
   auth:boolean;
   free:boolean;
-  query_params:object
+  query_params:object,
+  header_params:boolean
   ///...
 }
 
 
+ export interface IbuildRespCall{
+    url:string,
+    error:any,
+    message:any
+  }

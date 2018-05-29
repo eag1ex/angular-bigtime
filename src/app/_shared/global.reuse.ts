@@ -47,7 +47,7 @@ export class GlobalReuse  {
     var url = window.location.href;
     return api_support.filter((item,inx)=>{
         return url.indexOf(item)!==-1;
-    })[0];
+    })[0] || false;
   }
 
 }

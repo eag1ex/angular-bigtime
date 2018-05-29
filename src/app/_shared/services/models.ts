@@ -9,23 +9,37 @@ export class BeersModel { //punkapi single output
   image_url:string;
   ///...
 }
-
+ 
 export class FlickrPhotoModel {
     // in flickr.photos.search
-    photos:{
-      page:number;
-      pages:number;
-      total:number;
-      photo:[{
-        id:string,
-        title:string,
-        ownername:string,
-        tags:string,
-        url_s:string,
-        url_m:string
-      }]
-    }
+  //  photos:{
+  //    page:number;
+//     pages:number;
+//      total:number;
+    //  photo:[{
+        id:string;
+        title:string;
+        ownername:string;
+        tags:string;
+        url_s:string;
+        url_m:string;
+   //   }]
+  //  }
 }
+
+ 
+export class GettyImages {
+
+        id:string;
+        title:string;
+        artist:string;
+        caption:string;
+        collection_name:string;
+        date_created:string;
+        display_sizes:Array<{name,uri}>;
+
+}
+
 
 
 class pair1 extends BeersModel{
@@ -39,12 +53,22 @@ class pair2 extends pair1{
     super();
   }
 }
-export class Models extends pair2{
+
+class pair3 extends pair2{
   constructor(){
     super();
   }
 }
 
+export class Models extends pair3{
+  constructor(){
+    super();
+  }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 /**
  * // FlickrModel single item output
  {
@@ -78,7 +102,8 @@ export class Models extends pair2{
  */
 
 
-
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 /*
  // BeersModel single item output
@@ -209,5 +234,74 @@ export class Models extends pair2{
     "contributed_by": "Sam Mason <samjbmason>"
   }
 ]
-
 */
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+/**
+ GETTYIMAGES, single output
+
+{
+    "result_count": 334770,
+    "images": [
+        {
+            "id": "847116840",
+            "allowed_use": {
+                "how_can_i_use_it": "Available for all permitted uses under our |License Terms|.",
+                "release_info": "No release required",
+                "usage_restrictions": []
+            },
+            "artist": "kiszon pascal",
+            "asset_family": "creative",
+            "call_for_image": false,
+            "caption": "portrait of an happy old french bulldog smiling and looking at camera . .",
+            "collection_code": "FKF",
+            "collection_id": 348,
+            "collection_name": "Moment",
+            "copyright": "pascal kiszon",
+            "date_created": "2017-09-12T00:00:00Z",
+            "display_sizes": [
+                {
+                    "is_watermarked": true,
+                    "name": "comp",
+                    "uri": "https://media.gettyimages.com/photos/portrait-of-a-happy-old-french-bulldog-looking-at-camera-picture-id847116840?b=1&k=6&m=847116840&s=612x612&h=qkU8RseN1O-9UasfmJq8FdHcpULSLeEfHEfh9CwlfWc="
+                },
+                {
+                    "is_watermarked": true,
+                    "name": "preview",
+                    "uri": "https://media.gettyimages.com/photos/portrait-of-a-happy-old-french-bulldog-looking-at-camera-picture-id847116840?b=1&k=6&m=847116840&s=170667a&h=LjuG2GiMGhhosGCwrm9GO2SHKsJ7CNaeJfFBLis_bck="
+                },
+                {
+                    "is_watermarked": false,
+                    "name": "thumb",
+                    "uri": "https://media.gettyimages.com/photos/portrait-of-a-happy-old-french-bulldog-looking-at-camera-picture-id847116840?b=1&k=6&m=847116840&s=170x170&h=9z4MzDRQMoTRn3R3yIR9-RnVTetplxDVbeOYS1VahLk="
+                }
+            ],
+            "editorial_segments": [],
+            "event_ids": [],
+            "graphical_style": "photography",
+            "license_model": "royaltyfree",
+            "max_dimensions": {
+                "height": 4000,
+                "width": 6000
+            },
+            "orientation": "Horizontal",
+            "product_types": [],
+            "quality_rank": 3,
+            "referral_destinations": [
+                {
+                    "site_name": "gettyimages",
+                    "uri": "http://www.gettyimages.com/detail/photo/portrait-of-a-happy-old-french-bulldog-looking-at-royalty-free-image/847116840"
+                }
+            ],
+            "title": "portrait of a happy old french bulldog looking at camera . ."
+        }
+    ]
+}
+
+
+
+ */

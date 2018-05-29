@@ -24,6 +24,8 @@ import { ProductItemComponent } from './products/product-item/product-item.compo
 // pipes
 import { PipeNumber } from './_shared/pipe.number';
 import { SearchPipe } from './_shared/pipe.search';
+import { FilterBy } from './_shared/pipe.filterBy';
+
 
 // directives
 import { PageTitleDirective } from './_shared/directives/directives';
@@ -46,6 +48,7 @@ import {ApiManagerService} from './_shared/services/api-manager/api-manager.serv
     indexChangeDirective,
     SearchInputDirective,
     SearchPipe,
+    FilterBy,
     PageTitleDirective,
     PipeNumber,
     ProductComponent,
