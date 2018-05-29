@@ -43,11 +43,15 @@ export class GlobalReuse  {
         return rtn;
     }
 
+    /// find api name via url, good if reloading the browser
    findApiNameFromUrl(api_support){
     var url = window.location.href;
-    return api_support.filter((item,inx)=>{
+    var api= api_support.filter((item,inx)=>{
+        
         return url.indexOf(item)!==-1;
     })[0] || false;
+
+    return api;
   }
 
 }

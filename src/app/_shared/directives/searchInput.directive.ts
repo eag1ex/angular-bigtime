@@ -14,6 +14,7 @@ export class SearchInputDirective implements OnInit {
   public searchAPIcheck: boolean = false;
   constructor(private elm: ElementRef,private onSearchAction: EventEmitService) {
 
+    // we could bind it to on change eventi know, but this give more flexibility to what we want to communicate  and what type of data :)
     this.searchAction = onSearchAction.subscribe(msg => {
       if (msg.eventType == 'BackToDirective') {
         if(msg.reset){

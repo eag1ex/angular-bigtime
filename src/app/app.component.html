@@ -25,6 +25,6 @@
     </div>
 </nav>
 
-<div class='container' >
+<div class='container' [ngClass]="{'flickrBG':selected_apiName=='flickr', 'gettyimagesBG':selected_apiName=='gettyimages','punkapiBG':selected_apiName=='punkapi' }">
     <router-outlet></router-outlet>
 </div>

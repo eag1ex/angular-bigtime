@@ -19,6 +19,7 @@ export interface IMyGlobals{
           searchSubscription: any,
          'punkapi.data': any,
          'flickr.data':any,
+         'gettyimages.data':any,
           APP_LOADED:any,
           current_page:string,
           selected_apiName:string

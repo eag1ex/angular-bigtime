@@ -163,7 +163,8 @@ export class DataService {
     //this.lStorage.removeAll()
 
     var checkLocalstorage = this.checkLocalstorage(apiName,params);
-    if (checkLocalstorage !== false) {
+    if (checkLocalstorage !== false && checkLocalstorage!==null) {
+     // console.log('why is localstorrage not empty',checkLocalstorage)
       this.logger.log(`getting data for ${apiName} from localstorage!!`)
       return checkLocalstorage;
     }

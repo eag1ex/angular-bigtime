@@ -24,13 +24,14 @@ import { ProductItemComponent } from './products/product-item/product-item.compo
 // pipes
 import { PipeNumber } from './_shared/pipe.number';
 import { SearchPipe } from './_shared/pipe.search';
-import { FilterBy } from './_shared/pipe.filterBy';
+import { FilterImage } from './_shared/pipe.filterBy';
 
 
 // directives
 import { PageTitleDirective } from './_shared/directives/directives';
 import { indexChangeDirective } from './_shared/directives/directives';
 import { SearchInputDirective } from './_shared/directives/searchInput.directive';
+import { ImageDirective } from './_shared/directives/image.directive';
 
 // services
 import { MyGlobals } from './_shared/myglobals';
@@ -47,8 +48,9 @@ import {ApiManagerService} from './_shared/services/api-manager/api-manager.serv
     SharedComponent,
     indexChangeDirective,
     SearchInputDirective,
+    ImageDirective,
     SearchPipe,
-    FilterBy,
+    FilterImage,
     PageTitleDirective,
     PipeNumber,
     ProductComponent,

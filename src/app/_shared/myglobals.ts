@@ -30,14 +30,15 @@ export class MyGlobals implements IMyGlobals{
         /// stored data before LocalStorage
         'punkapi.data': null,
         'flickr.data':null,
+        'gettyimages.data':null,
 
         APP_LOADED:false,
         current_page:'',
-        selected_apiName:''
+        selected_apiName:'punkapi'// preset dynamicly changed
     };
 
     api_support:Array<any> =  new ApiList().list().reduce((outp,val,inx)=>{       
-            if(val.name) outp.push(val.name);
+            if(val.name && val.enabled) outp.push(val.name);
             return outp;
     },[]); 
 
@@ -85,6 +86,9 @@ export class MyGlobals implements IMyGlobals{
 
     }
 
+  descLimit(str,limit=150) {
+    return (str) ? str.substring(0, limit) : '';
+  }
 
     /// to moveto new global exportable
     nicename(str):string{

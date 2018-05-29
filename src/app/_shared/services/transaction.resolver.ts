@@ -68,8 +68,12 @@ export class TransactionResolver implements Resolve<any> {
    */
   singleItem(data, _match): Array<any> {
     var output = data.reduce((output, item, inx) => {
-      var itm = this._globals.stripSpecialChar(item.name||item.title);
+      var limit_desc = this._globals.descLimit(item.name||item.title||item.artist|| item.ownername,60);  // has to be the same setting
+    
+      var itm = this._globals.stripSpecialChar(limit_desc);
       if (itm.indexOf(_match) !== -1) {
+          console.log('what is limit_desc',limit_desc)
+       console.log('what is _match',_match)
         output.push(item);
       }
       return output;

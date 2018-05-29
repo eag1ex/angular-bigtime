@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../_shared/services/data.service';
 import { LoggerService } from '../_shared/services/logger.service';
-import { BeersModel,FlickrPhotoModel } from '../_shared/services/models';
+import { BeersModel,FlickrPhotoModel,GettyImages } from '../_shared/services/models';
 import { MyGlobals } from '../_shared/myglobals';
 import { EventEmitService } from '../_shared/services/eventEmmiter.service';
 import * as _ from "lodash";
@@ -29,6 +29,8 @@ export class ProductComponent implements OnInit {
   state: string = 'large';
   public indexPerRow: number = 0;
   public punkapiData: BeersModel[];
+  public flickrData: FlickrPhotoModel[];
+  public gettyimagesData: GettyImages[];
   public DataLoaded = false;
   public routeName: any;
   public linkLoaded:any=false;
@@ -43,8 +45,8 @@ export class ProductComponent implements OnInit {
 
   // default page settings 
   public PAGE_DEFAULTS = {
-    apiName:'flickr', //punkapi
-    pageTitle: 'Beers.. Drink! Get drunk!',
+    apiName:'punkapi', //flickr
+    pageTitle: 'Beers.. Drink! Get drunk!',// 
     pageName:'products',
     per_page: 10,
     paged: 10,
@@ -61,6 +63,8 @@ export class ProductComponent implements OnInit {
     private searchEmmiter: EventEmitService
 
   ) {
+
+    this.PAGE_DEFAULTS.apiName = _globals.glob.selected_apiName;
 
     this.available_apis = _globals.api_support;
 
@@ -100,7 +104,7 @@ export class ProductComponent implements OnInit {
    */
   onSearchQBackToDirective(data) {
     data.eventType = 'BackToDirective';
-    this.searchEmmiter.next(data);
+    
   }
 
 
@@ -304,18 +308,29 @@ loadLink(owner){
       this.routeName = false;
       this.getMyHttpRequest(this.routeName, this.PAGE_DEFAULTS.apiName);
     })
+
+    this.updateTitle();
   }
 
+  updateTitle(){
+    this.PAGE_DEFAULTS.pageTitle =  this.PAGE_DEFAULTS.apiName +' API'  + " | "+  this.PAGE_DEFAULTS.pageName;
+  }
+
+
   ngOnInit() {
+      this.updateTitle()
       this.dofetch();
    
   }
 
   filterTag(ipName){
+
     if(!ipName) return false;
     this.PAGE_DEFAULTS.apiName =ipName;
     console.log('-- filterTag to fetch for ipName: ',ipName)
     this.dofetch(); 
+    this.updateTitle();
+    this.searchEmmiter.next({bgChange:true, apiName:ipName});
   }
 
   mCommas(str){
@@ -323,7 +338,8 @@ loadLink(owner){
   }
  
   niceName(str) {
-    var nice = this._globals.nicename(str)
+    var limit_desc = this._globals.descLimit(str,60);  
+    var nice = this._globals.nicename(limit_desc);
     return (str) ? nice : '';
   }
 
@@ -360,7 +376,7 @@ loadLink(owner){
      //  console.log('what is the fucking data',data)
         this.DataLoaded = true;
         this[`${apiName}Data`] = data;
-        //console.log('what is punkapiData',this[apiName+'Data']); 
+       // console.log(`what is ${apiName} data`,this[apiName+'Data']); 
 
         this._globals.glob[`${apiName}.data`] = data;
 

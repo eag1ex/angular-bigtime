@@ -2,7 +2,7 @@
 
   //https://api.punkapi.com/v2/beers/?beer_name=cool_beer&page=1&per_page=5
 var punkapi = {
-
+  'enabled':true, // to enable this api, when its working :)
   'name': 'punkapi',
   'api': 'https://api.punkapi.com/v2',
   'prefix': 'beers',
@@ -20,7 +20,7 @@ https://api.flickr.com/services/rest/?api_key=1754e3e5724bd7c66c732b835083c8df&m
  */
    
 var flickr = {
-
+  'enabled':true, // to enable this api, when its working :)
   'name': 'flickr',
   'apiURL': '',
   'api': 'https://api.flickr.com/services/rest',
@@ -37,7 +37,7 @@ var flickr = {
     'orientation': "square", // image ratio
     'per_page': 100,
     'page': 1
-    //media=photos&extras=url_s&format=json&nojsoncallback=1&orientation=square&per_page=100
+
   }
 }
 
@@ -48,7 +48,7 @@ https://api.gettyimages.com/v3/search/images?phrase=dogs&page=1&page_size=1&fiel
  */
 
 var gettyimages = {
-
+  'enabled':true, // to enable this api, when its working :)
   'name': 'gettyimages',
   'apiURL': '',
   'api': 'https://api.gettyimages.com/v3/search',
@@ -69,6 +69,7 @@ class Presets {
  
   pre(){
     return {
+        'enabled':false,
         'header_params':false,
         'prefix': false,
         'api_key': false,

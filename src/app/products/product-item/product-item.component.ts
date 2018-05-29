@@ -49,34 +49,67 @@ export class ProductItemComponent implements OnInit {
     var prod = this._route.snapshot.data['product'];
     if (prod.length > 0) {
       this.productData = prod[0];
-      
-      /// check and update data keys
-      if(!this.productData.image_url ){
-         this.productData.image_url = this.productData.url_m;
 
-      }
+       /// check and update data keys
+      this.productData = this.sortData(()=>{
+          this.productdataPairs = this.generateKeyArray(this.productData);
+      },this.productData);
 
-       if(!this.productData.tagline ){
-         this.productData.tagline = this.productData.tags;
-
-      }
-
-      if(!this.productData.description ){
-         this.productData.description = this.productData.title;
-
-      }
   
       // update title
-      this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.pageTitle + ' | ' + (this.productData.name || this.productData.title);
+      this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.pageTitle + ' | ' + this.productData.name;
       
       // generate pairs, quick fix
-      this.productdataPairs = this.generateKeyArray(this.productData);
+      
     
     } else {
       this.productdataPairs = null;
       this._router.navigate(['/products']);
     }
 
+  }
+
+  sortData(genarete_CB,productData){
+
+    // generate pairs initially before data sort, so we gate original output!  
+    genarete_CB();
+      console.log('what is productData',productData)
+      if(!productData.image_url ){
+         productData.image_url = productData.url_m || productData.url_s;
+
+      }
+
+       productData.name  = productData.name|| productData.title || productData.ownername;
+
+       if(!productData.tagline ){
+        productData.tagline =productData.tags;
+      }
+
+      if(!productData.description ){
+         productData.description = productData.title;
+      }
+
+      // return image image_url instead
+      if(productData.display_sizes ){
+
+        var image_url = productData.display_sizes.reduce((outp, item,inx)=>{
+              if(item.name=='comp'){
+                outp.push(item.uri);
+              }
+          return outp
+        },[])[0] || false;
+
+        if(image_url){
+          delete productData.display_sizes;
+
+          productData.image_url = image_url;
+        }         
+         //productData.description = productData.title;
+      }
+
+      //  display_sizes:Array<{name,uri}>;
+
+     return productData;   
   }
 
 

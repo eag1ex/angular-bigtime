@@ -6,7 +6,7 @@ export const fadeInAnimation = trigger('fadeInAnimation', [
 
     // route 'enter' transition
     transition(':enter', [
-
+ 
         // css styles at start of transition
         style({ opacity: 0 }),
 

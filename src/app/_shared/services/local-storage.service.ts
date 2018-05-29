@@ -9,7 +9,7 @@ import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/toPromise';
 
-import { BeersModel } from './models';
+import { BeersModel,Models } from './models';
 import { LoggerService } from './logger.service';
 
 
@@ -35,7 +35,7 @@ export class LocalStorageService {
 
   constructor(private logger: LoggerService) {
 
-     // this.removeAll() 
+     this.removeAll(); 
 
    }
  
@@ -43,7 +43,7 @@ export class LocalStorageService {
     return window.localStorage;
   }
 
-  setItem(id: string, data: BeersModel[]) {
+  setItem(id: string, data: Models[]) {
     var data_set = false;
     if (id && data.length > 0) {
       this.localStorage.setItem(id, JSON.stringify(data));
@@ -66,7 +66,7 @@ export class LocalStorageService {
     return Observable.of(item)
       .map((response) => {
          this.logger.log(`received localstorage data for ${id}`)
-        return response as BeersModel[]
+        return response as Models[]
       })
       .do((d) => {
         return d;

@@ -3,10 +3,10 @@
 declare var jquery:any;
 declare var $ :any;
 
-import { Component, Input, Output, OnInit, EventEmitter  } from '@angular/core';
+import { Component, Input, Output, OnInit, EventEmitter,Renderer,ElementRef  } from '@angular/core';
 import { MyGlobals } from './_shared/myglobals';
+import { GlobalReuse } from './_shared/global.reuse';
 import { EventEmitService } from './_shared/services/eventEmmiter.service';
-
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoggerService } from './_shared/services/logger.service';
@@ -27,13 +27,32 @@ export class AppComponent implements OnInit{
     a: '[ BigTime ]',
     b: ''
   };
+  private removeOldClass:string;
   public currentPageName:string;
   public APP_LOADED = false;
   private subscription;
   public displaySearchInput=false;
-
+  public selected_apiName;
+  public onAnyEventToComponent;
   constructor(private _globals: MyGlobals, private emmiter: EventEmitService, 
-    private _router: Router, private logger: LoggerService) {
+    private _router: Router, private logger: LoggerService,
+    private renderer: Renderer, private element: ElementRef
+  ) {
+
+
+    this.onAnyEventToComponent = emmiter.subscribe(msg => {
+      if (msg.bgChange) {
+        this.setBackgroundClass(msg.apiName);
+
+      } 
+     
+
+    }, (err) => {
+         this.logger.log(`what is the err ${err}`,true); 
+    }, (complete) => {
+     // console.log('what is the complete', complete)
+    });  
+
 
    
     _router.events.subscribe((val: any) => {
@@ -65,6 +84,7 @@ export class AppComponent implements OnInit{
 
       if (val.constructor.name === 'NavigationEnd') {
         this.currentPageName =_globals.glob.current_page;
+        this.setBackgroundClass(_globals.glob.selected_apiName); // double check
       }
 
        
@@ -87,9 +107,24 @@ export class AppComponent implements OnInit{
   }
 
 
+  setBackgroundClass(className: any = false) {
+    //console.log('what is his.element.nativeElement',this.element.nativeElement)
+    if(this.removeOldClass){
+      this.element.nativeElement.classList.remove(this.removeOldClass);
+    }
+   
+    var bgName = new GlobalReuse().findApiNameFromUrl(this._globals.api_support);
+    bgName = (className || bgName || this._globals.glob.selected_apiName) + 'BG';
+
+    this.removeOldClass = bgName;  
+    this.element.nativeElement.classList.add( bgName );
+   
+  }
+
   /**
    * manage animation of angular app on initial load!
    */
+
  angularOnLoaded(){
 
     this.APP_LOADED=true;
@@ -119,6 +154,7 @@ export class AppComponent implements OnInit{
   }
   
   ngOnInit() {
+     this.setBackgroundClass();
     this.angularOnLoaded();
    
   }

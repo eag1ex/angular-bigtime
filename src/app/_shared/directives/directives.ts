@@ -1,4 +1,4 @@
-import { Component, Input, Output, HostBinding, OnInit, ElementRef, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy,Component, Input, Output, HostBinding, OnInit, ElementRef, EventEmitter } from '@angular/core';
 
 
 /// not currently used
@@ -37,29 +37,31 @@ export class indexChangeDirective implements OnInit {
 @Component({
   selector: 'page-title',
   template: PageTitleTemplate(),
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageTitleDirective implements OnInit {
-  titleName: string;
+  
   titleDisplay:number;
   constructor(private elm: ElementRef) {
 
   }
+
+  @Input() titleName: string;
 
   @Input()
   title: string;
 
   @Input()
   display: number;
+ 
 
+ ngOnInit() { 
 
- ngOnInit() {
-  this.titleName = this.title;
   this.titleDisplay = this.display;
-
   }
 }
 
 function PageTitleTemplate(){
-  return `<h1 class="display-{{titleDisplay}}">{{titleName}}</h1>`;
+  return `<h1 class="display-{{titleDisplay}}">{{title}}</h1>`;
 }
 

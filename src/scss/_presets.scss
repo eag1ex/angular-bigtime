@@ -1,8 +1,8 @@
 /// only add global presets here
 
 body{
-    background:  rgba(  0,167, 82,.1);
-    background-color:rgba(  0,167, 82,.1);
+    background:  $body-bg;//rgba(  0,167, 82,.1);
+  background-color:$body-bg;//rgba(  0,167, 82,.1);
 }
 
 .tc{
@@ -14,9 +14,21 @@ p.small{
    // font-size: smaller;
 }
 
+.bg-trans{
+   background-color:rgba(255,255,255,0.4); 
+}
+
 .clf, .cf{
     @include clearfix;
     @include  pie-clearfix;
+}
+
+/// general animations on hover
+a,button, .btn{
+    &:hover{
+         -webkit-transition: 0.2s ease-in-out!important;
+         transition: 0.2s ease-in-out!important;
+    }
 }
 
 

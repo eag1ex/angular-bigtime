@@ -10,8 +10,8 @@ import {ApiList} from '../api-list';
 
 var importDynamicRoutes = (() => {
   return new ApiList().list().reduce((outp, val, inx) => {
-    if (val.name) {
-      outp.push({
+    if (val.name &&  val.enabled) {
+      outp.push({ 
                 path: `product/${val.name}/:id`,
                 //   canActivate: [ TransactionResolver ],
                 component: ProductItemComponent,
@@ -21,9 +21,10 @@ var importDynamicRoutes = (() => {
               })
     }
     return outp;
-  }, []);
+  }, []); 
 })();
 importDynamicRoutes.push({ path: 'products', component: ProductComponent });
+importDynamicRoutes.push({ path: 'products/paged:id', component: ProductComponent });
 importDynamicRoutes.push({ path: 'products/paged', redirectTo: 'products', pathMatch: 'full' })
 importDynamicRoutes.push({ path: 'product/**', redirectTo: 'products', pathMatch: 'full' })
 importDynamicRoutes.push({ path: '**', redirectTo: 'products', pathMatch: 'full'})
