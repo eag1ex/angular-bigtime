@@ -103,7 +103,7 @@
  
   </div><!--product-row -->
 
-
+  
   <div class="product-row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="gettyimages"'>
    
     <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-1"
@@ -139,6 +139,36 @@
 
 
   </div><!--product-row -->
+
+    
+  <div class="product-row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="omdbapi"'>
+   
+    <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-1"
+      *ngFor="let item of omdbapiData | search:'Title,imdbID' :searchModel; let i = index;">
+
+      <div class="card bg-trans my-2  card w-100"> 
+
+      <image  class="p-2" [src]='item.Poster' [alt]="item.Title" [title]='item.Title'></image> 
+
+        <h6  class="card-header p-2 text-center"><span class="text-info cf">title:</span> {{item.Title}}</h6>
+         <div class="card-body">
+
+            <p class="card-text"><span class="text-info cf">Type:</span> {{item.Type}}</p>
+            <p class="card-text"><span class="text-info cf">Year:</span> {{item.Year}}</p>
+            <p class="card-text"><span class="text-info cf">imdbID:</span> {{item.imdbID}}</p>
+ 
+        </div>
+         <div class="d-flex card-body px-1 justify-content-center pt-0">
+        <button type="button" class="btn btn-sm btn-dark card-link px-4" (click)="goto(niceName(item.Title));">View</button>
+      </div>
+      </div> 
+    </div>
+
+  </div><!--product-row -->
+
+
+
+
 
 
 

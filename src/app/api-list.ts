@@ -57,9 +57,37 @@ var gettyimages = {
   'Api-Key': '734uv72r6de98em86u5rkwe5',
   'query_params': {                 
     'phrase': "",// what to search
-    'fields': 'comp,id,title,collection_name,caption,detail_set,',// what to output
+    'fields': 'comp,id,title,collection_name,caption,detail_set',// what to output
     'page_size': 20,// per page results
     'page': 1
+  }
+}
+
+
+/**
+ available params at: https://www.omdbapi.com/?apikey=86d5e34b&s=guardians&type=movie&r=json&page=2&plot=full
+ i: A valid IMDb ID (e.g. tt1285016)
+ t: movie title
+ s: search
+ plot: full
+ type:movie, series, episode  < can choose only one per query
+ page: page number to return
+ per_page: NOT_AVAIALBLE ... hmm need to impement limits, but it returns 10 anyway, lets create limit anyway;
+ */
+
+var omdbapi = {
+  'enabled':true, // to enable this api, when its working :)
+  'name': 'omdbapi',
+  'apiURL': '',
+  'api': 'https://www.omdbapi.com',
+  'apikey': '86d5e34b',
+  'query_params': {
+    'r':'json',
+    'plot':'full',                 
+    'type': 'movie',
+    's': 'brure+lee', //what to search
+    'page': 1,
+    'i':'' //(e.g. tt1285016)
   }
 }
 
@@ -67,8 +95,9 @@ var gettyimages = {
 
 class Presets {
  
-  pre(){
-    return {
+  pre(unset:any=false){
+
+    var _pre =  {
         'enabled':false,
         'header_params':false,
         'prefix': false,
@@ -77,7 +106,10 @@ class Presets {
         'secret': false,
         'auth': false,
         'free': true,
-    }
+    } 
+    
+    if(unset) delete _pre[unset];
+    return _pre
   }
 }
 
@@ -87,11 +119,15 @@ constructor(){
 }
   /// in case the predefind api's are not available for current user, we need to validate output some how
   proposedList(){
-    return ['punkapi','flickr', 'gettyimages'];
+    return ['punkapi','flickr', 'gettyimages','omdbapi'];
   }
 
   list() {
-    return [Object.assign(this.pre(),punkapi),Object.assign(this.pre(),flickr), Object.assign(this.pre(),gettyimages)]}
+    return [Object.assign(this.pre(),punkapi),
+            Object.assign(this.pre(),flickr), 
+            Object.assign(this.pre(),gettyimages),
+            Object.assign(this.pre('api_key'/*unset*/),omdbapi)         
+          ]}
   ///...
 }
 

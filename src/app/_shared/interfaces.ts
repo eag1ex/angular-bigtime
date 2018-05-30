@@ -39,6 +39,7 @@ export interface IApiModel {
   apiURL:string;
   prefix:any;
   api_key:any; 
+  apikey:any;
   secret:any;
   token:any;
   auth:boolean;

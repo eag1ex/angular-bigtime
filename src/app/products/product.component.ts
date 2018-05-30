@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../_shared/services/data.service';
 import { LoggerService } from '../_shared/services/logger.service';
-import { BeersModel,FlickrPhotoModel,GettyImages } from '../_shared/services/models';
+import { BeersModel,FlickrPhotoModel,GettyImages,OmdbapiModel } from '../_shared/services/models';
 import { MyGlobals } from '../_shared/myglobals';
 import { EventEmitService } from '../_shared/services/eventEmmiter.service';
 import * as _ from "lodash";
@@ -28,9 +28,11 @@ import { IRouteName } from '../_shared/interfaces';
 export class ProductComponent implements OnInit {
   state: string = 'large';
   public indexPerRow: number = 0;
+
   public punkapiData: BeersModel[];
   public flickrData: FlickrPhotoModel[];
   public gettyimagesData: GettyImages[];
+  public omdbapiData: OmdbapiModel[];
   public DataLoaded = false;
   public routeName: any;
   public lastSearchBefore:string='';
@@ -68,12 +70,9 @@ export class ProductComponent implements OnInit {
 
 
     this.PAGE_DEFAULTS.apiName = _globals.glob.selected_apiName;
-
     this.available_apis = _globals.api_support;
-
     // set pagename globals
     _globals.glob.current_page = this.PAGE_DEFAULTS.pageName;
-
     // preset default api name for current component// same for :paged as well
     _globals.glob.selected_apiName = this.PAGE_DEFAULTS.apiName;
   
@@ -98,6 +97,8 @@ export class ProductComponent implements OnInit {
     });
 
     _globals.glob.searchSubscription= this.searchSubscription;
+
+     this.dataService._globs=_globals;
 
   }
 
@@ -335,6 +336,8 @@ loadLink(owner){
   ngOnInit() {
       this.updateTitle()
       this.dofetch();
+
+
   
   }  
    
@@ -406,7 +409,7 @@ loadLink(owner){
       return false
     }
 
-    this.dataService.getHttpRequest(routeName,apiName,this._globals).subscribe( 
+    this.dataService.getHttpRequest(routeName,apiName).subscribe( 
       data => {
      //  console.log('what is the fucking data',data)
         this.DataLoaded = true;
@@ -447,7 +450,7 @@ loadLink(owner){
 
   getFlickerLink(routeName: IRouteName, apiName: string) {
     this.linkLoaded = 0;
-    this.dataService.getFlickerLink(routeName, apiName, this._globals).subscribe(
+    this.dataService.getFlickerLink(routeName, apiName).subscribe(
       data => {
         this.linkLoaded = 1;
 

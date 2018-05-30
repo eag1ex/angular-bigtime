@@ -11,7 +11,7 @@ import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/toPromise';
 
 import * as _ from "lodash";
-import { BeersModel,FlickrPhotoModel,Models,GettyImages } from './models';
+import { BeersModel,FlickrPhotoModel,Models,GettyImages,OmdbapiModel } from './models';
 import { LoggerService } from './logger.service';
 import { LocalStorageService } from './local-storage.service';
 import {ApiManagerService} from './api-manager/api-manager.service';
@@ -27,14 +27,20 @@ import { IRouteName, IMyGlobals} from '../interfaces';
 export class DataService {
  /// private apiURL = 'https://api.punkapi.com/v2/beers'; now using ApiManagerService
   public punkapiData: Array<any>;
+  public _globs:any;
   constructor(
     private http: Http,
     private logger: LoggerService,
     private lStorage: LocalStorageService,
     private apiManager:ApiManagerService
-  ) { }
+  ) { 
 
-  
+    
+  }
+
+  get _globals(){
+    return this._globs;
+  }
 
   ///check if we have avaialble localstorage first
   /**
@@ -97,6 +103,12 @@ export class DataService {
 
   errorHandler(errorData:any, apiName:string):object{
 
+    if (apiName == 'omdbapi') {
+      if(errorData.Error!==undefined){
+          return errorData;
+      }
+    }
+
     if (apiName == 'gettyimages') {
       if (errorData.ErrorCode !== undefined) {
         return errorData;
@@ -157,7 +169,7 @@ export class DataService {
   }
 
 
-  getHttpRequest(params: IRouteName, apiName: string = 'punkapi',globs:IMyGlobals): Observable<any[]> {
+  getHttpRequest(params: IRouteName, apiName: string = 'punkapi'): Observable<any[]> {
 
     // remove all storage / for testing
     //this.lStorage.removeAll()
@@ -172,7 +184,7 @@ export class DataService {
     // delete delete 
      delete  params.searchAPI;
      
-    var _paramsReturn = this.apiManager.buildRespCall(apiName, params,globs);
+    var _paramsReturn = this.apiManager.buildRespCall(apiName, params,this._globals as IMyGlobals);
     
     if (_paramsReturn.error) {
       var nice_print = ( _paramsReturn.error ) ? JSON.stringify(_paramsReturn):_paramsReturn;
@@ -180,6 +192,18 @@ export class DataService {
       return Observable.throw(`api error for ${apiName}: ${nice_print}`);
     }
 
+
+    if ( apiName == 'omdbapi') {
+      return this.httpRequest(params, _paramsReturn.url, apiName, 
+        // MANAGE DATA OUTPUT
+        (DATA:OmdbapiModel[])=>{
+          var d= (DATA as any).Search;
+          /// conditional check
+          return this.checkImages_omdbapi(d);
+        }) as Observable<OmdbapiModel[]>;
+    }
+
+    
     if ( apiName == 'gettyimages') {
       (params as any).header_params = this.apiManager.last_gen_api.headers;
       return this.httpRequest(params, _paramsReturn.url, apiName, 
@@ -203,7 +227,7 @@ export class DataService {
         // MANAGE DATA OUTPUT
         (DATA:FlickrPhotoModel[])=>{
           return (DATA as any).photos.photo;
-
+            
       }) as Observable<FlickrPhotoModel[]>;
     } 
    
@@ -226,10 +250,11 @@ export class DataService {
         if (checker) {
           throw checker as any;
         }
-        
-        //console.log('what is the response.json()',response.json())
 
-        return dataCallBack(response.json()) as any;
+        var d = dataCallBack(response.json()); 
+        var checked_data = this.returnMaxAllowed(d);
+        console.log('what is the data',checked_data)
+        return checked_data as any;
       })
       .do((dat) => {      
         //var r_data = // manage data output
@@ -244,11 +269,25 @@ export class DataService {
 
   }
 
+  // in case of overloads, because we are also storing to localStorage, so no overloading the browser:) 
+  returnMaxAllowed(dataModel:Models[],limit:number=10/*per page*/):Models[]{
+
+    var dataLen = dataModel.length;
+    var newData = dataModel;
+
+    if(dataLen>limit){
+        var reduceBy = dataLen - limit;
+        newData = _.dropRight(dataModel,reduceBy);
+        console.log('-- modelData reduced by: ',reduceBy);
+    }
+    
+    return newData;
+  }
 
 
-  getFlickerLink(params: IRouteName, apiName: string = 'punkapi', globs: IMyGlobals): Observable<any[]> {
+  getFlickerLink(params: IRouteName, apiName: string = 'punkapi'): Observable<any[]> {
 
-    var _paramsReturn = this.apiManager.buildRespCall(apiName, params, globs);
+    var _paramsReturn = this.apiManager.buildRespCall(apiName, params, this._globals as IMyGlobals);
 
     if (_paramsReturn.error) {
       var nice_print = (_paramsReturn.error) ? JSON.stringify(_paramsReturn) : _paramsReturn;
@@ -280,7 +319,17 @@ export class DataService {
 
   }
 
-  generateHeaderOptions(header_val: any):RequestOptions {
+  // only output with images
+  private checkImages_omdbapi(data: OmdbapiModel[]): OmdbapiModel[] {
+    return data.reduce((outp, val, inx) => {
+      if (val.Poster.indexOf('N/A') == -1) {
+        outp.push(val);
+      }
+      return outp;
+    }, [])
+  }
+
+  private generateHeaderOptions(header_val: any):RequestOptions {
     if (!header_val.header_params) return false as any;
 
     var hData = header_val.header_params

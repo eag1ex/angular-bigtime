@@ -25,6 +25,7 @@ export class MyGlobals implements IMyGlobals{
      * collecting data
      */
     glob = {
+        items_per_page:10,
         searchSubscription: null,
 
         /// stored data before LocalStorage

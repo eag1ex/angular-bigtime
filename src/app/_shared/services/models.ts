@@ -27,6 +27,7 @@ export class FlickrPhotoModel {
   //  }
 }
 
+
  
 export class GettyImages {
 
@@ -41,29 +42,57 @@ export class GettyImages {
 }
 
 
-
-class pair1 extends BeersModel{
-  constructor(){
-    super();
-  }
+export class OmdbapiModel {
+  //"Search": [
+  //      {
+            "Title": string;
+            "Year": string;
+            "imdbID": string;
+            "Type": string;
+            "Poster": string; // image or "N/A" undefind
+   //     }
+  //  ]
 }
 
-class pair2 extends pair1{
-  constructor(){
-    super();
-  }
-}
 
-class pair3 extends pair2{
-  constructor(){
-    super();
-  }
-}
 
-export class Models extends pair3{
-  constructor(){
-    super();
-  }
+/**
+ * ALL AS ONE;
+ */
+export class Models {
+
+  //////// OmdbapiModel
+  "Title": string;
+  "Year": string;
+  "imdbID": string;
+  "Type": string;
+  "Poster": string; 
+  // GettyImages
+  id: string;
+  title: string;
+  artist: string;
+  caption: string;
+  collection_name: string;
+  date_created: string;
+  display_sizes: Array<{ name, uri }>;
+
+  //////// FlickrPhotoModel
+  // id:string;
+  // title:string;
+  ownername: string;
+  tags: string;
+  url_s: string;
+  url_m: string;
+
+
+  /////// BeersMode
+  //id: number;
+  name: string;
+  tagline: string;
+  first_brewed: string;
+  description: string;
+  image_url: string;
+
 }
 
 
@@ -302,6 +331,21 @@ export class Models extends pair3{
     ]
 }
 
-
-
  */
+
+ /////////////////////////////////////////////////////////////////////////////////
+ /////////////////////////////////////////////////////////////////////////////////
+
+ /**
+ omdbapi, single output
+  {
+    "Search": [
+        {
+            "Title": "Guardians of the Gates: The Surfboats",
+            "Year": "2012",
+            "imdbID": "tt2736806",
+            "Type": "movie",
+            "Poster": "N/A"
+        }
+    ]
+  */
