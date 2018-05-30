@@ -94,6 +94,7 @@ export class ApiManagerService extends GlobalReuse {
         (this.last_gen_api as any).headers={
           'Api-Key':api['Api-Key']
         }
+        delete api['Api-Key'];
     }
 
 
@@ -114,6 +115,10 @@ export class ApiManagerService extends GlobalReuse {
     if (api.name == 'gettyimages') {
 
       api.apiURL = api.apiURL + '?';
+      // unsetoriginal vals
+      delete (api.query_params as any).phrase;
+      delete (api.query_params as any).page;  
+      delete (api.query_params as any).page_size;  
 
       for (var key in _obj) {
         if (_obj.hasOwnProperty(key)) {
@@ -148,7 +153,6 @@ export class ApiManagerService extends GlobalReuse {
             continue;
           }
 
-
         }
       }
 
@@ -156,14 +160,16 @@ export class ApiManagerService extends GlobalReuse {
 
 
     if (api.name == 'flickr') {
-      console.log('what is _obj for flicker',_obj)
+    //  console.log('what is _obj for flicker',_obj)
 
        api.apiURL = api.apiURL+'&';
 
        /// reset other query for this search
       // unset api.query_params.text
       delete (api.query_params as any).text;
-      
+      delete (api.query_params as any).page;  
+      delete (api.query_params as any).per_page;  
+
       for (var key in _obj) {
         if (_obj.hasOwnProperty(key)) {
 
@@ -213,14 +219,16 @@ export class ApiManagerService extends GlobalReuse {
 
     if (api.name == 'punkapi') {
       api.apiURL = api.apiURL+'?';
+
       /// update query_params for output
       // reset
       delete (api.query_params as any).beer_name;
+      delete (api.query_params as any).page;  
+      delete (api.query_params as any).per_page;
 
       for (var key in _obj) {
         if (_obj.hasOwnProperty(key)) {
 
-  
 
           if (key == 'paged') {
             (api.query_params as any).page = _obj[key];

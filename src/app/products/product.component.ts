@@ -33,12 +33,14 @@ export class ProductComponent implements OnInit {
   public gettyimagesData: GettyImages[];
   public DataLoaded = false;
   public routeName: any;
+  public lastSearchBefore:string='';
   public linkLoaded:any=false;
   public exec_search = false;
   private searchSubscription: any;
   private searchModel: string;
   private ErrorData:any = false;
   public available_apis:Array<any>;
+  public lastSearch:any=false;
   private searchtext = {
     inx: 0
   }
@@ -63,6 +65,7 @@ export class ProductComponent implements OnInit {
     private searchEmmiter: EventEmitService
 
   ) {
+
 
     this.PAGE_DEFAULTS.apiName = _globals.glob.selected_apiName;
 
@@ -104,7 +107,7 @@ export class ProductComponent implements OnInit {
    */
   onSearchQBackToDirective(data) {
     data.eventType = 'BackToDirective';
-    
+    this.searchEmmiter.next(data);
   }
 
 
@@ -142,9 +145,15 @@ export class ProductComponent implements OnInit {
       //  }
        
         var search_val = search_v as  any;
- 
+        if(search_val){
+          // to use when hitting this.gotoPaged!
+          this.lastSearchBefore = val;
+        } 
+
+
         if (search_val && searchAPI) {
           search_val.originalName = val;
+          search_val.searchAPI = searchAPI;
           this.getMyHttpRequest(search_val,this.PAGE_DEFAULTS.apiName);
           this.logger.log(`searching api results with: ${search_val.search_by_name}`)
 
@@ -162,10 +171,11 @@ export class ProductComponent implements OnInit {
     if (type == 'focusout' && val.length > 2) {
 
       setTimeout(() => {
-        exec();
+        exec();   
+
         this.exec_search = false;
 
-      }, 2000);
+      }, 700);
 
       // slow down requests to 2 seconds
 
@@ -175,8 +185,8 @@ export class ProductComponent implements OnInit {
       setTimeout(() => {
         exec();
         this.exec_search = false;
-      }, 500)
-
+      }, 300)
+ 
     }
 
   }
@@ -258,7 +268,7 @@ loadLink(owner){
   fetchEvent(): Promise<object> {
     var paged: any = this._route.snapshot.paramMap.get('paged');
     /// update curent paged for accuricy
-    
+    console.log('whatis the current page??',paged)
     this.PAGE_DEFAULTS.currentPaged = parseInt(paged) || this.PAGE_DEFAULTS.currentPaged;
 
     paged = (paged) ? { paged } : false;
@@ -282,8 +292,12 @@ loadLink(owner){
     if (nr) {
 
       this.routeName = { paged: parseInt(nr) };
+      if(this.lastSearch){
+        //add last search val to pass to next page
+         this.routeName.search_by_name= this.niceName(this.lastSearch.toLowerCase());
+      }
       this.PAGE_DEFAULTS.currentPaged = nr;
-
+      this.searchModel ='';
       this.getMyHttpRequest(this.routeName,this.PAGE_DEFAULTS.apiName);
     } else {
       this.getMyHttpRequest(false as any,this.PAGE_DEFAULTS.apiName);
@@ -297,6 +311,7 @@ loadLink(owner){
         return Promise.reject('no route found!');
       }
       if (whichOrder.paged) {
+       // console.log('whichOrder.paged??',whichOrder.paged)
         this.PAGE_DEFAULTS.currentPaged = parseInt(whichOrder.paged);
       }
 
@@ -316,20 +331,22 @@ loadLink(owner){
     this.PAGE_DEFAULTS.pageTitle =  this.PAGE_DEFAULTS.apiName +' API'  + " | "+  this.PAGE_DEFAULTS.pageName;
   }
 
-
+   
   ngOnInit() {
       this.updateTitle()
       this.dofetch();
+  
+  }  
    
-  }
-
   filterTag(ipName){
 
     if(!ipName) return false;
     this.PAGE_DEFAULTS.apiName =ipName;
     console.log('-- filterTag to fetch for ipName: ',ipName)
+    this.lastSearchBefore='';
     this.dofetch(); 
     this.updateTitle();
+    this.searchModel ='';
     this.searchEmmiter.next({bgChange:true, apiName:ipName});
   }
 
@@ -357,10 +374,28 @@ loadLink(owner){
   }
 
 
-  getMyHttpRequest(routeName:IRouteName, apiName:string) {
+/**
+ * 
+ * this.lastSearchBefore; vs this.lastSearch
+ * 
+ * lastSearch: updates per each call to getMyHttpRequest
+ * lastSearchBefore: remembers the search toke place before last :) 
+ * 
+ * @param routeName 
+ * @param apiName 
+ * @param cbOnDone  // no used
+ */
 
+  getMyHttpRequest(routeName:IRouteName, apiName:string, cbOnDone:any=false) {
+
+    if(routeName.searchAPI){
+        this.onSearchQBackToDirective({loading:true}) // tells the search directive to display loading icon, cool!!
+    
+    }
+  
     this.ErrorData = false;
     this.DataLoaded = false;
+    this.lastSearch=false;
     console.log('Getting new data ...');
 
     routeName.per_page = this.PAGE_DEFAULTS.per_page as any;
@@ -379,15 +414,22 @@ loadLink(owner){
        // console.log(`what is ${apiName} data`,this[apiName+'Data']); 
 
         this._globals.glob[`${apiName}.data`] = data;
-
+         this.searchModel ='';
+        this.lastSearch = routeName.originalName || this.lastSearchBefore;
         this.onSearchQBackToDirective({reset:true}) 
+
+        if(typeof cbOnDone=='function'){
+          cbOnDone();
+        } 
+        
       },
       (errorMsg: any) => {
         this.DataLoaded = null;
         this._globals.glob[`${apiName}.data`] = this.DataLoaded;
 
         if(typeof errorMsg!=='string'){
-          (errorMsg as any).badSearch = routeName.originalName
+          (errorMsg as any).badSearch = routeName.originalName;
+          this.lastSearch = routeName.originalName || this.lastSearchBefore;
         }
         
         this.ErrorData =errorMsg;
@@ -395,6 +437,10 @@ loadLink(owner){
         
         this.searchModel =''; // reset
         this.onSearchQBackToDirective({reset:true}) 
+
+        if(typeof cbOnDone=='function'){
+          cbOnDone();
+        }
       }
     );
   }

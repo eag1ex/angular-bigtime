@@ -7,7 +7,6 @@ import { ProductItemComponent } from './product-item/product-item.component';
 import { TransactionResolver } from '../_shared/services/transaction.resolver';
 import {ApiList} from '../api-list';
 
-
 var importDynamicRoutes = (() => {
   return new ApiList().list().reduce((outp, val, inx) => {
     if (val.name &&  val.enabled) {
@@ -23,17 +22,22 @@ var importDynamicRoutes = (() => {
     return outp;
   }, []); 
 })();
-importDynamicRoutes.push({ path: 'products', component: ProductComponent });
-importDynamicRoutes.push({ path: 'products/paged:id', component: ProductComponent });
-importDynamicRoutes.push({ path: 'products/paged', redirectTo: 'products', pathMatch: 'full' })
-importDynamicRoutes.push({ path: 'product/**', redirectTo: 'products', pathMatch: 'full' })
-importDynamicRoutes.push({ path: '**', redirectTo: 'products', pathMatch: 'full'})
 
+var _routesObj = [
+  { path: 'products', component: ProductComponent },
+  { path: 'products/paged/:paged', component: ProductComponent },
+  { path: 'products/paged', redirectTo: 'products', pathMatch: 'full' },
+  { path: 'product/**', redirectTo: 'products', pathMatch: 'full' },
+  { path: '**', redirectTo: 'products', pathMatch: 'full'}
+]
+ 
+var _routes =importDynamicRoutes.concat(_routesObj)
+console.log('what are the _routes',_routes)
 @NgModule({
   //schemas: [NO_ERRORS_SCHEMA],
   imports: [
     CommonModule, 
-    RouterModule.forChild(importDynamicRoutes),
+    RouterModule.forChild(_routes),
   ],
   // at app.module
   declarations: [

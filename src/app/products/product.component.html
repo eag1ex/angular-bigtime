@@ -21,15 +21,24 @@
         </div>
       </div>
     </div>   
-  </div> 
+  </div>  
               
 
-  <div *ngIf='DataLoaded===true' class="product-row justify-content-md-center mt-4 mb-4 anim-f">
+  <div *ngIf='DataLoaded===true' class="product-row justify-content-md-center mt-4 mb-2 anim-f">
     <div class="col-auto available_apis"  >                      
       <button  (click)="clicked=i; filterTag(api);" [ngClass]='{"btn-info active": i==clicked || PAGE_DEFAULTS.apiName===api, "btn-outline-info":i!=clicked }' *ngFor="let api of available_apis; let i=index;" type="button" class="m-1 btn-sm" >{{api}}</button>
     </div>
   </div>                                 
-  
+
+    <div *ngIf='DataLoaded===true && lastSearch' class="product-row justify-content-md-center mt-1 anim-f">
+      <div class="col-auto">
+         <div class='last_search'><small class="text-light bg-info px-2 py-1 mt-2"><span class="text-info">Last search:&nbsp;</span>{{lastSearch}}</small></div>
+      </div>
+    </div>
+    
+
+
+
   <div class="product-row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="punkapi"'>
     <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-2"
       *ngFor="let item of punkapiData | search:'name' :searchModel; let i = index;">

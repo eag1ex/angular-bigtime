@@ -229,7 +229,7 @@ app-root {
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 /*
-<div class="sk-circle img-preloader">
+<div class="sk-circle">
   <div class="sk-circle1 sk-child"></div>
   <div class="sk-circle2 sk-child"></div>
   <div class="sk-circle3 sk-child"></div>
@@ -246,7 +246,7 @@ app-root {
 */
 
 //// image preloader
-.sk-circle.img-preloader {
+.sk-circle {
   margin: 5px auto;
   width: 40px;
   height: 40px;

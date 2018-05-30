@@ -1,4 +1,4 @@
-import { Component, Input, Output, HostBinding, OnInit, ElementRef, EventEmitter } from '@angular/core';
+import { Component, Input, Output, HostBinding, OnInit, ElementRef, EventEmitter, Renderer } from '@angular/core';
 import { EventEmitService } from '../services/eventEmmiter.service';
 
 //private emmiter: EventEmitService, 
@@ -8,27 +8,73 @@ import { EventEmitService } from '../services/eventEmmiter.service';
   template: template(),
 })
 export class SearchInputDirective implements OnInit {
-  searchtext: string;
   titleDisplay: number;
-  searchAction:any;
+  searchAction: any;
+  loading:boolean = false;
+  searchtext: string;
+  haltSearch: boolean; false;
   public searchAPIcheck: boolean = false;
-  constructor(private elm: ElementRef,private onSearchAction: EventEmitService) {
+  constructor(private elm: ElementRef, private onSearchAction: EventEmitService, private renderer: Renderer) {
+
+
+    renderer.listen(elm.nativeElement, 'focusout', (event) => {
+      
+      
+      if (this.searchAPIcheck && this.searchtext.length>2) {
+      //  console.log('doHaltAndWait searchElm focusout!');
+     //   this.doHaltAndWait();
+      }
+
+    });
+
+    renderer.listen(elm.nativeElement, 'keydown', (event) => {
+        if (event.keyCode == 13 && this.searchtext.length >2) {
+          if(this.searchAPIcheck){
+         //    console.log('doHaltAndWait searchElm keydown!');
+       //     this.doHaltAndWait();
+          }
+        }
+    });
+    //elm.nativeElement.focusout();// does not work
 
     // we could bind it to on change eventi know, but this give more flexibility to what we want to communicate  and what type of data :)
     this.searchAction = onSearchAction.subscribe(msg => {
       if (msg.eventType == 'BackToDirective') {
-        if(msg.reset){
-          this.searchtext='';
+        if (msg.reset) {
+          console.log('received BackToDirective!')
+          this.searchtext = '';
+          this.searchAPIcheck = false;
+          this.loading=false;
+        }
+        if(msg.loading){
+          this.loading=true;
+        }
+        if (msg.dofocusout) {
+
+          //renderer.invokeElementMethod(elm.nativeElement, 'focusout', []);
+          // elm.nativeElement.
         }
         //
-      //  console.log('did the directive receive onSearchAction?? ', msg)
+        //  console.log('did the directive receive onSearchAction?? ', msg)
       }
-       
-      }, (err) => {
-         console.error('--- onSearchAction error', err)
+
+    }, (err) => {
+      console.error('--- onSearchAction error', err)
     }, (complete) => {
-     // console.log('what is the complete', complete)
+      // console.log('what is the complete', complete)
     });
+
+  }
+
+
+  doHaltAndWait() {
+   // if (!this.haltSearch) this.haltSearch = true;
+
+    setTimeout(() => {
+      this.haltSearch = false;
+    }, 500)
+
+    console.log('--- wait, haltsearch!')
   }
 
   @Input()
@@ -46,13 +92,17 @@ export class SearchInputDirective implements OnInit {
    */
 
   searchItems(event, searchVal, type) {
-    if(this.searchtext==''){
-      searchVal='';
+   // if (this.haltSearch == true) return;
+    if (this.searchtext == '') {
+      searchVal = '';
     }
-    this.onSearch.emit({ event: event, 
-                        searchVal: searchVal, 
-                        type: type, searchAPIcheck: 
-                        this.searchAPIcheck });
+
+    this.onSearch.emit({
+      event: event,
+      searchVal: searchVal,
+      type: type, searchAPIcheck:
+      this.searchAPIcheck
+    });
   }
 
   ngOnInit() {
@@ -62,13 +112,29 @@ export class SearchInputDirective implements OnInit {
 function template() {
 
   return `
-
+ 
     <div class="input-group mb-1 search-wrap">
-        <div class="input-group-prepend">
-            <div class="input-group-text">
-            <input type="checkbox" [checked]="searchAPIcheck" (change)="searchAPIcheck = !searchAPIcheck" />  
+          <div class="sk-circle search-loading-icon"  *ngIf='loading===true'>
+              <div class="sk-circle1 sk-child"></div>
+              <div class="sk-circle2 sk-child"></div>
+              <div class="sk-circle3 sk-child"></div>
+              <div class="sk-circle4 sk-child"></div>
+              <div class="sk-circle5 sk-child"></div>
+              <div class="sk-circle6 sk-child"></div>
+              <div class="sk-circle7 sk-child"></div>
+              <div class="sk-circle8 sk-child"></div>
+              <div class="sk-circle9 sk-child"></div>
+              <div class="sk-circle10 sk-child"></div>
+              <div class="sk-circle11 sk-child"></div>
+              <div class="sk-circle12 sk-child"></div>
             </div>
-        </div>
+
+
+              <div class="input-group-prepend">
+                  <div class="input-group-text">
+                  <input type="checkbox" [checked]="searchAPIcheck" (change)="searchAPIcheck = !searchAPIcheck" />  
+                  </div>
+              </div>
 
 
              <input 

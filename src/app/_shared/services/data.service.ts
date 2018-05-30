@@ -163,12 +163,15 @@ export class DataService {
     //this.lStorage.removeAll()
 
     var checkLocalstorage = this.checkLocalstorage(apiName,params);
-    if (checkLocalstorage !== false && checkLocalstorage!==null) {
+    if (checkLocalstorage !== false && checkLocalstorage!==null && !params.searchAPI) {
      // console.log('why is localstorrage not empty',checkLocalstorage)
       this.logger.log(`getting data for ${apiName} from localstorage!!`)
       return checkLocalstorage;
     }
 
+    // delete delete 
+     delete  params.searchAPI;
+     
     var _paramsReturn = this.apiManager.buildRespCall(apiName, params,globs);
     
     if (_paramsReturn.error) {
@@ -215,7 +218,7 @@ export class DataService {
     if(!with_headers){ // if no headers available pass empty headers :)
       with_headers = new RequestOptions({}); 
     }
-    console.log('what are the with_headers: ',with_headers)
+    //console.log('what are the with_headers: ',with_headers)
     return this.http.get(paramsReturn,with_headers)
       .map((response: any) => {
 
@@ -224,7 +227,7 @@ export class DataService {
           throw checker as any;
         }
         
-        console.log('what is the response.json()',response.json())
+        //console.log('what is the response.json()',response.json())
 
         return dataCallBack(response.json()) as any;
       })
@@ -266,7 +269,7 @@ export class DataService {
       })
       .do((dat) => {
         //var r_data = // manage data output
-        console.log('what is the iser_id data: ', dat)
+       // console.log('what is the iser_id data: ', dat)
         // this.setLocalStorage(originalParams, r_data); // magic happens!
         return dat;
       })

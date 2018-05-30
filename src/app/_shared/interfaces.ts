@@ -9,6 +9,7 @@ export interface IRouteName{
   singlePage:any,
   per_page: any, 
   originalName:any,
+  searchAPI:any,
   header_params:any,
   perpage:any // or perpage
 } 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot } from '@angular/router'; 
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/toPromise';
 import { MyGlobals } from '../myglobals';
@@ -10,13 +10,13 @@ import { GlobalReuse } from '../global.reuse';
 export class TransactionResolver implements Resolve<any> {
   constructor(
     private _globals: MyGlobals,
-    private dService: DataService
+    private dService: DataService, 
   ) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
 
     var res, final;
-
+    console.log('are we at transition resolver??')
     /// this will not work if reloading the page, because the value will be set to preset value for what we are looking for
     var apiNam= this._globals.glob.selected_apiName;
     var apiByhref= new GlobalReuse().findApiNameFromUrl(this._globals.api_support);
@@ -39,10 +39,10 @@ export class TransactionResolver implements Resolve<any> {
     var data = selected_api_object || null;
 
     if (data) {
-    //  console.log('what is the match',_match)
-      final = this.singleItem(data, _match);
 
+      final = this.singleItem(data, _match);
     } else {
+
       final = false;
     }
     // the data is retreived from local variable NOT REST!
