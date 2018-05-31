@@ -12,7 +12,7 @@
 @import '~compass-mixins/lib/compass';
 @import '~compass-mixins/lib/compass/layout';
 @import '~compass-mixins/lib/compass/utilities/general/clearfix';
+@import "presets";
 @import 'preloaders';
 ///@import 'responsive'; // responsive we will load at bottom of styles in case of strong overrites!
-@import "presets";
 

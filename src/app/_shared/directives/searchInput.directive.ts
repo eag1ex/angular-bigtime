@@ -10,8 +10,10 @@ import { EventEmitService } from '../services/eventEmmiter.service';
 export class SearchInputDirective implements OnInit {
   titleDisplay: number;
   searchAction: any;
+  apiName:string;
   loading:boolean = false;
   searchtext: string;
+  placeHolder:string;
   haltSearch: boolean; false;
   public searchAPIcheck: boolean = false;
   constructor(private elm: ElementRef, private onSearchAction: EventEmitService, private renderer: Renderer) {
@@ -39,6 +41,12 @@ export class SearchInputDirective implements OnInit {
 
     // we could bind it to on change eventi know, but this give more flexibility to what we want to communicate  and what type of data :)
     this.searchAction = onSearchAction.subscribe(msg => {
+
+      if(msg.apiName){
+        this.apiName = msg.apiName;
+         this.placeHoldermessage(this.apiName);    
+        }
+
       if (msg.eventType == 'BackToDirective') {
         if (msg.reset) {
           console.log('received BackToDirective!')
@@ -49,6 +57,7 @@ export class SearchInputDirective implements OnInit {
         if(msg.loading){
           this.loading=true;
         }
+
         if (msg.dofocusout) {
 
           //renderer.invokeElementMethod(elm.nativeElement, 'focusout', []);
@@ -63,7 +72,32 @@ export class SearchInputDirective implements OnInit {
     }, (complete) => {
       // console.log('what is the complete', complete)
     });
+  }
 
+
+  placeHoldermessage(apiName:any=false){
+    apiName = apiName || this.apiName;
+
+     var placeholder = "";
+     var whichSearch = (this.searchAPIcheck) ?'API search:': 'search:';
+
+    if(!apiName) {
+     this.placeHolder= `${whichSearch} title`;
+    }
+   
+    if(apiName=='punkapi'){
+      placeholder=`${whichSearch} beer name`;
+    }
+    if(apiName=='gettyimages'){
+      placeholder=`${whichSearch} title,artist,keyword`;
+    }
+    if(apiName=='flickr'){
+      placeholder=`${whichSearch} title,tags,ownername`;
+    }
+    if(apiName=='omdbapi'){
+      placeholder=`${whichSearch} title, or imdbID:ttxxx`;
+    }
+    this.placeHolder = placeholder;
   }
 
 
@@ -90,6 +124,13 @@ export class SearchInputDirective implements OnInit {
    * @param searchVal 
    * @param type 
    */
+  liveAPIchange(){
+    //toogle which search message :)
+    setTimeout(()=>{
+      this.placeHoldermessage()  
+    },200)
+    
+  }
 
   searchItems(event, searchVal, type) {
    // if (this.haltSearch == true) return;
@@ -110,11 +151,10 @@ export class SearchInputDirective implements OnInit {
 }
 
 function template() {
-
+  
   return `
- 
     <div class="input-group mb-1 search-wrap">
-          <div class="sk-circle search-loading-icon"  *ngIf='loading===true'>
+          <div class="sk-circle search-loading-icon" *ngIf='loading===true'>
               <div class="sk-circle1 sk-child"></div>
               <div class="sk-circle2 sk-child"></div>
               <div class="sk-circle3 sk-child"></div>
@@ -131,8 +171,8 @@ function template() {
 
 
               <div class="input-group-prepend">
-                  <div class="input-group-text">
-                  <input type="checkbox" [checked]="searchAPIcheck" (change)="searchAPIcheck = !searchAPIcheck" />  
+                  <div class="input-group-text px-3">
+                  <input type="checkbox" [checked]="searchAPIcheck" (change)="liveAPIchange(); searchAPIcheck = !searchAPIcheck" />  
                   </div>
               </div>
 
@@ -142,13 +182,12 @@ function template() {
             (focusout)="searchItems($event,search.value,'focusout');"
       
             [(ngModel)]="searchtext" #search 
-             placeholder="search title/name!"
-             class="form-control"
+             [placeholder]="placeHolder"
+             class="form-control p-1 ml-3"
              aria-label="Search" 
-             type="text"
-             >
+             type="text">
             
     </div>
      <p class="search-api-check mb-1 p-1 pl-2" [ngClass]="{'show-search-api-check':searchAPIcheck===true}" >Search API!</p>
-`;
+ `;
 }

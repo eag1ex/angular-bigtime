@@ -2,7 +2,7 @@
 
   <div class='product-row justify-content-md-center'>
 
-    <page-title [title]="PAGE_DEFAULTS.pageTitle" [display]='6' class="mt-5 text-center w-100"></page-title>
+  
   </div>
 
     <div *ngIf="DataLoaded===false" class='anim-f'>
@@ -13,14 +13,19 @@
     
 
 
-  <div *ngIf="ErrorData">
-    <div class="product-row justify-content-md-center m-5 anim-f" role="alert">
+  <div *ngIf="ErrorData"> 
+    <div class="product-row justify-content-md-center mx-5 mt-5 mb-2 anim-f" role="alert">
       <div class="col-lg-6  col-md-6 col-sm-12">
         <div class='error-loading bg-info p-2'>
           <pre><code> {{ErrorData|json}}</code></pre>
         </div>
       </div>
-    </div>   
+    </div>  
+      <div class="product-row justify-content-md-center mx-5 mt-3 mb-2 anim-f" role="alert">
+          <div class="col-auto w-100 text-center">
+            <button class="btn btn-info" (click)="starOver()">Start Again</button>
+          </div>
+      </div>
   </div>  
               
 
@@ -31,8 +36,8 @@
   </div>                                 
 
     <div *ngIf='DataLoaded===true && lastSearch' class="product-row justify-content-md-center mt-1 anim-f">
-      <div class="col-auto">
-         <div class='last_search'><small class="text-light bg-info px-2 py-1 mt-2"><span class="text-info">Last search:&nbsp;</span>{{lastSearch}}</small></div>
+      <div class="col-auto w-100">
+         <div class='last_search text-center'><small class="text-light bg-info px-2 py-1 mt-2"><span class="text-info">Last search:&nbsp;</span>{{lastSearch}}</small></div>
       </div>
     </div>
     
@@ -68,7 +73,7 @@
   <div class="product-row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="flickr"'>
    
     <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-1"
-      *ngFor="let item of flickrData | search:'title,tags' :searchModel; let i = index;">
+      *ngFor="let item of flickrData | search:'title,tags,ownername' :searchModel; let i = index;">
 
       <div class="card bg-trans my-2  card w-100">
  
@@ -179,7 +184,7 @@
 <!-- product-container-->
 <div class="cf"></div>
 
-<div class="row justify-content-md-center mb-2 mt-3" *ngIf="DataLoaded!==false">
+<div class="row justify-content-md-center mb-2 mt-3 pb-3" *ngIf="DataLoaded!==false">
   <div class="col-12">
     <nav class="">
 

@@ -62,6 +62,6 @@ export class PageTitleDirective implements OnInit {
 }
 
 function PageTitleTemplate(){
-  return `<h1 class="display-{{titleDisplay}}">{{title}}</h1>`;
+  return `<h1 class="display-{{titleDisplay}} p-2">{{title}}</h1>`;
 }
 

@@ -6,8 +6,15 @@
           <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="navbar-collapse collapse">
 
+        <div class="navbar-collapse collapse">
+             
+            <div class="col-auto w-75"> 
+  
+                 <page-title [title]="app_dynamic_title" [display]='7' class="mt-1 text-center text-white"></page-title>
+  
+            </div>
+ 
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
                     <!--<a class="nav-link" href="#">Latest <span class="sr-only">(current)</span></a>-->
@@ -16,15 +23,19 @@
  
             </ul>
 
-            <form class="form-inline">
- 
-                <search-input  [ngClass]="{'showMe':displaySearchInput===true && currentPageName==='products', 'hideMe':displaySearchInput===false || currentPageName!=='products'}"
-                    class="my-1 p-1 anim-f" (onSearch)="onSearch($event);"></search-input>
-            </form>
         </div>
     </div>
 </nav>
 
 <div class='container' [ngClass]="{'flickrBG':selected_apiName=='flickr', 'gettyimagesBG':selected_apiName=='gettyimages','punkapiBG':selected_apiName=='punkapi' }">
+    
+    <div class='row justify-content-md-center'>
+        <div class='mx-2 col col-sm-10 col-md-6 col-lg-6'>
+             <form class="form-inline w-100 search-input-wrap">
+                <search-input [ngClass]="{'moveDown':displaySearchInput===true && currentPageName==='products', 'hideMe':displaySearchInput===false || currentPageName!=='products'}"
+                    class="w-100 mb-1 mt-0 px-3 pt-4 pb-1 anim-f" (onSearch)="onSearch($event);"></search-input>
+             </form>   
+        </div>
+    </div>
     <router-outlet></router-outlet>
 </div>

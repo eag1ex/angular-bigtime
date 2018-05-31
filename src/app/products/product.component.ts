@@ -12,8 +12,6 @@ import { slideInOutAnimation,moveIn } from '../_shared/animations';
 import { IRouteName } from '../_shared/interfaces';
 
 
-
-
 @Component({
   selector: 'products',
   templateUrl: './product.component.html',
@@ -64,7 +62,7 @@ export class ProductComponent implements OnInit {
     private dataService: DataService,
     private logger: LoggerService,
     private _globals: MyGlobals,
-    private searchEmmiter: EventEmitService
+    private appEmmiter: EventEmitService
 
   ) {
 
@@ -81,7 +79,7 @@ export class ProductComponent implements OnInit {
      *  this event is received from app.component
      */
     
-    this.searchSubscription = searchEmmiter.subscribe(msg => {
+    this.searchSubscription = appEmmiter.subscribe(msg => {
       if (msg.eventType == 'onSearch') {
         if (_.isObject(msg)) {
           this.PAGE_DEFAULTS.searchAPIcheck = msg.searchAPIcheck;
@@ -96,10 +94,7 @@ export class ProductComponent implements OnInit {
      // console.log('what is the complete', complete)
     });
 
-    _globals.glob.searchSubscription= this.searchSubscription;
-
-     this.dataService._globs=_globals;
-
+    
   }
 
   /**
@@ -108,7 +103,7 @@ export class ProductComponent implements OnInit {
    */
   onSearchQBackToDirective(data) {
     data.eventType = 'BackToDirective';
-    this.searchEmmiter.next(data);
+    this.appEmmiter.next(data);
   }
 
   getKeywords(obj){
@@ -331,35 +326,44 @@ loadLink(owner){
       this.getMyHttpRequest(this.routeName, this.PAGE_DEFAULTS.apiName);
     })
 
+
     this.updateTitle();
+    this._globals.glob.searchSubscription= this.searchSubscription;
+    this.dataService._globs=this._globals;
+    
   }
 
   updateTitle(){
     this.PAGE_DEFAULTS.pageTitle =  this.PAGE_DEFAULTS.apiName +' API'  + " | "+  this.PAGE_DEFAULTS.pageName;
+    setTimeout(()=>{
+      this.appEmmiter.next({updateTitle:this.PAGE_DEFAULTS.pageTitle, apiName:this.PAGE_DEFAULTS.apiName});  
+    },100)
+    
   }
 
+  starOver(){
+    this.filterTag(this.PAGE_DEFAULTS.apiName, 1);
+  }
    
   ngOnInit() {
-      this.updateTitle()
       this.dofetch();
-  
   }  
    
-  filterTag(ipName, paged:number=1){
+  filterTag(apiName, paged:number=1){
 
-    if(!ipName) return false;
+    if(!apiName) return false;
 
     this._router.navigate([`/products/paged` + '/' + 1]);
     
     this.searchModel ='';
 
-    this.PAGE_DEFAULTS.apiName =ipName;
-    console.log('-- filterTag to fetch for ipName: ',ipName)
+    this.PAGE_DEFAULTS.apiName =apiName;
+    console.log('-- filterTag to fetch for apiName: ',apiName)
     this.lastSearchBefore='';
     this.dofetch(paged); 
     this.updateTitle();
     this.searchModel ='';
-    this.searchEmmiter.next({bgChange:true, apiName:ipName});
+    this.appEmmiter.next({bgChange:true, apiName:apiName});
   }
 
   mCommas(str){

@@ -13,7 +13,7 @@ import { LoggerService } from './_shared/services/logger.service';
 import { fadeInAnimation } from './_shared/animations';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-root', 
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   animations: [fadeInAnimation],
@@ -29,6 +29,7 @@ export class AppComponent implements OnInit{
   };
   private removeOldClass:string;
   public currentPageName:string;
+  public app_dynamic_title:string;
   public APP_LOADED = false;
   private subscription;
   public displaySearchInput=false;
@@ -43,10 +44,10 @@ export class AppComponent implements OnInit{
     this.onAnyEventToComponent = emmiter.subscribe(msg => {
       if (msg.bgChange) {
         this.setBackgroundClass(msg.apiName);
-
       } 
-     
-
+      if(msg.updateTitle){
+         this.app_dynamic_title =msg.updateTitle;
+      }
     }, (err) => {
          this.logger.log(`what is the err ${err}`,true); 
     }, (complete) => {
@@ -106,6 +107,7 @@ export class AppComponent implements OnInit{
     });
   }
 
+ 
 
   setBackgroundClass(className: any = false) {
     //console.log('what is his.element.nativeElement',this.element.nativeElement)
@@ -159,8 +161,7 @@ export class AppComponent implements OnInit{
    
   }
  
-   ngAfterViewInit() {
- 
+  ngAfterViewInit() {
   }
 
 
