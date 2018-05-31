@@ -9,21 +9,19 @@
 
         &.flickrBG{
             background-color: $flickrBG!important;
-        -webkit-transition: 0.2s ease-in-out!important;
-         transition: 0.2s ease-in-out!important;
         }
         &.punkapiBG{
             background-color: $punkapiBG!important;
-        -webkit-transition: 0.2s ease-in-out!important;
-         transition: 0.2s ease-in-out!important;
         }
-        
+ 
         &.gettyimagesBG{
         background-color: $gettyimagesBG!important;
-        -webkit-transition: 0.2s ease-in-out!important;
-         transition: 0.2s ease-in-out!important;
+     
         }
          
+        &.omdbapiBG{
+            background-color: $omdbapiBG
+        }
        //-webkit-transition: 0.5s linear all !important;
        // transition: 0.5s linear all !important;
         /*
@@ -33,6 +31,8 @@
         $gettyimagesBG: #FFCBDB; // rgb 255, 203, 219
 
         */
+        -webkit-transition: 0.2s ease-in-out!important;
+         transition: 0.2s ease-in-out!important;
 
     }
     home {}
@@ -88,8 +88,8 @@
             @include make-row();
         }
         .product-col-content {
-             
-
+             // radious
+            
 
             @include make-col-ready();
             @include media-breakpoint-up(xs) {
@@ -107,6 +107,7 @@
         }
         .product-wrap {
             .card {
+                @include border-radius(6px, 6px);
                 img {
                     height: 100%;
                     min-height: 100px;

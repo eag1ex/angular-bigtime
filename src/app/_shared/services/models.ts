@@ -67,6 +67,7 @@ export class Models {
   "imdbID": string;
   "Type": string;
   "Poster": string; 
+  
   // GettyImages
   id: string;
   title: string;

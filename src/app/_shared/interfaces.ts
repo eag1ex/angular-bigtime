@@ -25,7 +25,7 @@ export interface IMyGlobals{
           current_page:string,
           selected_apiName:string
       },
-
+   api_random_search_val:any;   
    api_support:Array<any>,
    
    getData(data: any, params : any): Observable<Models[]>;

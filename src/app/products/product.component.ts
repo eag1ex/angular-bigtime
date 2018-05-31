@@ -111,6 +111,9 @@ export class ProductComponent implements OnInit {
     this.searchEmmiter.next(data);
   }
 
+  getKeywords(obj){
+    return this._globals.getKeywords(obj);
+  }  
 
   /**
    * 
@@ -266,10 +269,11 @@ loadLink(owner){
    * it returns the correct value for the "getMyHttpRequest" api request from ngOnInit() call
    */
 
-  fetchEvent(): Promise<object> {
-    var paged: any = this._route.snapshot.paramMap.get('paged');
+  fetchEvent(_paged:any=false): Promise<object> {
+    var paged: any = _paged || this._route.snapshot.paramMap.get('paged');
     /// update curent paged for accuricy
-    console.log('whatis the current page??',paged)
+   
+   
     this.PAGE_DEFAULTS.currentPaged = parseInt(paged) || this.PAGE_DEFAULTS.currentPaged;
 
     paged = (paged) ? { paged } : false;
@@ -305,12 +309,14 @@ loadLink(owner){
     }
   }
 
-  dofetch() {
+  dofetch(paged:any=false) {
     /// get page param  
-    this.fetchEvent().then((whichOrder: any) => {
+
+    this.fetchEvent(paged).then((whichOrder: any) => {
       if (whichOrder === false) {
         return Promise.reject('no route found!');
       }
+
       if (whichOrder.paged) {
        // console.log('whichOrder.paged??',whichOrder.paged)
         this.PAGE_DEFAULTS.currentPaged = parseInt(whichOrder.paged);
@@ -336,18 +342,21 @@ loadLink(owner){
   ngOnInit() {
       this.updateTitle()
       this.dofetch();
-
-
   
   }  
    
-  filterTag(ipName){
+  filterTag(ipName, paged:number=1){
 
     if(!ipName) return false;
+
+    this._router.navigate([`/products/paged` + '/' + 1]);
+    
+    this.searchModel ='';
+
     this.PAGE_DEFAULTS.apiName =ipName;
     console.log('-- filterTag to fetch for ipName: ',ipName)
     this.lastSearchBefore='';
-    this.dofetch(); 
+    this.dofetch(paged); 
     this.updateTitle();
     this.searchModel ='';
     this.searchEmmiter.next({bgChange:true, apiName:ipName});
@@ -417,8 +426,8 @@ loadLink(owner){
        // console.log(`what is ${apiName} data`,this[apiName+'Data']); 
 
         this._globals.glob[`${apiName}.data`] = data;
-         this.searchModel ='';
-        this.lastSearch = routeName.originalName || this.lastSearchBefore;
+        this.searchModel ='';
+        this.lastSearch = routeName.originalName || this.lastSearchBefore || this._globals.api_random_search_val;
         this.onSearchQBackToDirective({reset:true}) 
 
         if(typeof cbOnDone=='function'){

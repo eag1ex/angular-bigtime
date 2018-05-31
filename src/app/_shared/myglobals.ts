@@ -37,6 +37,8 @@ export class MyGlobals implements IMyGlobals{
         current_page:'',
         selected_apiName:'punkapi'// preset dynamicly changed
     };
+    
+    api_random_search_val:any='';
 
     api_support:Array<any> =  new ApiList().list().reduce((outp,val,inx)=>{       
             if(val.name && val.enabled) outp.push(val.name);
@@ -113,6 +115,18 @@ export class MyGlobals implements IMyGlobals{
 
         return clean||'';
     }
+
+      getKeywords(itemObj){
+        var d=  itemObj.reduce((outp,item,inx)=>{
+            if(item.text){
+                outp.push(item.text);
+            }
+            return outp;
+        },[]) || '';
+
+        return  (d)? d.toString():'';
+  }
+
 
 }
 

@@ -58,9 +58,7 @@ export class ProductItemComponent implements OnInit {
   
       // update title
       this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.pageTitle + ' | ' + this.productData.name;
-      
-      // generate pairs, quick fix
-      
+           
     
     } else {
       this.productdataPairs = null;
@@ -73,13 +71,14 @@ export class ProductItemComponent implements OnInit {
 
     // generate pairs initially before data sort, so we gate original output!  
     genarete_CB();
+
       console.log('what is productData',productData)
       if(!productData.image_url ){
-         productData.image_url = productData.url_m || productData.url_s;
-
+         productData.image_url = productData.url_m || productData.url_s || productData.Poster;
       }
 
-       productData.name  = productData.name|| productData.title || productData.ownername;
+
+       productData.name  = productData.name|| productData.title || productData.Title|| productData.ownername;
 
        if(!productData.tagline ){
         productData.tagline =productData.tags;
@@ -101,14 +100,10 @@ export class ProductItemComponent implements OnInit {
 
         if(image_url){
           delete productData.display_sizes;
-
           productData.image_url = image_url;
         }         
-         //productData.description = productData.title;
+
       }
-
-      //  display_sizes:Array<{name,uri}>;
-
      return productData;   
   }
 

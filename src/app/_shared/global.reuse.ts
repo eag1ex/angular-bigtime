@@ -53,5 +53,4 @@ export class GlobalReuse  {
 
     return api;
   }
-
 }

@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ApiList } from '../../../api-list';
-import { IApiModel } from '../../interfaces';
+import { IApiModel, IMyGlobals } from '../../interfaces';
 import { GlobalReuse } from '../../global.reuse';
 //import * as _ from "lodash"; 
-
-import { IMyGlobals } from "../../interfaces";
 
 import { IbuildRespCall } from "../../interfaces";
 
@@ -15,7 +13,7 @@ import { IbuildRespCall } from "../../interfaces";
   providedIn: 'root'
 })
 export class ApiManagerService extends GlobalReuse {
-
+  _globals:IMyGlobals;
   last_gen_api = {
     headers: Object,
     'Api-Key': false,
@@ -23,7 +21,8 @@ export class ApiManagerService extends GlobalReuse {
   }
 
   constructor() {
-    super()
+    super();
+
   }
 
   /// available api/s
@@ -33,7 +32,9 @@ export class ApiManagerService extends GlobalReuse {
 
 
 
-  buildRespCall(apiName: string, paramData: object, globs): IbuildRespCall {
+  buildRespCall(apiName: string, paramData: object, globs:IMyGlobals): IbuildRespCall {
+    // import
+    this._globals = globs;
 
     var required_params = ['prefix', 'api', 'query_params'];
     var _api = this.apis;
@@ -56,7 +57,7 @@ export class ApiManagerService extends GlobalReuse {
       return { error: true, message: `missing required_params: ${missing}` } as any
     }
     console.log('what api are me getting?',get_api)
-    var _output = this.testOutput(get_api, paramData, globs) as any;
+    var _output = this.testOutput(get_api, paramData) as any;
 
     if (_output.error) {
       //console.error('--- what is missing? ', _output.error)
@@ -109,11 +110,11 @@ private randNumber(max:number=10){
 }
 
 
-private randomTitleFor_omdbapi():string{
-        var search_titles = ['bruce lee','kill bill','killer','ladies','sexy','iron man','start wars','matrix','ip man','rambo'];
+private searchByrandomTitle(search_titles:Array<any>):string{
+    if(!search_titles) return ''
         var rand_num = this.randNumber(search_titles.length-1);
   return search_titles[rand_num];
-}
+} 
 
   private checkAPIprerequests(api: IApiModel): IApiModel {
     if (!api) {
@@ -161,14 +162,6 @@ private randomTitleFor_omdbapi():string{
       /// some logic here todo
     }
     
-    /// presets
-   if (api.name == 'omdbapi'){
-     console.log('what are api.query_params as any).s',(api.query_params as any).s)
-     if( !(api.query_params as any).s ){
-      
-        (api.query_params as any).s = this.randomTitleFor_omdbapi();
-     }
-   }
 
     // prepend corrent prefixes
     if (api.name == 'gettyimages') api.apiURL = api.apiURL + '?';
@@ -184,16 +177,21 @@ private randomTitleFor_omdbapi():string{
     // update pre requests!!
     api = this.checkAPIprerequests(api);
 
+
+    // randomSearch values
+  
     // match to familiar name defenitions for all apis, saves alot of lines of code!!!
     var commKeyParams = {
       'gettyimages': {
         search: 'phrase',
         page: 'page',
-        per_page: 'page_size'
+        per_page: 'page_size',
+         randomTitles:['technology','galaxy','crime','war','poland','love','drugs','strong man','future','kungfu','creative','celebrity','china','bangkok','thailand']
       },
         'omdbapi': {
         search: 's',
         page: 'page',
+        randomTitles:['bruce lee','kill bill','war','killer','ladies','sexy','iron man','start wars','the matrix','ip man','rambo']
      //   per_page: 'page_size'
       },
       'punkapi': {
@@ -201,10 +199,12 @@ private randomTitleFor_omdbapi():string{
         page: 'page',
         per_page: 'per_page'
       },
+
       'flickr': {
         search: 'text',
         page: 'page',
-        per_page: 'per_page'
+        per_page: 'per_page',
+        randomTitles:['bruce lee','kill bill','killer','war','ladies','sexy','strong man','start wars','the matrix','kungfu','rambo','galaxy']
       }
     }
 
@@ -213,7 +213,7 @@ private randomTitleFor_omdbapi():string{
     // recycle common
     for (var key in api_selected_chain) {
       var _delete = api_selected_chain[key];
-      if ( (api.query_params as any)[_delete] ){
+      if ( (api.query_params as any)[_delete] && key!=='randomTitles'){
         delete (api.query_params as any)[_delete];
       }
     } //
@@ -248,13 +248,6 @@ private randomTitleFor_omdbapi():string{
           continue;
         }
 
-        if (key == 'search_by_name' && api.name=='omdbapi') {
-            if(!_obj[key]){
-              (api.query_params as any)[api_selected_chain.search] = this.randomTitleFor_omdbapi();
-               continue; // important to put it here
-            }      
-         
-        }
 
         if (key == 'search_by_name' || key == 'byName') {
           (api.query_params as any)[api_selected_chain.search] = _obj[key];
@@ -283,11 +276,13 @@ private randomTitleFor_omdbapi():string{
       }
     }
 
-
-    if (api.name == 'omdbapi') {
-
-      if (!api.query_params.s) {
-        api.query_params.s = this.randomTitleFor_omdbapi();
+    // add rendom search results except for punkapi
+     if (api.name !== 'punkapi') {
+      if (!api.query_params[ api_selected_chain.search]) {
+        var searchName = this.searchByrandomTitle(api_selected_chain.randomTitles);
+        api.query_params[ api_selected_chain.search] =  searchName;
+         this._globals.api_random_search_val = searchName;
+        console.log('--- searching for ',searchName)
       }
     }
 
@@ -295,12 +290,12 @@ private randomTitleFor_omdbapi():string{
 
   }
 
-  private testOutput(itemApi: IApiModel, _obj, globs: IMyGlobals): object {
+  private testOutput(itemApi: IApiModel, _obj): object {
     var output: any = {}
     var result;
 
     // check for supprted apis
-    if (globs.api_support.indexOf(itemApi.name) !== -1) {
+    if (this._globals.api_support.indexOf(itemApi.name) !== -1) {
 
       //// prepend query with 
       var _url_ = this.modifyOutput(itemApi, _obj);
@@ -323,7 +318,7 @@ private randomTitleFor_omdbapi():string{
     else { //api_support 
 
       // console.error(`--- currently only supporting apiName: ${glob.api_support}`);
-      var msg = `currently only supporting apiName: ${globs.api_support.toString()}`;
+      var msg = `currently only supporting apiName: ${this._globals.api_support.toString()}`;
       return { error: msg } as any;
     }
   }

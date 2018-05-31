@@ -26,7 +26,7 @@ var flickr = {
   'api': 'https://api.flickr.com/services/rest',
   'api_key': '1754e3e5724bd7c66c732b835083c8df',
   'query_params': {
-    'method': "flickr.photos.search",// type of query from                        
+    'method': "flickr.photos.search",// flickr.photos.getPopular, flickr.photos.getFavorites                    
     'text': "",// what to search
     'tags': "portrait,mug",// returns byt reference tag
     'content_type': 1,
@@ -44,20 +44,28 @@ var flickr = {
 
 /**
  * GETTYIMAGES
-https://api.gettyimages.com/v3/search/images?phrase=dogs&page=1&page_size=1&fields=comp,id,title,collection_name,caption,detail_set
- */
+https://api.gettyimages.com/swagger/ui/index
+
+https://api.gettyimages.com/v3/search/images/creative/?file_types=jpg&graphical_styles=photography&license_models=royaltyfree&minimum_size=medium&sort_order=most_popular&fields=comp%2Cid%2Ctitle%2Ccollection_name%2Ccaption%2Cdetail_set%2Cartist%2Ccopyright%2Cdate_created&page=1&page_size=10
+
+*/ 
 
 var gettyimages = {
   'enabled':true, // to enable this api, when its working :)
   'name': 'gettyimages',
   'apiURL': '',
   'api': 'https://api.gettyimages.com/v3/search',
-  'prefix':'images',
+  'prefix':'images/creative',
   'header_params':true,
   'Api-Key': '734uv72r6de98em86u5rkwe5',
-  'query_params': {                 
+  'query_params': {   
+    'file_types':'jpg',
+    'graphical_styles':'photography',
+    'license_models':'royaltyfree',  
+    'minimum_size':'medium',
+    'sort_order': 'most_popular',       
     'phrase': "",// what to search
-    'fields': 'comp,id,title,collection_name,caption,detail_set',// what to output
+    'fields': 'keywords,comp,id,title,collection_name,caption,detail_set,artist,copyright,date_created',// what to output
     'page_size': 20,// per page results
     'page': 1
   }
@@ -91,6 +99,32 @@ var omdbapi = {
   }
 }
 
+// https://api.themoviedb.org/3/movie/550?api_key=1f346380dee2d7565baf4b508d050741
+
+
+
+/**
+ https://api.themoviedb.org/3/account/favorite/movies?api_key=<<api_key>>&language=en-US&sort_by=created_at.asc&page=1
+how to generate session 
+https://developers.themoviedb.org/3/authentication/how-do-i-generate-a-session-id
+ */
+var themoviedb = {
+  'enabled':false, // to enable this api, when its working :)
+  'name': 'themoviedb',
+  'apiURL': '',
+  'api': 'https://api.themoviedb.org/3/movie/550',
+  'api_key': '1f346380dee2d7565baf4b508d050741',
+  'query_params': {
+    'r':'json',
+    'plot':'full',                 
+    'type': 'movie',
+    's': 'brure+lee', //what to search
+    'page': 1,
+    'i':'' //(e.g. tt1285016)
+  }
+}
+
+
 
 
 class Presets {
@@ -123,6 +157,7 @@ constructor(){
   }
 
   list() {
+    // set the order
     return [Object.assign(this.pre(),punkapi),
             Object.assign(this.pre(),flickr), 
             Object.assign(this.pre(),gettyimages),
