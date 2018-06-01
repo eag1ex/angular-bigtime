@@ -41,6 +41,7 @@ export class ProductComponent implements OnInit {
   private ErrorData:any = false;
   public available_apis:Array<any>;
   public lastSearch:any=false;
+  doingPaged:boolean = false; 
   private searchtext = {
     inx: 0
   }
@@ -53,7 +54,8 @@ export class ProductComponent implements OnInit {
     per_page: 10,
     paged: 10,
     currentPaged: 1,
-    searchAPIcheck: false
+    searchAPIcheck: false,
+    pageDefault:1
   }
 
 
@@ -190,6 +192,11 @@ export class ProductComponent implements OnInit {
 
   }
 
+get paged_is():any{
+  
+  return parseInt(this._route.snapshot.paramMap.get('paged')) || false;
+}
+
 // request flicker artist link
 
 loadLink(owner){
@@ -265,11 +272,11 @@ loadLink(owner){
    */
 
   fetchEvent(_paged:any=false): Promise<object> {
-    var paged: any = _paged || this._route.snapshot.paramMap.get('paged');
+    var paged: any = _paged  || this.paged_is|| this.PAGE_DEFAULTS.currentPaged ||this.PAGE_DEFAULTS.pageDefault;
     /// update curent paged for accuricy
-   
-   
-    this.PAGE_DEFAULTS.currentPaged = parseInt(paged) || this.PAGE_DEFAULTS.currentPaged;
+  //
+    this.PAGE_DEFAULTS.currentPaged = paged;
+    // console.log('what is paged', paged)
 
     paged = (paged) ? { paged } : false;
 
@@ -291,6 +298,7 @@ loadLink(owner){
   gotoPaged(nr: any) {
     if (nr) {
 
+      (this._globals.payload as any).paged = nr;
       this.routeName = { paged: parseInt(nr) };
       if(this.lastSearch){
         //add last search val to pass to next page
@@ -304,33 +312,41 @@ loadLink(owner){
     }
   }
 
-  dofetch(paged:any=false) {
+  dofetch(paged:any=false,apiName:any=false) {
     /// get page param  
+   
+    this.PAGE_DEFAULTS.apiName = apiName || (this._globals.payload as any).apiName || this.PAGE_DEFAULTS.apiName;
+    paged = paged || (this._globals.payload as any).paged;
 
     this.fetchEvent(paged).then((whichOrder: any) => {
       if (whichOrder === false) {
-        return Promise.reject('no route found!');
+        return Promise.reject('no route found!'); 
       }
 
       if (whichOrder.paged) {
-       // console.log('whichOrder.paged??',whichOrder.paged)
-        this.PAGE_DEFAULTS.currentPaged = parseInt(whichOrder.paged);
+        this.PAGE_DEFAULTS.currentPaged = whichOrder.paged;
+ 
       }
 
       this.routeName = whichOrder;
+      //console.log('fetching getMyHttpRequest for apiname ',this.PAGE_DEFAULTS.apiName)
       this.getMyHttpRequest(this.routeName, this.PAGE_DEFAULTS.apiName);
 
     }, (err) => {
       this.logger.log(err, true)
       this.routeName = false;
       this.getMyHttpRequest(this.routeName, this.PAGE_DEFAULTS.apiName);
-    })
+    }) 
 
 
     this.updateTitle();
     this._globals.glob.searchSubscription= this.searchSubscription;
     this.dataService._globs=this._globals;
-    
+
+    setTimeout(()=>{
+      this.appEmmiter.next({bgChange:true, apiName:this.PAGE_DEFAULTS.apiName});
+    },100)
+
   }
 
   updateTitle(){
@@ -340,30 +356,51 @@ loadLink(owner){
     },100)
     
   }
-
-  starOver(){
+ 
+  starOver(startOver=true){
     this.filterTag(this.PAGE_DEFAULTS.apiName, 1);
   }
    
+
+
   ngOnInit() {
+
       this.dofetch();
+     // console.log(' doing oninit and fetch')
   }  
    
+
+
+
+
+
+
   filterTag(apiName, paged:number=1){
 
     if(!apiName) return false;
-
-    this._router.navigate([`/products/paged` + '/' + 1]);
+   // console.log('filterTag what is the apiName',apiName);
     
     this.searchModel ='';
 
-    this.PAGE_DEFAULTS.apiName =apiName;
+    this.PAGE_DEFAULTS.apiName =apiName;  
+
     console.log('-- filterTag to fetch for apiName: ',apiName)
     this.lastSearchBefore='';
-    this.dofetch(paged); 
+    /// can call fetch because it will not call oninit, where fetch is also called, no double events
+    if(this.paged_is){
+      this.dofetch(paged,apiName);
+    }else{
+      /// not on paged so send payload for oninit
+      (this._globals.payload as any).apiName = apiName;
+      (this._globals.payload as any).paged = paged;
+    }
+    // payload
+    
+    
     this.updateTitle();
     this.searchModel ='';
-    this.appEmmiter.next({bgChange:true, apiName:apiName});
+
+    
   }
 
   mCommas(str){

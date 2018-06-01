@@ -32,7 +32,7 @@ var _routesObj = [
 ]
  
 var _routes =importDynamicRoutes.concat(_routesObj)
-console.log('what are the _routes',_routes)
+
 @NgModule({
   //schemas: [NO_ERRORS_SCHEMA],
   imports: [

@@ -56,22 +56,26 @@ export class ApiManagerService extends GlobalReuse {
 
       return { error: true, message: `missing required_params: ${missing}` } as any
     }
-    console.log('what api are me getting?',get_api)
+   // console.log('what api are me getting?',get_api)
     var _output = this.testOutput(get_api, paramData) as any;
 
     if (_output.error) {
       //console.error('--- what is missing? ', _output.error)
       return { error: true, message: `${_output.error.toString()}` } as any;
     }
-
-    return { url: _output } as any;
+    var ready_d = { url: _output.good} as any;
+    if(_output.lastSearch ){
+        _output.lastSearch = encodeURIComponent(_output.lastSearch);
+        ready_d.lastSearch =_output.lastSearch; 
+    }
+    return ready_d as any;
 
   }
 
 
 
 
-  private modifyOutput(api: IApiModel, _obj) {
+  private modifyOutput(api: IApiModel, _obj):object {
 
     api = this.checkAPIrequirements(api, _obj) as IApiModel;
 
@@ -91,16 +95,16 @@ export class ApiManagerService extends GlobalReuse {
 
     if (!api.query_params) {
       console.error('something went wrong with modifyOutput');
-      return false;
+      return false as any;
     }
     var query = this.encodeQueryData(api.query_params); // create url
     var q = this.removeEmptyParam(query);
 
     var _url = api.apiURL + q;
-    console.log('what is the _url', _url)
+   // console.log('what is the _url', _url)
     var clean_url = _url; // remove any empty params from url just in case
 
-    return clean_url;
+    return {clean_url:clean_url,lastSearch:(api as any).lastSearch};
   }
 
 
@@ -285,7 +289,7 @@ private searchByrandomTitle(search_titles:Array<any>):string{
         console.log('--- searching for ',searchName)
       }
     }
-
+    (api as any).lastSearch = api.query_params[ api_selected_chain.search]||'';
     return api;
 
   }
@@ -294,14 +298,15 @@ private searchByrandomTitle(search_titles:Array<any>):string{
     var output: any = {}
     var result;
 
+    delete _obj.searchAPI; /// we do not need it here
     // check for supprted apis
     if (this._globals.api_support.indexOf(itemApi.name) !== -1) {
 
       //// prepend query with 
-      var _url_ = this.modifyOutput(itemApi, _obj);
-      console.log('-- modifyOutput url: ', _url_);
-      if (_url_) {
-        output.good = _url_
+      var val = this.modifyOutput(itemApi, _obj) as any;
+      console.log('-- modifyOutput url: ', val.clean_url);
+      if (val.clean_url) {
+        output.good = val.clean_url
       } else {
         output.bad = true
       }
@@ -312,7 +317,7 @@ private searchByrandomTitle(search_titles:Array<any>):string{
     }
 
     if (output.good) {
-      return output.good;
+      return {good:output.good,lastSearch:val.lastSearch};
     }
 
     else { //api_support 

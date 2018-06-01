@@ -10,6 +10,7 @@ export interface IRouteName{
   per_page: any, 
   originalName:any,
   searchAPI:any,
+  lastSearch:any,
   header_params:any,
   perpage:any // or perpage
 } 
@@ -25,6 +26,7 @@ export interface IMyGlobals{
           current_page:string,
           selected_apiName:string
       },
+    payload:Object,
    api_random_search_val:any;   
    api_support:Array<any>,
    
@@ -53,5 +55,6 @@ export interface IApiModel {
  export interface IbuildRespCall{
     url:string,
     error:any,
-    message:any
+    message:any,
+    lastSearch:any
   }

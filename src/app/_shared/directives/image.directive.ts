@@ -47,7 +47,7 @@ export class ImageDirective implements OnInit {
             this.imageLoaded = true;
         }, 100);     
         
-        console.log('image loaded!!!') 
+        //console.log('image loaded!!!') 
       }
 
       tester.onerror=()=>{

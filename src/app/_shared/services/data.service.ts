@@ -43,31 +43,39 @@ export class DataService {
   }
 
   ///check if we have avaialble localstorage first
-  /**
-   * LocalStorageService ids
-      apiName:paged:1 
-      apiName:item:name:Paradox_Islay 
-   */
-
- 
-  checkLocalstorage(apiName,params: any): any {
+  
+  checkLocalstorage(apiName, params: any): any {
     if (!params) return null;
     var getStorage: any = null;
-
-    //{apiName}:paged:1  << always first page
+    console.log('do wehave last search q ',params.lastSearch)
+    //{apiName}:paged:1:lastSearch:example_name  << always first page
     if (params.parent_page) {
-      getStorage = this.lStorage.getItem(`${apiName}:paged:${1}`);
+      var set_key = `${apiName}:paged:${1}`;
+      if (params.lastSearch) {
+        set_key = set_key + `:lastsearch:${params.lastSearch}`;
+      }
+      getStorage = this.lStorage.getItem(set_key);
     }
-    // {apiName}:paged:${paged}
+    // {apiName}:paged:${paged}:lastSearch:example_name
     if (params.paged) {
-      getStorage = this.lStorage.getItem(`${apiName}:paged:${params.paged}`);
+      var set_key = `${apiName}:paged:${params.paged}`;
+      if (params.lastSearch) {
+        set_key = set_key + `:lastsearch:${params.lastSearch}`;
+      }
+      getStorage = this.lStorage.getItem(set_key);
     }
 
-    // {apiName}:item:name:search_by_name
-    // {apiName}:item:name:byName
+    // {apiName}:item:name:search_by_name:lastSearch:example_name
+    // {apiName}:item:name:byName:lastSearch:example_name
     if (params.byName || params.search_by_name) {
-      var searchBy = params.byName || params.search_by_name || false;
-      getStorage = this.lStorage.getItem(`${apiName}:item:name:${searchBy}`);
+      var searchBy = params.byName || params.search_by_name;
+      var set_key = `${apiName}:item:name:${searchBy}`;
+
+      if (params.lastSearch) {
+        set_key = set_key + `:lastsearch:${params.lastSearch}`;
+      }
+
+      getStorage = this.lStorage.getItem(set_key);
     }
     return getStorage;
   }
@@ -78,23 +86,35 @@ export class DataService {
    * @param params 
    * @param data 
    */
-  setLocalStorage(apiName,params: any, data: Models[]): boolean {
+  setLocalStorage(apiName, params: any, data: Models[]): boolean {
 
     if (!params && !data) return false;
     var setStorage: any = false;
 
-    //{apiName}:paged:1  << always first page
+    //{apiName}:paged:1:lastSearch:example_search  << always first page
     if (params.parent_page) {
-      setStorage = this.lStorage.setItem(`${apiName}:paged:${1}`, data);
+      var set_key = `${apiName}:paged:${1}`;
+      if (params.lastSearch) {
+        set_key = set_key + `:lastsearch:${params.lastSearch}`;
+      }
+      setStorage = this.lStorage.setItem(set_key, data);
     }
-    // {apiName}:paged:${paged}
+    // {apiName}:paged:${paged}:lastSearch:example_search
     if (params.paged) {
-      setStorage = this.lStorage.setItem(`${apiName}:paged:${params.paged}`, data);
+      var set_key = `${apiName}:paged:${params.paged}`;
+      if (params.lastSearch) {
+        set_key = set_key + `:lastsearch:${params.lastSearch}`;
+      }
+      setStorage = this.lStorage.setItem(set_key, data);
     }
-    // {apiName}:item:name:search_by_name
+    // {apiName}:item:name:search_by_name:lastSearch:example_search
     if (params.search_by_name || params.byName) {
-      var byName = params.search_by_name || params.byName || false;
-      setStorage = this.lStorage.setItem(`${apiName}:item:name:${byName}`, data);
+      var byName = params.search_by_name || params.byName;
+      var set_key = `${apiName}:item:name:${byName}`;
+      if (params.lastSearch) {
+        set_key = set_key + `:lastsearch:${params.lastSearch}`;
+      }
+      setStorage = this.lStorage.setItem(set_key, data);
     }
 
     return setStorage;
@@ -173,18 +193,21 @@ export class DataService {
 
     // remove all storage / for testing
     //this.lStorage.removeAll()
+    var _paramsReturn = this.apiManager.buildRespCall(apiName, params,this._globals as IMyGlobals);
 
-    var checkLocalstorage = this.checkLocalstorage(apiName,params);
+    var paramsForLocalStorage =params;
+    paramsForLocalStorage.lastSearch= _paramsReturn.lastSearch;
+    var checkLocalstorage = this.checkLocalstorage(apiName,paramsForLocalStorage);
+
     if (checkLocalstorage !== false && checkLocalstorage!==null && !params.searchAPI) {
      // console.log('why is localstorrage not empty',checkLocalstorage)
       this.logger.log(`getting data for ${apiName} from localstorage!!`)
       return checkLocalstorage;
     }
 
-    // delete delete 
-     delete  params.searchAPI;
+
      
-    var _paramsReturn = this.apiManager.buildRespCall(apiName, params,this._globals as IMyGlobals);
+   
     
     if (_paramsReturn.error) {
       var nice_print = ( _paramsReturn.error ) ? JSON.stringify(_paramsReturn):_paramsReturn;
@@ -194,7 +217,7 @@ export class DataService {
 
 
     if ( apiName == 'omdbapi') {
-      return this.httpRequest(params, _paramsReturn.url, apiName, 
+      return this.httpRequest(params, _paramsReturn, apiName, 
         // MANAGE DATA OUTPUT
         (DATA:OmdbapiModel[])=>{
           var d= (DATA as any).Search;
@@ -206,7 +229,7 @@ export class DataService {
     
     if ( apiName == 'gettyimages') {
       (params as any).header_params = this.apiManager.last_gen_api.headers;
-      return this.httpRequest(params, _paramsReturn.url, apiName, 
+      return this.httpRequest(params, _paramsReturn, apiName, 
         // MANAGE DATA OUTPUT
         (DATA:GettyImages[])=>{
           return (DATA as any).images
@@ -215,7 +238,7 @@ export class DataService {
     
 
     if ( apiName == 'punkapi') {
-      return this.httpRequest(params, _paramsReturn.url, apiName, 
+      return this.httpRequest(params, _paramsReturn, apiName, 
         // MANAGE DATA OUTPUT
         (DATA:BeersModel[])=>{
           return DATA;
@@ -223,7 +246,7 @@ export class DataService {
     }
 
     if (apiName == 'flickr') {
-      return this.httpRequest(params, _paramsReturn.url, apiName,
+      return this.httpRequest(params, _paramsReturn, apiName,
         // MANAGE DATA OUTPUT
         (DATA:FlickrPhotoModel[])=>{
           return (DATA as any).photos.photo;
@@ -235,15 +258,21 @@ export class DataService {
 
 
 
-  private httpRequest(originalParams: IRouteName, paramsReturn: string, _apiName: string, dataCallBack): Observable<any[]> {
-
+  private httpRequest(originalParams: IRouteName, paramsReturn: any, _apiName: string, dataCallBack): Observable<any[]> {
+    delete originalParams.searchAPI;
+    
     var with_headers = this.generateHeaderOptions(originalParams);
 
     if(!with_headers){ // if no headers available pass empty headers :)
       with_headers = new RequestOptions({}); 
     }
-    //console.log('what are the with_headers: ',with_headers)
-    return this.http.get(paramsReturn,with_headers)
+
+    /// modify original params for local storage
+    if(paramsReturn.lastSearch){
+      originalParams.lastSearch=  paramsReturn.lastSearch
+    }
+     
+    return this.http.get(paramsReturn.url,with_headers)
       .map((response: any) => {
 
         var checker = this.errorHandler(response.json(), _apiName);
@@ -253,13 +282,13 @@ export class DataService {
 
         var d = dataCallBack(response.json()); 
         var checked_data = this.returnMaxAllowed(d);
-        console.log('what is the data',checked_data)
+       // console.log('what is the data',checked_data)
         return checked_data as any;
       })
       .do((dat) => {      
         //var r_data = // manage data output
       //  console.log('what is the new data here',r_data)
-        //this.setLocalStorage(_apiName,originalParams, dat); // magic happens!
+        this.setLocalStorage(_apiName,originalParams, dat); // magic happens!
         return dat;
       })
       .catch((error: any) => {
@@ -309,7 +338,7 @@ export class DataService {
       .do((dat) => {
         //var r_data = // manage data output
        // console.log('what is the iser_id data: ', dat)
-        // this.setLocalStorage(originalParams, r_data); // magic happens!
+         this.setLocalStorage(apiName,params, dat); // magic happens!
         return dat;
       })
       .catch((error: any) => {

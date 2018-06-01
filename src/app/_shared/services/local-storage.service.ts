@@ -29,13 +29,13 @@ import { LoggerService } from './logger.service';
 
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root' 
 })
 export class LocalStorageService {
 
   constructor(private logger: LoggerService) {
 
-     this.removeAll(); 
+    //this.removeAll();   
 
    }
  

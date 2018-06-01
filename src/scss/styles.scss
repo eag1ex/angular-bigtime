@@ -69,6 +69,16 @@
 
     page-title{ 
         display: block;
+
+   &.mobile-page-title{
+       color: rgba(0,0,0,0.6)!important;
+       h1{
+           font-size: 1.7rem!important;
+           color: rgba(0,0,0,0.6)!important;
+       }
+   }     
+
+
     }
 
     product-item {
@@ -140,6 +150,9 @@
             }
         }
         .product-wrap {
+            .tags, .keywords{
+                font-size: smaller;
+            }
             .card {
                 @include border-radius(6px, 6px);
                 img {

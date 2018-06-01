@@ -37,7 +37,7 @@ export class MyGlobals implements IMyGlobals{
         current_page:'',
         selected_apiName:'punkapi'// preset dynamicly changed
     };
-    
+    payload:object ={};
     api_random_search_val:any='';
 
     api_support:Array<any> =  new ApiList().list().reduce((outp,val,inx)=>{       
@@ -65,7 +65,7 @@ export class MyGlobals implements IMyGlobals{
         var _data = data || this.glob[this.glob.selected_apiName+'.data']; 
         if (!_data || data.length<1) {
             this._router.navigate(['/products']);
-            this.logger.log('Something bad _data is null',true)
+           // this.logger.log('Something bad _data is null',true)
             return Observable.of('Something bad happened glob.beers, its null') as any;
         }
 

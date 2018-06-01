@@ -24,7 +24,7 @@ import { fadeInAnimation } from './_shared/animations';
 })
 export class AppComponent implements OnInit{
   appName = {
-    a: '[ BigTime ]',
+    a: '[ Picky ]',
     b: ''
   };
   private removeOldClass:string;

@@ -49,7 +49,7 @@ export class SearchInputDirective implements OnInit {
 
       if (msg.eventType == 'BackToDirective') {
         if (msg.reset) {
-          console.log('received BackToDirective!')
+        //  console.log('received BackToDirective!')
           this.searchtext = '';
           this.searchAPIcheck = false;
           this.loading=false;
