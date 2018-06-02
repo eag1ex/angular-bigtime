@@ -1,53 +1,48 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+
     <div class="container">
         <a class="navbar-brand" [routerLink]="['/app/products']"><span class='t-strong'>{{appName.a}}</span>&nbsp;<span class='t-light'>{{appName.b}}</span></a>
+        
         <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07"
             aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
 
-
-
-
         <div class="navbar-collapse collapse">
-             
-            <div class="col-auto w-75"> 
-  
-                 <page-title [title]="app_dynamic_title" [display]='7' class="mt-1 text-center text-white"></page-title>
-  
+
+            <div class="col-auto w-75">
+                <page-title [title]="app_dynamic_title" [display]='7' class="mt-1 text-center text-white"></page-title>
             </div>
- 
+
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
                     <!--<a class="nav-link" href="#">Latest <span class="sr-only">(current)</span></a>-->
                 </li>
 
- 
             </ul>
 
         </div>
     </div>
+
 </nav>
 
 <div class='container' [ngClass]="{'flickrBG':selected_apiName=='flickr', 'gettyimagesBG':selected_apiName=='gettyimages','punkapiBG':selected_apiName=='punkapi' }">
 
-
-
     <div class='row justify-content-md-center' *ngIf="currentPageName==='products'">
         <div class='mx-2 col col-sm-10 col-md-6 col-lg-6'>
-             <form class="form-inline w-100 search-input-wrap">
+            <form class="form-inline w-100 search-input-wrap">
                 <search-input [ngClass]="{'moveDown':displaySearchInput===true && currentPageName==='products', 'hideMe':displaySearchInput===false || currentPageName!=='products'}"
                     class="w-100 mb-1 mt-0 px-3 pt-4 pb-1 anim-f" (onSearch)="onSearch($event);"></search-input>
-             </form>   
+            </form>
         </div>
     </div>
 
     <div class='row justify-content-md-center d-block d-sm-none  d-none d-sm-block d-md-none mt-3'>
-        <div class="col-auto w-100"> 
-
+        <div class="col-auto w-100">
             <page-title [title]="app_dynamic_title" [display]='7' class="mobile-page-title mt-1 text-center text-white"></page-title>
-
         </div>
     </div>
-    <router-outlet></router-outlet>
+
+    <router-outlet></router-outlet> <!-- load all if the components here-->
+
 </div>

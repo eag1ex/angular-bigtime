@@ -7,9 +7,9 @@
 
 
 
-export class GlobalReuse  {
+export class GlobalReuse {
 
-    constructor(){
+    constructor() {
 
     }
 
@@ -17,40 +17,40 @@ export class GlobalReuse  {
         let ret = [];
         for (let d in data)
             ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
-            // ret.push(d + '=' + data[d]);
+        // ret.push(d + '=' + data[d]);
         return ret.join('&');
     }
 
     removeEmptyParam(sourceURL) {
-        if(sourceURL.indexOf('?')==-1){
-            sourceURL = "?"+sourceURL;
+        if (sourceURL.indexOf('?') == -1) {
+            sourceURL = "?" + sourceURL;
         }
         var rtn = sourceURL.split("?")[0],
-            param, 
+            param,
             params_arr = [],
             queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
         if (queryString !== "") {
             params_arr = queryString.split("&");
             for (var i = params_arr.length - 1; i >= 0; i -= 1) {
                 param = params_arr[i].split("=")[0];
-                var is_empty = params_arr[i].split("=")[1].length==0;
-                if (is_empty) {      
-                  params_arr.splice(i, 1);
+                var is_empty = params_arr[i].split("=")[1].length == 0;
+                if (is_empty) {
+                    params_arr.splice(i, 1);
                 }
             }
-            rtn = rtn  + params_arr.join("&");
+            rtn = rtn + params_arr.join("&");
         }
         return rtn;
     }
 
     /// find api name via url, good if reloading the browser
-   findApiNameFromUrl(api_support){
-    var url = window.location.href;
-    var api= api_support.filter((item,inx)=>{
-        
-        return url.indexOf(item)!==-1;
-    })[0] || false;
+    findApiNameFromUrl(api_support) {
+        var url = window.location.href;
+        var api = api_support.filter((item, inx) => {
 
-    return api;
-  }
+            return url.indexOf(item) !== -1;
+        })[0] || false;
+
+        return api;
+    }
 }

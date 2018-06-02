@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http,RequestOptions } from '@angular/http';
+import { Headers, Http, RequestOptions } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch'; //
@@ -11,13 +11,13 @@ import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/toPromise';
 
 import * as _ from "lodash";
-import { BeersModel,FlickrPhotoModel,Models,GettyImages,OmdbapiModel } from './models';
+import { BeersModel, FlickrPhotoModel, Models, GettyImages, OmdbapiModel } from './models';
 import { LoggerService } from './logger.service';
 import { LocalStorageService } from './local-storage.service';
-import {ApiManagerService} from './api-manager/api-manager.service';
+import { ApiManagerService } from './api-manager/api-manager.service';
 
 // interfaces
-import { IRouteName, IMyGlobals} from '../interfaces';
+import { IRouteName, IMyGlobals } from '../interfaces';
 
 
 
@@ -25,58 +25,55 @@ import { IRouteName, IMyGlobals} from '../interfaces';
   providedIn: 'root'
 })
 export class DataService {
- /// private apiURL = 'https://api.punkapi.com/v2/beers'; now using ApiManagerService
   public punkapiData: Array<any>;
-  public _globs:any;
+  public _globs: any;
   constructor(
     private http: Http,
     private logger: LoggerService,
     private lStorage: LocalStorageService,
-    private apiManager:ApiManagerService
-  ) { 
+    private apiManager: ApiManagerService
+  ) {
 
-    
+
   }
 
-  get _globals(){
+  get _globals() {
     return this._globs;
   }
 
   ///check if we have avaialble localstorage first
-  
-  checkLocalstorage(apiName, params: any): any {
+  checkLocalstorage(apiName, params: any, single:boolean=false): any {
     if (!params) return null;
     var getStorage: any = null;
-    console.log('do wehave last search q ',params.lastSearch)
+    var set_key;
+    /*
+    var matched= ['parent_page','paged','byName','search_by_name'].filter((item, inx)=>{
+       return params.indexOf(item)!==-1;
+    }).length> 0 ? matched:false;
+
+    var match_logic = 
+
+    if(matched){
+    }
+    */
+
     //{apiName}:paged:1:lastSearch:example_name  << always first page
-    if (params.parent_page) {
-      var set_key = `${apiName}:paged:${1}`;
-      if (params.lastSearch) {
-        set_key = set_key + `:lastsearch:${params.lastSearch}`;
-      }
-      getStorage = this.lStorage.getItem(set_key);
-    }
+    if (params.parent_page) set_key = `${apiName}:paged:${1}`;
+
     // {apiName}:paged:${paged}:lastSearch:example_name
-    if (params.paged) {
-      var set_key = `${apiName}:paged:${params.paged}`;
-      if (params.lastSearch) {
-        set_key = set_key + `:lastsearch:${params.lastSearch}`;
-      }
-      getStorage = this.lStorage.getItem(set_key);
+    if (params.paged) set_key = `${apiName}:paged:${params.paged}`;
+
+    // {apiName}:search_by_name:lastSearch:example_name
+    // {apiName}:byName:lastSearch:example_name
+    var searchBy = params.byName || params.search_by_name;
+    if (searchBy) {
+      set_key = `${apiName}:name:${searchBy}`;
     }
 
-    // {apiName}:item:name:search_by_name:lastSearch:example_name
-    // {apiName}:item:name:byName:lastSearch:example_name
-    if (params.byName || params.search_by_name) {
-      var searchBy = params.byName || params.search_by_name;
-      var set_key = `${apiName}:item:name:${searchBy}`;
 
-      if (params.lastSearch) {
-        set_key = set_key + `:lastsearch:${params.lastSearch}`;
-      }
-
-      getStorage = this.lStorage.getItem(set_key);
-    }
+    if (params.lastSearch && !single) set_key = set_key + `:lastsearch:${params.lastSearch}`;
+   
+    getStorage = this.lStorage.getItem(set_key);
     return getStorage;
   }
 
@@ -86,46 +83,42 @@ export class DataService {
    * @param params 
    * @param data 
    */
-  setLocalStorage(apiName, params: any, data: Models[]): boolean {
+  setLocalStorage(apiName, params: any, data: Models[], single:boolean=false): boolean {
 
     if (!params && !data) return false;
     var setStorage: any = false;
+    var set_key;
+  
 
     //{apiName}:paged:1:lastSearch:example_search  << always first page
-    if (params.parent_page) {
-      var set_key = `${apiName}:paged:${1}`;
-      if (params.lastSearch) {
-        set_key = set_key + `:lastsearch:${params.lastSearch}`;
-      }
-      setStorage = this.lStorage.setItem(set_key, data);
-    }
+    if (params.parent_page) set_key = `${apiName}:paged:${1}`;
+
     // {apiName}:paged:${paged}:lastSearch:example_search
-    if (params.paged) {
-      var set_key = `${apiName}:paged:${params.paged}`;
-      if (params.lastSearch) {
-        set_key = set_key + `:lastsearch:${params.lastSearch}`;
-      }
-      setStorage = this.lStorage.setItem(set_key, data);
-    }
+    if (params.paged) set_key = `${apiName}:paged:${params.paged}`;
+
     // {apiName}:item:name:search_by_name:lastSearch:example_search
     if (params.search_by_name || params.byName) {
       var byName = params.search_by_name || params.byName;
-      var set_key = `${apiName}:item:name:${byName}`;
-      if (params.lastSearch) {
-        set_key = set_key + `:lastsearch:${params.lastSearch}`;
-      }
-      setStorage = this.lStorage.setItem(set_key, data);
+      set_key = `${apiName}:name:${byName}`;
     }
 
+    if (params.lastSearch && !single) set_key = set_key + `:lastsearch:${params.lastSearch}`;
+    
+    setStorage = this.lStorage.setItem(set_key, data);
     return setStorage;
   }
 
 
-  errorHandler(errorData:any, apiName:string):object{
+  /**
+   * mocked error handling for each api error respond 
+   * @param errorData 
+   * @param apiName 
+   */
+  errorHandler(errorData: any, apiName: string): object {
 
     if (apiName == 'omdbapi') {
-      if(errorData.Error!==undefined){
-          return errorData;
+      if (errorData.Error !== undefined) {
+        return errorData;
       }
     }
 
@@ -152,7 +145,7 @@ export class DataService {
         }
       }
     }
-   
+
     if (apiName == 'flickr') {
       if (errorData.photos !== undefined) {
         if (errorData.photos.photo.length == 0) {
@@ -170,109 +163,134 @@ export class DataService {
       }
     }
 
-    if(errorData.error){
+    if (errorData.error) {
       errorData.apiName = apiName
       return errorData;
     }
 
-      if (errorData.length === 0) {
-        return {
-          error: true,
-          message: 'data respons as null',
-          apiName: apiName
-        }
-      
+    if (errorData.length === 0) {
+      return {
+        error: true,
+        message: 'data respons as null',
+        apiName: apiName
+      }
 
-    }else{
+
+    } else {
       return false as any;
     }
   }
 
+  /**
+   * getHttpRequest(..):Observable
+   * rest :get request together with httpRequest(..)
+   * we do our call request with this method which works together with "this.apiManage" which handles
+   * api rest parse/manipulation to single url string
+   * we check for presence of localstorage and return from here in case its available, this is the best way 
+   * of handling localstorage i think because it returns the same respons as if it were a call from rest :)
+   * We switchcase rest call baseton api requested and manipulate respons arrordingly, every rest resp as an assigned model decorator
+   * so we know what to except!
+   * 
+   */
 
   getHttpRequest(params: IRouteName, apiName: string = 'punkapi'): Observable<any[]> {
 
-    // remove all storage / for testing
-    //this.lStorage.removeAll()
-    var _paramsReturn = this.apiManager.buildRespCall(apiName, params,this._globals as IMyGlobals);
+    var _paramsReturn = this.apiManager.buildRespCall(apiName, params, this._globals as IMyGlobals);
 
-    var paramsForLocalStorage =params;
-    paramsForLocalStorage.lastSearch= _paramsReturn.lastSearch;
-    var checkLocalstorage = this.checkLocalstorage(apiName,paramsForLocalStorage);
+    var paramsForLocalStorage = params;
+    paramsForLocalStorage.lastSearch = _paramsReturn.lastSearch;
+    var checkLocalstorage = this.checkLocalstorage(apiName, paramsForLocalStorage);
 
-    if (checkLocalstorage !== false && checkLocalstorage!==null && !params.searchAPI) {
-     // console.log('why is localstorrage not empty',checkLocalstorage)
+    if (checkLocalstorage !== false && checkLocalstorage !== null && !params.searchAPI) {
       this.logger.log(`getting data for ${apiName} from localstorage!!`)
       return checkLocalstorage;
     }
 
 
-     
-   
-    
     if (_paramsReturn.error) {
-      var nice_print = ( _paramsReturn.error ) ? JSON.stringify(_paramsReturn):_paramsReturn;
-     // console.log('what is _paramsReturn!!!!!',nice_print)
+      var nice_print = (_paramsReturn.error) ? JSON.stringify(_paramsReturn) : _paramsReturn;
       return Observable.throw(`api error for ${apiName}: ${nice_print}`);
     }
 
+    var RESP: Observable<any[]>;
 
-    if ( apiName == 'omdbapi') {
-      return this.httpRequest(params, _paramsReturn, apiName, 
-        // MANAGE DATA OUTPUT
-        (DATA:OmdbapiModel[])=>{
-          var d= (DATA as any).Search;
-          /// conditional check
-          return this.checkImages_omdbapi(d);
-        }) as Observable<OmdbapiModel[]>;
+    switch (apiName) {
+
+      case 'omdbapi':
+
+        RESP = this.httpRequest(params, _paramsReturn, apiName,
+          // MANAGE DATA OUTPUT
+          (DATA: OmdbapiModel[]) => {
+            var d = (DATA as any).Search;
+            /// conditional check
+            return this.checkImages_omdbapi(d);
+          }) as Observable<OmdbapiModel[]>;
+        break;
+
+      case 'punkapi':
+
+        RESP = this.httpRequest(params, _paramsReturn, apiName,
+          // MANAGE DATA OUTPUT
+          (DATA: BeersModel[]) => {
+            return DATA;
+          }) as Observable<BeersModel[]>;
+        break;
+
+      case 'gettyimages':
+
+        (params as any).header_params = this.apiManager.last_gen_api.headers;
+        RESP = this.httpRequest(params, _paramsReturn, apiName,
+          // MANAGE DATA OUTPUT
+          (DATA: GettyImages[]) => {
+            return (DATA as any).images
+          }) as Observable<GettyImages[]>;
+        break;
+
+      case 'flickr':
+
+        RESP = this.httpRequest(params, _paramsReturn, apiName,
+          // MANAGE DATA OUTPUT
+          (DATA: FlickrPhotoModel[]) => {
+            return (DATA as any).photos.photo;
+          }) as Observable<FlickrPhotoModel[]>;
+        break;
+
+      default:
+        this.logger.log('apiName not matched so requesting default', true);
+        RESP = this.httpRequest(params, _paramsReturn, 'punkapi',
+          // MANAGE DATA OUTPUT
+          (DATA: BeersModel[]) => {
+            return DATA;
+          }) as Observable<BeersModel[]>;
+      //code block
     }
 
-    
-    if ( apiName == 'gettyimages') {
-      (params as any).header_params = this.apiManager.last_gen_api.headers;
-      return this.httpRequest(params, _paramsReturn, apiName, 
-        // MANAGE DATA OUTPUT
-        (DATA:GettyImages[])=>{
-          return (DATA as any).images
-        }) as Observable<GettyImages[]>;
-    }
-    
-
-    if ( apiName == 'punkapi') {
-      return this.httpRequest(params, _paramsReturn, apiName, 
-        // MANAGE DATA OUTPUT
-        (DATA:BeersModel[])=>{
-          return DATA;
-        }) as Observable<BeersModel[]>;
-    }
-
-    if (apiName == 'flickr') {
-      return this.httpRequest(params, _paramsReturn, apiName,
-        // MANAGE DATA OUTPUT
-        (DATA:FlickrPhotoModel[])=>{
-          return (DATA as any).photos.photo;
-            
-      }) as Observable<FlickrPhotoModel[]>;
-    } 
-   
-  }           
+    return RESP;
+  }
 
 
-
+  /**
+   * extended to getHttpRequest(..)
+   * @param originalParams 
+   * @param paramsReturn 
+   * @param _apiName 
+   * @param dataCallBack 
+   */
   private httpRequest(originalParams: IRouteName, paramsReturn: any, _apiName: string, dataCallBack): Observable<any[]> {
     delete originalParams.searchAPI;
-    
-    var with_headers = this.generateHeaderOptions(originalParams);
 
-    if(!with_headers){ // if no headers available pass empty headers :)
-      with_headers = new RequestOptions({}); 
+    // check for headers if api requires it!
+    var with_headers = this.generateHeaderOptions(originalParams);
+    if (!with_headers) { // if no headers available pass empty headers :)
+      with_headers = new RequestOptions({});
     }
 
     /// modify original params for local storage
-    if(paramsReturn.lastSearch){
-      originalParams.lastSearch=  paramsReturn.lastSearch
+    if (paramsReturn.lastSearch) {
+      originalParams.lastSearch = paramsReturn.lastSearch
     }
-     
-    return this.http.get(paramsReturn.url,with_headers)
+
+    return this.http.get(paramsReturn.url, with_headers)
       .map((response: any) => {
 
         var checker = this.errorHandler(response.json(), _apiName);
@@ -280,15 +298,12 @@ export class DataService {
           throw checker as any;
         }
 
-        var d = dataCallBack(response.json()); 
+        var d = dataCallBack(response.json());
         var checked_data = this.returnMaxAllowed(d);
-       // console.log('what is the data',checked_data)
         return checked_data as any;
       })
-      .do((dat) => {      
-        //var r_data = // manage data output
-      //  console.log('what is the new data here',r_data)
-        this.setLocalStorage(_apiName,originalParams, dat); // magic happens!
+      .do((dat) => {
+        this.setLocalStorage(_apiName, originalParams, dat); // magic happens!
         return dat;
       })
       .catch((error: any) => {
@@ -298,32 +313,14 @@ export class DataService {
 
   }
 
-  // in case of overloads, because we are also storing to localStorage, so no overloading the browser:) 
-  returnMaxAllowed(dataModel:Models[],limit:number=10/*per page*/):Models[]{
-
-    var dataLen = dataModel.length;
-    var newData = dataModel;
-
-    if(dataLen>limit){
-        var reduceBy = dataLen - limit;
-        newData = _.dropRight(dataModel,reduceBy);
-        console.log('-- modelData reduced by: ',reduceBy);
-    }
-    
-    return newData;
-  }
-
 
   getFlickerLink(params: IRouteName, apiName: string = 'punkapi'): Observable<any[]> {
 
     var _paramsReturn = this.apiManager.buildRespCall(apiName, params, this._globals as IMyGlobals);
-
     if (_paramsReturn.error) {
       var nice_print = (_paramsReturn.error) ? JSON.stringify(_paramsReturn) : _paramsReturn;
-      // console.log('what is _paramsReturn!!!!!',nice_print)
       return Observable.throw(`api error for ${apiName}: ${nice_print}`);
     }
-
 
     return this.http.get(_paramsReturn.url)
       .map((response: any) => {
@@ -336,9 +333,7 @@ export class DataService {
         return response.json().user as any;
       })
       .do((dat) => {
-        //var r_data = // manage data output
-       // console.log('what is the iser_id data: ', dat)
-         this.setLocalStorage(apiName,params, dat); // magic happens!
+
         return dat;
       })
       .catch((error: any) => {
@@ -347,6 +342,24 @@ export class DataService {
       });
 
   }
+
+
+  // in case of overloads, because we are also storing to localStorage, so no overloading the browser:) 
+  private returnMaxAllowed(dataModel: Models[], limit: number = 10/*per page*/): Models[] {
+    limit = this._globals.items_per_page || limit;
+    var dataLen = dataModel.length;
+    var newData = dataModel;
+
+    if (dataLen > limit) {
+      var reduceBy = dataLen - limit;
+      newData = _.dropRight(dataModel, reduceBy);
+      console.log('-- modelData reduced by: ', reduceBy);
+    }
+
+    return newData;
+  }
+
+
 
   // only output with images
   private checkImages_omdbapi(data: OmdbapiModel[]): OmdbapiModel[] {
@@ -358,7 +371,7 @@ export class DataService {
     }, [])
   }
 
-  private generateHeaderOptions(header_val: any):RequestOptions {
+  private generateHeaderOptions(header_val: any): RequestOptions {
     if (!header_val.header_params) return false as any;
 
     var hData = header_val.header_params
@@ -375,5 +388,5 @@ export class DataService {
     return options
   }
 
-}
+};
 

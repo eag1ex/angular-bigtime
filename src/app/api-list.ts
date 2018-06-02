@@ -1,4 +1,12 @@
 
+/**
+ *  This file implements all APIS, and makes them available in the app, you can disable them individually
+ *  you have to follow the schema for each object to make it work, follow already predefind apis as an example,
+ *  The pre() method appends all the value requirements that are repeated on each object, to avoid repetition or mistakes,
+ *  any values preset in the object will overite the pre();
+ */
+
+
 
   //https://api.punkapi.com/v2/beers/?beer_name=cool_beer&page=1&per_page=5
 var punkapi = {
@@ -104,6 +112,7 @@ var omdbapi = {
 
 
 /**
+ * NO YET INTEGRATED
  https://api.themoviedb.org/3/account/favorite/movies?api_key=<<api_key>>&language=en-US&sort_by=created_at.asc&page=1
 how to generate session 
 https://developers.themoviedb.org/3/authentication/how-do-i-generate-a-session-id
@@ -123,8 +132,6 @@ var themoviedb = {
     'i':'' //(e.g. tt1285016)
   }
 }
-
-
 
 
 class Presets {
@@ -151,10 +158,13 @@ export class ApiList extends Presets{
 constructor(){
   super();
 }
+
+/*
   /// in case the predefind api's are not available for current user, we need to validate output some how
   proposedList(){
     return ['punkapi','flickr', 'gettyimages','omdbapi'];
   }
+*/
 
   list() {
     // set the order

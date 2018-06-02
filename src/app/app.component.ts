@@ -1,7 +1,7 @@
 
 // avoide any console errors
 declare var jquery:any;
-declare var $ :any;
+declare var $ :any; 
 
 import { Component, Input, Output, OnInit, EventEmitter,Renderer,ElementRef  } from '@angular/core';
 import { MyGlobals } from './_shared/myglobals';
@@ -64,7 +64,7 @@ export class AppComponent implements OnInit{
         if (val.url.indexOf('products') == -1) {
           if (_globals.glob.searchSubscription !== null) {
             _globals.glob.searchSubscription.unsubscribe();
-            logger.log(`unsubscribeed form searchSubscription`)
+            logger.log(`unsubscribed form searchSubscription`)
           }
         }
 

@@ -1,5 +1,11 @@
 
-export class BeersModel { //punkapi single output
+/**
+ *  Model decorations for out data outputs, so you can see what is the minimum requirement for each oof our
+ *  models when it compiles, and checks for errors :)
+ */
+
+//punkapi single output
+export class BeersModel { 
   // BeersModel single item output
   id: number;
   name: string;
@@ -35,6 +41,7 @@ export class GettyImages {
         title:string;
         artist:string;
         caption:string;
+        keywords:Array<{name}>;
         collection_name:string;
         date_created:string;
         display_sizes:Array<{name,uri}>;
@@ -346,7 +353,7 @@ export class Models {
             "Year": "2012",
             "imdbID": "tt2736806",
             "Type": "movie",
-            "Poster": "N/A"
+            "Poster": "N/A" or image url
         }
     ]
   */

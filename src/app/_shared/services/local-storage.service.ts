@@ -16,6 +16,9 @@ import { LoggerService } from './logger.service';
 /**
  * local storage 
  *  todo: not yet implemented storage expiry
+ * 
+ * stores first enquired data and returns localy stored data on subsequent search
+ * and returns request as an observable to data.service
  */
 
 
@@ -23,8 +26,10 @@ import { LoggerService } from './logger.service';
 /**
  *  LocalStorageService ids:
  * 
-    apiName:paged:1 
-    apiName:item:name:example_name 
+    {apiName}:paged:1 
+    {apiName}:item:name:example_name 
+    {apiName}:item:name:example_name:lastsearch:name20%something
+    {apiName}:item:name:example_name:paged:1:lastsearch:name20%something
  */
 
 
@@ -35,7 +40,7 @@ export class LocalStorageService {
 
   constructor(private logger: LoggerService) {
 
-    //this.removeAll();   
+     //this.removeAll();   
 
    }
  

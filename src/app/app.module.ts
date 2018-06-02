@@ -42,6 +42,12 @@ import { TransactionResolver } from './_shared/services/transaction.resolver';
 import { LocalStorageService } from './_shared/services/local-storage.service';
 import {ApiManagerService} from './_shared/services/api-manager/api-manager.service';
 
+
+/**
+ * todo add barrel for all of the imports
+ */
+
+
 @NgModule({
   declarations: [
     AppComponent,

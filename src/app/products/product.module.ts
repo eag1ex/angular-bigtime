@@ -12,7 +12,6 @@ var importDynamicRoutes = (() => {
     if (val.name &&  val.enabled) {
       outp.push({ 
                 path: `product/${val.name}/:id`,
-                //   canActivate: [ TransactionResolver ],
                 component: ProductItemComponent,
                 resolve: {
                   product: TransactionResolver
@@ -31,6 +30,11 @@ var _routesObj = [
   { path: '**', redirectTo: 'products', pathMatch: 'full'}
 ]
  
+/**
+ * dynamicly loading routes for the generated apis
+ * ** sometimes you get a console error when re rendering on change, it is an angular 6 bug
+ * to avoid it, will integrage this dynamic loader as an import, should fix the issue
+ */
 var _routes =importDynamicRoutes.concat(_routesObj)
 
 @NgModule({

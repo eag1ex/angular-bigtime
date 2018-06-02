@@ -2,15 +2,16 @@
 import { Component, Input, OnInit, ElementRef } from '@angular/core';
 
 
-/// not currently used
-/////////////////////////////////////////////////////////////////////
+/**
+ * we include image loader so we can display prealoader icon
+ */
 @Component({
   selector: 'image',
   template: template(),
 })
 export class ImageDirective implements OnInit {
 
-  imageLoaded:boolean =false;
+  imageLoaded: boolean = false;
   constructor(private elm: ElementRef) {
   }
 
@@ -23,14 +24,8 @@ export class ImageDirective implements OnInit {
   @Input()
   alt: string;
 
-
-
-  //@Output()
-  //currinx = new EventEmitter<number>();
-
-
   ngAfterViewInit() {
-   
+
   }
 
   ngOnInit() {
@@ -39,25 +34,25 @@ export class ImageDirective implements OnInit {
 
   }
 
-  preloadImage(src){
-     var tester=new Image();
-     tester.src =  src;
-      tester.onload=()=>{
-        setTimeout(()=> {
-            this.imageLoaded = true;
-        }, 100);     
-        
-        //console.log('image loaded!!!') 
-      }
+  preloadImage(src) {
+    var tester = new Image();
+    tester.src = src;
+    tester.onload = () => {
+      setTimeout(() => {
+        this.imageLoaded = true;
+      }, 100);
+    }
 
-      tester.onerror=()=>{
-        this.imageLoaded=false;
-      }
+    tester.onerror = () => {
+      this.imageLoaded = false;
+    }
   }
 
-}
-function template(){
-    return `
+};
+
+
+function template() {
+  return `
     <div class="sk-circle img-preloader"   *ngIf='imageLoaded===false'>
       <div class="sk-circle1 sk-child"></div>
       <div class="sk-circle2 sk-child"></div>
@@ -74,27 +69,4 @@ function template(){
   </div>      
     <img *ngIf='imageLoaded===true' class="card-img-top " [src]='src' [alt]="alt" [title]='title'>
     `;
-}
-
-/**
-  
-
-var tester=new Image();
-                    tester.src=$scope.imageUrl;
-
-                    // onload
-                    tester.onload=()=>{
-                       $scope.imgLoaded=true;
-                       
-                       $timeout(()=>{
-                        $scope.$apply()
-                        console.log('image loaded!!')
-                       })
-                      
-                    };
-                     // error
-                    tester.onerror=()=>{
-                        $scope.imgLoaded=null;
-                        console.log('image not laoded!!',$scope.imageUrl)
-                    };
- */
+};

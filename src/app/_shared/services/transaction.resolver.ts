@@ -6,6 +6,14 @@ import { MyGlobals } from '../myglobals';
 import { DataService } from './data.service';
 import { GlobalReuse } from '../global.reuse';
 
+/**
+ * this is the data transition layer module/resolver, 
+ * it returns the already available request into our next component, so we do not request it again
+ * It checks for data available directly from request via MyGlobals, or from local storage 
+ * it grabs the route.params.id and match > to find indexOf  [apiName+'.data']
+ */
+
+
 @Injectable()
 export class TransactionResolver implements Resolve<any> {
   constructor(
@@ -16,19 +24,17 @@ export class TransactionResolver implements Resolve<any> {
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
 
     var res, final;
-    console.log('are we at transition resolver??')
     /// this will not work if reloading the page, because the value will be set to preset value for what we are looking for
     var apiNam= this._globals.glob.selected_apiName;
     var apiByhref= new GlobalReuse().findApiNameFromUrl(this._globals.api_support);
 
-    var apiName = apiNam || apiByhref;
+    var apiName = apiByhref||apiNam; // in this order
 
     /**
      * check for localstorage data
      */
     var _id = route.params.id;
     var has_localStorage = this.checkForLocalStorageFirst(apiName,_id);
-
     if (has_localStorage !== false) {
       return has_localStorage;
     }
@@ -38,13 +44,9 @@ export class TransactionResolver implements Resolve<any> {
     var _match = this._globals.stripSpecialChar(_id);   
     var data = selected_api_object || null;
 
-    if (data) {
+    if (data)  final = this.singleItem(data, _match);
+    else  final = false;
 
-      final = this.singleItem(data, _match);
-    } else {
-
-      final = false;
-    }
     // the data is retreived from local variable NOT REST!
     res = this._globals.getData(final, { byName: _id });
     return res
@@ -53,11 +55,11 @@ export class TransactionResolver implements Resolve<any> {
 
   // we can retrieve
   /**
-   * {apiName}:item:name:byName
-   * {apiName}:item:name:search_by_name
+   * {apiName}:name:byName
+   * {apiName}:name:search_by_name
    */
   checkForLocalStorageFirst(apiName,str: string) {
-    return this.dService.checkLocalstorage(apiName,{ search_by_name: str, byName: str });
+    return this.dService.checkLocalstorage(apiName,{ search_by_name: str, byName: str },true);
   }
 
 
@@ -73,11 +75,8 @@ export class TransactionResolver implements Resolve<any> {
       var limit_desc = this._globals.descLimit(avail_title,60);  // has to be the same setting
     
       var itm = this._globals.stripSpecialChar(limit_desc);
-      if (itm.indexOf(_match) !== -1) {
-        //  console.log('what is limit_desc',limit_desc)
-       //console.log('what is _match',_match)
-        output.push(item);
-      }
+      if (itm.indexOf(_match) !== -1) output.push(item);
+
       return output;
     }, []);
 

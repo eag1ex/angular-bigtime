@@ -4,10 +4,10 @@
     p {
         // @include contrasted(#5f1210);
     }
-    app-root{
+
+    app-root {
         display: block;
-        min-height:365px; 
-             
+        min-height: 365px;
         .t-strong {
             font-weight: 800;
         }
@@ -19,110 +19,90 @@
                 font-size: 1.8rem;
             }
         }
-
-
-        &.flickrBG{
-            background-color: $flickrBG!important;
-            page-title{
-                color: $flickrBG!important;
+        &.flickrBG {
+            background-color: $flickrBG !important;
+            page-title {
+                color: $flickrBG !important;
             }
         }
-        &.punkapiBG{
-            background-color: $punkapiBG!important;
-             page-title{
-                color: $punkapiBG!important;
+        &.punkapiBG {
+            background-color: $punkapiBG !important;
+            page-title {
+                color: $punkapiBG !important;
             }
         }
- 
-        &.gettyimagesBG{
-        background-color: $gettyimagesBG!important;
-          page-title{
-                color: $gettyimagesBG!important;
+        &.gettyimagesBG {
+            background-color: $gettyimagesBG !important;
+            page-title {
+                color: $gettyimagesBG !important;
             }
-     
         }
-         
-        &.omdbapiBG{
+        &.omdbapiBG {
             background-color: $omdbapiBG;
-              page-title{
-                color: $omdbapiBG!important;
+            page-title {
+                color: $omdbapiBG !important;
             }
-        }
-       //-webkit-transition: 0.5s linear all !important;
-       // transition: 0.5s linear all !important;
-        /*
-        change color and animate on api change, nice!
-        $flickrBG:  #AFF9D3; //175, 249, 211
-        $punkapiBG: #FFFFB9; // 255, 243, 185
-        $gettyimagesBG: #FFCBDB; // rgb 255, 203, 219
+        } 
 
-        */
-        -webkit-transition: 0.2s ease-in-out!important;
-         transition: 0.2s ease-in-out!important;
-
+        -webkit-transition: 0.2s ease-in-out !important;
+        transition: 0.2s ease-in-out !important;
     }
+
     home {}
 
     /**
     
     **/
 
-    page-title{ 
+    page-title {
         display: block;
-
-   &.mobile-page-title{
-       color: rgba(0,0,0,0.6)!important;
-       h1{
-           font-size: 1.7rem!important;
-           color: rgba(0,0,0,0.6)!important;
-       }
-   }     
-
-
+        &.mobile-page-title {
+            color: rgba(0, 0, 0, 0.6) !important;
+            h1 {
+                font-size: 1.7rem !important;
+                color: rgba(0, 0, 0, 0.6) !important;
+            }
+        }
     }
 
     product-item {
-        display:block;// set as block element
+        display: block; // set as block element
         .item-container {
-            img.product-img{
+            img.product-img {
                 max-width: 70%;
-                &.image-from-flickrm, &.image-from-gettyimages{
-                    max-width: 100%!important;
+                &.image-from-flickrm,
+                &.image-from-gettyimages {
+                    max-width: 100% !important;
                 }
             }
             .product-card {
-                    
-                .list-group-item{
-                    span{
+                .list-group-item {
+                    span {
                         word-break: break-word;
                     }
                 }
-
             }
         }
     }
 
     products {
-        image{
+        image {
             display: block;
-            .img-preloader{
-                margin-top: 20px!important;
-                margin-bottom: 20px!important;
+            .img-preloader {
+                margin-top: 20px !important;
+                margin-bottom: 20px !important;
             }
         }
-
-        .available_apis{
-            button{
-                 color: $body-color;
-                &.active{
-                    color: #fff!important;
+        .available_apis {
+            button {
+                color: $body-color;
+                &.active {
+                    color: #fff !important;
                 }
-                cursor: pointer!important;
-               
+                cursor: pointer !important;
             }
         }
-
-        display:block;// set as block element
+        display:block; // set as block element
         /// make custom column layout for the products page
         .products-container {
             width: 800px;
@@ -132,9 +112,7 @@
             @include make-row();
         }
         .product-col-content {
-             // radious
-            
-
+            // radious
             @include make-col-ready();
             @include media-breakpoint-up(xs) {
                 @include make-col(6);
@@ -150,7 +128,8 @@
             }
         }
         .product-wrap {
-            .tags, .keywords{
+            .tags,
+            .keywords {
                 font-size: smaller;
             }
             .card {
@@ -169,81 +148,70 @@
         }
     }
 
-
     product-item {}
 
     // root of all above classes, can be used to overight classes
- 
-    .search-input-wrap{
+    .search-input-wrap {
         position: relative;
         min-height: 110px;
         overflow: visible;
-        top: -10px;
-        //  @include box-shadow(rgba(0, 0, 0, 0.1) 0 0 100px 5px);  
+        top: -10px; //  @include box-shadow(rgba(0, 0, 0, 0.1) 0 0 100px 5px);  
     }
+
     html search-input {
-
-     position: absolute;
-    // top: -110px;
-     @include border-radius(0px 0px 10px 10px); //@include box-shadow(rgba(0, 0, 0, 0.1) 0 0 100px 5px inset); 
-     @include box-shadow(rgba(0, 0, 0, 0.2) 0 0 70px, rgba(255, 255, 255, 0.4) 0 0 50px 5px inset);
-     background-color: rgba( 0, 0, 0, 0.01); //    border: 1px solid rgba(40, 49, 45, 0.2);
-
-     .input-group .input-group-prepend {
-         .input-group-text {
-             background: rgba( 0, 0, 0, 0.02);
-             @include border-radius(20px, 20px);
-             width: 43px;
-         }
-     }
-     .input-group-text {
-         border: none !important;
-     }
-     .sk-circle.search-loading-icon {
-         position: absolute !important;
-         right: 10px !important;
-         top: 5px;
-         width: 20px !important;
-         height: 20px !important;
-         .sk-child:before {
-             background-color: #fff !important;
-         }
-     }
-     .search-wrap {
-         input.form-control {
-             border: none;
-             background: none;
-             font-size: 1.2rem;
-             color: #000 !important;
-             &[type="text"] {
-
-                 @include input-placeholder {
-                    color: #bbb;
-                    font-style: italic;
-                 }
-             }
-
-         }
-     }
-     p.search-api-check {
-         font-size: 0.7rem;
-         color: #000;
-         letter-spacing: 1px;
-         opacity: 0.3;
-         &.show-search-api-check {
-             opacity: 1 !important;
-         }
-         -webkit-transition: 0.5s linear all !important;
-         transition: 0.5s linear all !important;
-     }
-
-
-     //// animation
-     &.moveDown{
-        -webkit-animation: moveDown 0.4s  normal ease-out;
-        animation: moveDown  0.4s normal ease-out;
-
-        @-webkit-keyframes moveDown {
+        position: absolute; // top: -110px;
+        @include border-radius(0px 0px 10px 10px); //@include box-shadow(rgba(0, 0, 0, 0.1) 0 0 100px 5px inset); 
+        @include box-shadow(rgba(0, 0, 0, 0.2) 0 0 70px, rgba(255, 255, 255, 0.4) 0 0 50px 5px inset);
+        background-color: rgba( 0, 0, 0, 0.01); //    border: 1px solid rgba(40, 49, 45, 0.2);
+        .input-group .input-group-prepend {
+            .input-group-text {
+                background: rgba( 0, 0, 0, 0.02);
+                @include border-radius(20px, 20px);
+                width: 43px;
+            }
+        }
+        .input-group-text {
+            border: none !important;
+        }
+        .sk-circle.search-loading-icon {
+            position: absolute !important;
+            right: 10px !important;
+            top: 5px;
+            width: 20px !important;
+            height: 20px !important;
+            .sk-child:before {
+                background-color: #fff !important;
+            }
+        }
+        .search-wrap {
+            input.form-control {
+                border: none;
+                background: none;
+                font-size: 1.2rem;
+                color: #000 !important;
+                &[type="text"] {
+                    @include input-placeholder {
+                        color: #bbb;
+                        font-style: italic;
+                    }
+                }
+            }
+        }
+        p.search-api-check {
+            font-size: 0.7rem;
+            color: #000;
+            letter-spacing: 1px;
+            opacity: 0.3;
+            &.show-search-api-check {
+                opacity: 1 !important;
+            }
+            -webkit-transition: 0.5s linear all !important;
+            transition: 0.5s linear all !important;
+        } //// animation
+        &.moveDown {
+            -webkit-animation: moveDown 0.4s normal ease-out;
+            animation: moveDown 0.4s normal ease-out;
+            @-webkit-keyframes moveDown {
                 0% {
                     top: -100px;
                 }
@@ -257,48 +225,42 @@
                     top: 0px;
                 }
             }
-            
             @keyframes moveDown {
                 0% {
-                top: -100px;
+                    top: -100px;
                 }
                 50% {
                     top: -50px;
                 }
-                 90% {
+                90% {
                     top: -10px;
                 }
                 100% {
                     top: 0px;
                 }
             }
-     }
-
- } // search-input
-
-        //// dirty fix
+        }
+    } // search-input
+    //// dirty fix
     app-root.omdbapiBG {
         .search-wrap input.form-control {
             &[type="text"] {
                 @include input-placeholder {
-                    color: #ccc!important;
+                    color: #ccc !important;
                 }
             }
         }
     }
 
-
-
-
     footer {
         border-top: 1px solid rgba( 69, 84, 77, 0.2);
     }
 
-    @include sticky-footer(72px, "#wrap", "#wrap_footer", "#footer");
-
-
-    //// nothing goes here below
-  /////////////////////////////////////
-  @import 'responsive';
-  /////////////////////
-  /// 
+    @include sticky-footer(72px, "#wrap", "#wrap_footer", "#footer"); //// nothing goes here below
+    
+    
+    
+    
+    /////////////////////////////////////
+    @import 'responsive'; /////////////////////
+    ///

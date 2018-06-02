@@ -1,6 +1,5 @@
   ////////////////// responsive only
   // mobile only
-
   @media (max-width: 575.98px) {
       product-item {
           a.navigate-back {
@@ -9,7 +8,7 @@
           page-title.text-center {
               margin-bottom: 0 !important;
           }
-          img.product-img{
+          img.product-img {
               max-width: 150px !important;
           }
       }
