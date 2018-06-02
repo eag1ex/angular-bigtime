@@ -44,6 +44,13 @@ export class GlobalReuse {
     }
 
     /// find api name via url, good if reloading the browser
+    
+    findInUrl(str:string):Boolean{
+        var url = window.location.href;
+        console.log('findInUrl waht!!! ',url) 
+        return url.indexOf(str)!==-1;
+    }
+
     findApiNameFromUrl(api_support) {
         var url = window.location.href;
         var api = api_support.filter((item, inx) => {
@@ -53,4 +60,5 @@ export class GlobalReuse {
 
         return api;
     }
+
 }

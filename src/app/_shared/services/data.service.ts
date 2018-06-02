@@ -11,7 +11,7 @@ import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/toPromise';
 
 import * as _ from "lodash";
-import { BeersModel, FlickrPhotoModel, Models, GettyImages, OmdbapiModel } from './models';
+import { BeersModel, FlickrPhotoModel, Models, GettyImages, OmdbapiModel,Omdbapi_imdbID } from './models';
 import { LoggerService } from './logger.service';
 import { LocalStorageService } from './local-storage.service';
 import { ApiManagerService } from './api-manager/api-manager.service';
@@ -56,6 +56,8 @@ export class DataService {
     if(matched){
     }
     */
+    
+    if (params.imdbID && single) set_key = `${apiName}-imdbID:${params.imdbID}`;
 
     //{apiName}:paged:1:lastSearch:example_name  << always first page
     if (params.parent_page) set_key = `${apiName}:paged:${1}`;
@@ -73,6 +75,8 @@ export class DataService {
 
     if (params.lastSearch && !single) set_key = set_key + `:lastsearch:${params.lastSearch}`;
    
+    console.log('getStorage ',set_key)
+
     getStorage = this.lStorage.getItem(set_key);
     return getStorage;
   }
@@ -89,7 +93,8 @@ export class DataService {
     var setStorage: any = false;
     var set_key;
   
-
+    //{apiName}-imdbID:tt0371746  << 
+    if (params.imdbID && single) set_key = `${apiName}-imdbID:${params.imdbID}`;
     //{apiName}:paged:1:lastSearch:example_search  << always first page
     if (params.parent_page) set_key = `${apiName}:paged:${1}`;
 
@@ -104,6 +109,7 @@ export class DataService {
 
     if (params.lastSearch && !single) set_key = set_key + `:lastsearch:${params.lastSearch}`;
     
+    console.log('setStorage ',set_key)
     setStorage = this.lStorage.setItem(set_key, data);
     return setStorage;
   }
@@ -117,7 +123,7 @@ export class DataService {
   errorHandler(errorData: any, apiName: string): object {
 
     if (apiName == 'omdbapi') {
-      if (errorData.Error !== undefined) {
+      if (errorData.Error !== undefined && !errorData.imdbID) {
         return errorData;
       }
     }
@@ -198,6 +204,7 @@ export class DataService {
     var _paramsReturn = this.apiManager.buildRespCall(apiName, params, this._globals as IMyGlobals);
 
     var paramsForLocalStorage = params;
+    
     paramsForLocalStorage.lastSearch = _paramsReturn.lastSearch;
     var checkLocalstorage = this.checkLocalstorage(apiName, paramsForLocalStorage);
 
@@ -220,11 +227,22 @@ export class DataService {
 
         RESP = this.httpRequest(params, _paramsReturn, apiName,
           // MANAGE DATA OUTPUT
-          (DATA: OmdbapiModel[]) => {
-            var d = (DATA as any).Search;
-            /// conditional check
-            return this.checkImages_omdbapi(d);
-          }) as Observable<OmdbapiModel[]>;
+          (DATA: any) => {
+            var d;
+            // do we have OmdbapiModel or Omdbapi_imdbID
+
+             /// conditional check
+            if (DATA.Search) {
+               d = DATA.Search as OmdbapiModel[];
+              return this.checkImages_omdbapi(d);
+            }
+
+            if (DATA.imdbID || DATA.Title) {
+              d = [DATA] as Omdbapi_imdbID[];
+              return this.checkImages_omdbapi(d);
+            }        
+            
+          }) as Observable<OmdbapiModel[] & Omdbapi_imdbID[]>;
         break;
 
       case 'punkapi':
@@ -304,9 +322,17 @@ export class DataService {
       })
       .do((dat) => {
         this.setLocalStorage(_apiName, originalParams, dat); // magic happens!
+       
         return dat;
       })
       .catch((error: any) => {
+        
+      /**
+       * todo handle error responseson timeout or connection error
+       * net::ERR_CONNECTION_RESET
+       * Response with status: 0
+       */
+
         this.logger.log(error, true)
         return Observable.throw(error || 'Upps error getting data, api or localstorage!');
       });
@@ -329,7 +355,6 @@ export class DataService {
         if (checker) {
           throw checker as any;
         }
-
         return response.json().user as any;
       })
       .do((dat) => {

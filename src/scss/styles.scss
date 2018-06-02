@@ -1,4 +1,11 @@
-    @import '_imports';
+    @import '_imports'; /// DO NOT REMOVE THIS FILE!
+
+    /*
+    all styles should be blocked within components for sake of sanity!
+    */
+////////////////////////////////////////////////////////////////////
+
+
     body {}
 
     p {
@@ -48,11 +55,7 @@
         transition: 0.2s ease-in-out !important;
     }
 
-    home {}
 
-    /**
-    
-    **/
 
     page-title {
         display: block;
@@ -86,6 +89,8 @@
     }
 
     products {
+
+
         image {
             display: block;
             .img-preloader {
@@ -139,7 +144,18 @@
                     min-height: 100px;
                 }
             }
+
+           &.product-imdbID{
+               img{
+                max-width: 300px!important;
+               }                
+            }  
+        
         }
+
+
+
+
         .pagination {
             //li.current-paged, .active{}
         }
@@ -263,4 +279,4 @@
     
     /////////////////////////////////////
     @import 'responsive'; /////////////////////
-    ///
+    /// DO NOT DECLARE ANYTHING BELOW RESPONSIVE IMPORTS!

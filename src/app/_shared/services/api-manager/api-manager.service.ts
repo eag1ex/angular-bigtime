@@ -258,6 +258,19 @@ export class ApiManagerService extends GlobalReuse {
           continue;
         }
 
+         if (key == 'imdbID') {
+           console.log('do we have imdbID ',key);
+          (api.query_params as any).i = _obj[key];
+          
+            delete (api.query_params as any).plot;
+            delete (api.query_params as any).type;
+            delete (api.query_params as any).s;
+            delete (api.query_params as any).page;
+
+          // do not assign anymore params if we have this match
+          break; 
+        }
+        
 
         if (key == 'user_id' || key == 'owner') {
           (api.query_params as any).user_id = _obj[key];
@@ -304,7 +317,7 @@ export class ApiManagerService extends GlobalReuse {
 
     // apply random search results except for punkapi
     if (api.name !== 'punkapi') {
-      if (!api.query_params[api_selected_chain.search]) {
+      if (!api.query_params[api_selected_chain.search] && !(api.query_params as any).i) {
         var searchName = this.searchByrandomTitle(api_selected_chain.randomTitles);
         api.query_params[api_selected_chain.search] = searchName;
         this._globals.api_random_search_val = searchName;

@@ -24,8 +24,9 @@ import { IRouteName } from '../_shared/interfaces';
 
 export class ProductComponent implements OnInit {
   state: string = 'large';
+  public in_clipboard:any={};
   public indexPerRow: number = 0;
-
+  is_imdbID:boolean = false;
   public punkapiData: BeersModel[];
   public flickrData: FlickrPhotoModel[];
   public gettyimagesData: GettyImages[];
@@ -85,8 +86,10 @@ export class ProductComponent implements OnInit {
     this.searchSubscription = appEmmiter.subscribe(msg => {
       if (msg.eventType == 'onSearch') {
         if (_.isObject(msg)) {
+          console.log('what is onSearch msg',msg)
           this.PAGE_DEFAULTS.searchAPIcheck = msg.searchAPIcheck;
-          this.searchItems(msg.event, msg.searchVal, msg.type, msg.searchAPIcheck);
+          this.searchItems(msg.event, msg.searchVal, msg.type, msg.searchAPIcheck, msg.imdbID);
+          // imdbID
         }
       }
 
@@ -125,7 +128,8 @@ export class ProductComponent implements OnInit {
    * @param val 
    * @param type 
    */
-  searchItems(event: any = false, val: string, type = '', searchAPI: false) {
+  searchItems(event: any = false, val: string, type = '', searchAPI: false,imdbID:boolean=false) {
+
 
     if (this.exec_search === true) {
       console.log('--wait! Still executing')
@@ -146,8 +150,15 @@ export class ProductComponent implements OnInit {
         if (search_val) this.lastSearchBefore = val;
 
         if (search_val && searchAPI) {
+
           search_val.originalName = val;
           search_val.searchAPI = searchAPI;
+          if(imdbID) {
+            search_val.imdbID = imdbID; 
+            delete  search_val.originalName;
+            delete search_val.search_by_name;
+          }
+
           this.getMyHttpRequest(search_val, this.PAGE_DEFAULTS.apiName);
           this.logger.log(`searching api results with: ${search_val.search_by_name}`)
 
@@ -231,20 +242,34 @@ export class ProductComponent implements OnInit {
 
   }
 
+  copyToclipb(selectorId){
+  this.in_clipboard = {};
+   this._globals.copyToclipBoard(selectorId,(is_)=>{
+    if(is_) this.in_clipboard[selectorId] = true;
+    else this.in_clipboard[selectorId] = true;
+   });
+  }
+
   /**
    * goes to product-item.component page
    * @param nr 
    */
-  goto(nr: any) {
+  goto(nr: any,imdbID:boolean=false) {
 
     // preset default api name for current component// same for paged as well
     this._globals.glob.selected_apiName = this.PAGE_DEFAULTS.apiName;
 
     if (nr === '' || nr === undefined) return;
     if (nr === 0) nr = 1;
+   
+    nr = nr.replace(/ /g, ""); //just in case strip spaces
 
     setTimeout(() => {
-      this._router.navigate([`/product/${this.PAGE_DEFAULTS.apiName}` + '/' + nr]);
+      var append = (imdbID)? '-imdbID':'';
+        
+        var _gotourl = `/product/${this.PAGE_DEFAULTS.apiName}${append}` + '/' + nr;
+        console.log('what is the goto url ',_gotourl)
+      this._router.navigate([_gotourl]);
     }, 300)
 
   }
@@ -443,12 +468,12 @@ export class ProductComponent implements OnInit {
 
     // tells the search directive to display loading icon, cool!!
     if (routeName.searchAPI) this.onSearchQBackToDirective({ loading: true })
-
+    this.is_imdbID = (routeName.imdbID)? true:false;  
     this.ErrorData = false;
     this.DataLoaded = false;
     this.lastSearch = false;
     console.log('Getting new data ...');
-
+    console.log(' this.is_imdbID ', this.is_imdbID )
     routeName.per_page = this.PAGE_DEFAULTS.per_page as any;
 
     if (!routeName) {
@@ -462,7 +487,7 @@ export class ProductComponent implements OnInit {
 
         this.DataLoaded = true; // show results
         this[`${apiName}Data`] = data; // dirty, dynamic setting
-        // console.log(`what is ${apiName} data`,this[apiName+'Data']); 
+         console.log(`what is ${apiName} data`,this[apiName+'Data']); 
 
         this._globals.glob[`${apiName}.data`] = data;
         this.searchModel = ''; // reset filter

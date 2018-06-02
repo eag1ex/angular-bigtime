@@ -116,24 +116,40 @@ export class SearchInputDirective implements OnInit {
    * @param type 
    */
   liveAPIchange() {
-    //toogle which search message :)
+
     setTimeout(() => {
       this.placeHoldermessage()
     }, 200)
 
+  }
+// imdbid:tt0371746
+  handle_imdbID(searchVal){
+    if (this.apiName !=='omdbapi') return false;   
+
+    var _match = 'imdbID:'.toLocaleLowerCase();
+    searchVal = searchVal.replace(/ /g, "").toLocaleLowerCase();   
+    if(searchVal.length > _match.length){
+        var _test =  searchVal.indexOf(_match)!==-1;
+        if(_test)  return searchVal.replace(_match,'');
+    }
+      return false;
   }
 
   searchItems(event, searchVal, type) {
     if (this.searchtext == '') {
       searchVal = '';
     }
-
-    this.onSearch.emit({
+    // handle_imdbID
+    var emmit_req = {
       event: event,
       searchVal: searchVal,
-      type: type, searchAPIcheck:
-      this.searchAPIcheck
-    });
+      type: type, 
+      searchAPIcheck:this.searchAPIcheck
+    }
+    var imdbID = this.handle_imdbID(searchVal);
+    (emmit_req as any).imdbID=imdbID;
+
+    this.onSearch.emit(emmit_req);
   }
 
   ngOnInit() {

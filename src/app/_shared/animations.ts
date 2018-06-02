@@ -1,6 +1,6 @@
 import { trigger, state, animate, transition, style } from '@angular/animations';
 
-/**
+/** 
  * our transitional and component based animation goes here!
  */
 

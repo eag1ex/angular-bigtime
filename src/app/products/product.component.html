@@ -146,9 +146,9 @@
 
 
   </div><!--product-row -->
-
+  
     
-  <div class="product-row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="omdbapi"'>
+  <div class="product-row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="omdbapi" && !is_imdbID'>
    
     <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-1"
       *ngFor="let item of omdbapiData | search:'Title,imdbID' :searchModel; let i = index;">
@@ -162,7 +162,14 @@
 
             <p class="card-text mb-1"><span class="text-info cf">Type:</span> {{item.Type}}</p>
             <p class="card-text mb-1"><span class="text-info cf">Year:</span> {{item.Year}}</p>
-            <p class="card-text mb-1"><span class="text-info cf">imdbID:</span> {{item.imdbID}}</p>
+            <p class="card-text mb-1"><span class="text-info cf">imdbID:</span> 
+              <span (click)="copyToclipb( 'imdbID-'+(i+1) );" id="imdbID-{{i+1}}">
+                      <span [ngClass]='{"text-success":in_clipboard["imdbID-"+(i+1)]==true}'>
+                        {{item.imdbID}}
+                      </span>
+              </span>      
+            </p>
+             
  
         </div>
          <div class="d-flex card-body px-1 justify-content-center pt-0">
@@ -173,6 +180,38 @@
 
   </div><!--product-row -->
 
+
+  <div class="row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="omdbapi" && is_imdbID===true'>
+   
+    <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f col-md-6 col-lg-7 col-sm-12 product-imdbID product-wrap item-inx-{{i}} px-1"
+      *ngFor="let item of omdbapiData;  let i = index;">
+
+      <div class="card bg-trans my-2  card w-100"> 
+
+      <image  class="p-2 text-center" [src]='item.Poster' [alt]="item.Title" [title]='item.Title'></image> 
+
+        <h6  class="card-header p-2 text-center"><span class="text-info cf">title:</span> {{item.Title}}</h6>
+         <div class="card-body">
+
+            <p class="card-text mb-1"><span class="text-info cf">Released:</span> {{item.Released}}</p>
+            <p class="card-text mb-1"><span class="text-info cf">Runtime:</span> {{item.Runtime}}</p>
+            <p class="card-text mb-1"><span class="text-info cf">Director:</span> {{item.Director}}</p>
+            <p class="card-text mb-1"><span class="text-info cf">Production:</span> {{item.Production}}</p>
+            <p class="card-text mb-1"><span class="text-info cf">Genre:</span> {{item.Genre}}</p>
+            <p class="card-text mb-1"><span class="text-info cf">imdbID:</span> 
+              <span (click)="copyToclipb( 'imdbID-'+(i+1) )" id="imdbID-{{i+1}}">
+                <span [ngClass]='{"text-success":in_clipboard["imdbID-"+(i+1)]==true}'>{{item.imdbID}}</span>
+              </span>
+            </p> 
+            <p class="card-text mb-1 "><span class="text-info cf">Writer:</span> {{descLimit(item.Writer)}}</p>    
+        </div>
+         <div class="d-flex card-body px-1 justify-content-center pt-0">
+        <button type="button" class="btn btn-sm btn-dark card-link px-4" (click)="goto(item.imdbID,true);">View Full</button>
+      </div>
+      </div> 
+    </div>
+
+  </div><!--product-row -->
 
 
 

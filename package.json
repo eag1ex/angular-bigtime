@@ -1,7 +1,7 @@
 {
   "name": "angular-picky-bigtime",
   "version": "1.0.1",
-    "description": "Angular 6 CLI Search App, punkapi.com API",
+    "description": "Advanced Angular 6 CLI Search App for number of popular api's",
    "keywords": [
     "angular 6",
     "angular 6 cli",
@@ -13,7 +13,7 @@
     "rx/js",
     "RESTfull API",
     "compass",
-    "sass/scss",
+    "sass/scss", 
     "webpack",
     "LocalStorage"
   ],

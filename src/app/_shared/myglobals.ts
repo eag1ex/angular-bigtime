@@ -67,7 +67,6 @@ export class MyGlobals implements IMyGlobals {
      */
     getData(data: any = false, params: any = false): Observable<Models[]> {
 
-
         var _data = data || this.glob[this.glob.selected_apiName + '.data'];
         if (!_data || data.length < 1) {
             this._router.navigate(['/products']);
@@ -131,6 +130,27 @@ export class MyGlobals implements IMyGlobals {
         }, []) || '';
 
         return (d) ? d.toString() : '';
+    }
+
+    copyToclipBoard(selectorId,cb) {
+        const selector = document.getElementById(selectorId);
+       // console.log('what is the selector ',selectorId) 
+      //  selector.onclick = function () {
+            document.execCommand("copy");
+      //  }
+
+        selector.addEventListener("copy", function (event) {
+            event.preventDefault();
+
+            if (event.clipboardData) {
+                var d = "imdbID:"+selector.textContent.replace(/ /g,'');
+                event.clipboardData.setData("text/plain", d);
+                event.clipboardData.getData("text")
+                 cb(true);
+            }else{
+                 cb(false);
+            }
+        });
     }
 
 };

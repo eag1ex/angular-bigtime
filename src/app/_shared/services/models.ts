@@ -61,6 +61,20 @@ export class OmdbapiModel {
   //  ]
 }
 
+export class Omdbapi_imdbID {
+   'Title':string; 
+   'Released':string;
+   'Runtime':string;
+   'Director':string;
+   'Production':string;
+   'Poster':string;
+   'Genre':string;
+   'imdbID':string;
+   'Writer':string;
+}
+
+
+
 
 
 /**
@@ -356,4 +370,29 @@ export class Models {
             "Poster": "N/A" or image url
         }
     ]
+
   */
+
+  /**
+   * 
+    omdbapi/imdbID single output
+   * 
+   {"Title":"Iron Man",
+   "Year":"2008",
+   "Rated":"PG-13",
+   "Released":"02 May 2008",
+   "Runtime":"126 min",
+   "Genre":"Action, Adventure, Sci-Fi",
+   "Director":"Jon Favreau",
+   "Writer":"Mark Fergus (screenplay), Hawk....................","Poster":"https://ia.media-imdb.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",
+   "Ratings":[{"Source":"Internet Movie Database","Value":"7.9/10"},{"Source":"Rotten Tomatoes","Value":"94%"},{"Source":"Metacritic","Value":"79/100"}],
+   "Metascore":"79",
+   "imdbRating":"7.9",
+   "imdbVotes":"794,159",
+   "imdbID":"tt0371746",
+   "Type":"movie",
+   "DVD":"30 Sep 2008",
+   "BoxOffice":"$318,298,180",
+   "Production":"Paramount Pictures",
+    "Website":"http://www.ironmanmovie.com/","Response":"True"}
+   */

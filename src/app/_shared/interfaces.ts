@@ -11,6 +11,7 @@ export interface IRouteName {
   originalName: any,
   searchAPI: any,
   lastSearch: any,
+  imdbID:any,
   header_params: any,
   perpage: any // or perpage
 }

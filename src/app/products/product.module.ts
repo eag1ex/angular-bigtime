@@ -9,7 +9,27 @@ import {ApiList} from '../api-list';
 
 var importDynamicRoutes = (() => {
   return new ApiList().list().reduce((outp, val, inx) => {
-    if (val.name &&  val.enabled) {
+    if (val.name =='omdbapi' && val.enabled){
+           outp.push({ 
+                path: `product/${val.name}/:id`,
+                component: ProductItemComponent,
+                resolve: {
+                  product: TransactionResolver
+                }
+              })
+              outp.push({ 
+                path: `product/${val.name}-imdbID/:imdbID`,
+                component: ProductItemComponent,
+                resolve: {
+                  product: TransactionResolver
+                }
+              })   
+
+               //
+    }
+    else if (val.name &&  val.enabled) {
+     
+
       outp.push({ 
                 path: `product/${val.name}/:id`,
                 component: ProductItemComponent,
@@ -36,7 +56,7 @@ var _routesObj = [
  * to avoid it, will integrage this dynamic loader as an import, should fix the issue
  */
 var _routes =importDynamicRoutes.concat(_routesObj)
-
+console.log('what are our routes',_routes)
 @NgModule({
   //schemas: [NO_ERRORS_SCHEMA],
   imports: [
