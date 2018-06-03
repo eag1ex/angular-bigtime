@@ -62,6 +62,7 @@ import {ApiManagerService} from './_shared/services/api-manager/api-manager.serv
     ProductComponent,
     ProductItemComponent
   ],
+  //
   imports: [
     // custom modules
     SharedModule, /// not in use at moment

@@ -2,7 +2,8 @@ import { NgModule,Input,Output,HostBinding,NO_ERRORS_SCHEMA  } from '@angular/co
 
 import { CommonModule } from '@angular/common';
 import { ProductComponent } from './product.component';
-import { RouterModule } from '@angular/router';
+import { RouterModule,Router } from '@angular/router';
+
 import { ProductItemComponent } from './product-item/product-item.component';
 import { TransactionResolver } from '../_shared/services/transaction.resolver';
 import {ApiList} from '../api-list';
@@ -13,7 +14,7 @@ var importDynamicRoutes = (() => {
            outp.push({ 
                 path: `product/${val.name}/:id`,
                 component: ProductItemComponent,
-                resolve: {
+                resolve: { 
                   product: TransactionResolver
                 }
               })
@@ -65,12 +66,18 @@ var _routes =importDynamicRoutes.concat(_routesObj)
   ],
   // at app.module
   declarations: [
-   // ProductComponent,
     
-  ]
+   // ProductComponent,
+      
+  ],
+   //entryComponents: [ProductItemComponent] 
 })
+ 
 
-
-export class ProductModule { }
+export class ProductModule {  
+  constructor(r:Router){
+   // r.resetConfig(importDynamicRoutes)
+  }
+}
 
 
