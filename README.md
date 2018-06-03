@@ -19,8 +19,11 @@ Flickr is social media for sharing free/images and selling artwork/images. You c
 Getty Images is a well known payed service for buying best images you can find, search for all size/type/shape  with custom filters.
 
 #### OMBD API Movie DB
-OMBD Is a movie data base where you can search for all generes and type: movie/tv series, and by `imdbID` 
+OMBD Is a movie data base where you can search for all generes and type: movie/tv series, and by `imdbID` << from imDB database.
 
+
+#### PunkAPI
+PunkAPI is a fake beer product search API, good for all kinds of testing.
 
 
 ##### INSTALL NEW Angular 6 CLI, and install angular-picky-bigtime!

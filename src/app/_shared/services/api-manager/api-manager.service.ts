@@ -79,7 +79,7 @@ export class ApiManagerService extends GlobalReuse {
       return { error: true, message: `${_output.error.toString()}` } as any;
     }
     var ready_d = { url: _output.good } as any;
-    if (_output.lastSearch) {
+    if (_output.lastSearch && _output.lastSearch!==undefined) {
       // due to localstorage if the user searches with final space, we donot want that!
       _output.lastSearch = encodeURIComponent(_output.lastSearch.replace(/ /g, ""));
       ready_d.lastSearch = _output.lastSearch;
@@ -209,12 +209,15 @@ export class ApiManagerService extends GlobalReuse {
         page: 'page',
         per_page: 'page_size',
         randomTitles: ['technology', 'galaxy', 'crime', 'war', 'poland', 'love', 'drugs', 'strong man', 'future', 'kungfu', 'creative', 'celebrity', 'china', 'bangkok', 'thailand']
+        
       },
       'omdbapi': {
         search: 's',
         page: 'page',
-        randomTitles: ['bruce lee', 'kill bill', 'war', 'killer', 'ladies', 'sexy', 'iron man', 'start wars', 'the matrix', 'ip man', 'rambo']
+        randomTitles: ['bruce lee', 'kill bill', 'war', 'killer', 'ladies', 'sexy', 'iron man', 'start wars', 'the matrix', 'ip man', 'rambo'],
+        imdbID:'i'
         //   per_page: 'page_size'
+
       },
       'punkapi': {
         search: 'beer_name',
@@ -242,9 +245,7 @@ export class ApiManagerService extends GlobalReuse {
     } //
 
 
-    /**
-     * handling each api
-     */
+
     for (var key in _obj) {
       if (_obj.hasOwnProperty(key)) {
 
@@ -259,7 +260,7 @@ export class ApiManagerService extends GlobalReuse {
         }
 
          if (key == 'imdbID') {
-           console.log('do we have imdbID ',key);
+
           (api.query_params as any).i = _obj[key];
           
             delete (api.query_params as any).plot;
@@ -315,7 +316,11 @@ export class ApiManagerService extends GlobalReuse {
       }
     }
 
-    // apply random search results except for punkapi
+      /**
+     * handling each api
+     */
+
+     // apply random search results except for punkapi
     if (api.name !== 'punkapi') {
       if (!api.query_params[api_selected_chain.search] && !(api.query_params as any).i) {
         var searchName = this.searchByrandomTitle(api_selected_chain.randomTitles);
@@ -324,9 +329,9 @@ export class ApiManagerService extends GlobalReuse {
         console.log('--- searching for ', searchName)
       }
     }
+   
 
     (api as any).lastSearch = api.query_params[api_selected_chain.search] || '';
-
     return api;
   }
 

@@ -56,7 +56,7 @@ var _routesObj = [
  * to avoid it, will integrage this dynamic loader as an import, should fix the issue
  */
 var _routes =importDynamicRoutes.concat(_routesObj)
-console.log('what are our routes',_routes)
+
 @NgModule({
   //schemas: [NO_ERRORS_SCHEMA],
   imports: [

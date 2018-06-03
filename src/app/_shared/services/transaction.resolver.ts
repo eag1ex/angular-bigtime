@@ -36,10 +36,11 @@ export class TransactionResolver implements Resolve<any> {
     var has_imdbID =(imdbID_id)? imdbID_id:false;//GReuse.findInUrl('imdbID') as any;
 
     if(has_imdbID){
-      apiName = 'omdbapi';//'imdbID' //  //${val.name}-imdbID << set in product.module routes
+       apiName = 'omdbapi';//'imdbID' //  //${val.name}-imdbID << set in product.module routes
+      (this._globals.payload as any).apiName = apiName; // fixes the api route as it is part of it.
     }  
  
-   console.log('route.params.id',has_imdbID)
+   //console.log('route.params.id',has_imdbID)
 
     /**
      * check for localstorage data
@@ -51,7 +52,14 @@ export class TransactionResolver implements Resolve<any> {
     }
      // else continue with the request from fresh response!
 
-    var selected_api_object = this._globals.glob[apiName+'.data']; 
+    
+    var selected_api_object;          
+    if(has_imdbID){
+       selected_api_object = this._globals.glob[apiName+'imdbID.data']; 
+    }else{
+       selected_api_object = this._globals.glob[apiName+'.data']; 
+    }
+
     var _match = this._globals.stripSpecialChar(_id);   
     var data = selected_api_object || null;
 

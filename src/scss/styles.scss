@@ -90,7 +90,6 @@
 
     products {
 
-
         image {
             display: block;
             .img-preloader {
@@ -131,8 +130,27 @@
             @include media-breakpoint-up(lg) {
                 @include make-col(2.2);
             }
-        }
+        } 
         .product-wrap {
+
+            .card{
+                &.product-updated{
+                    background-color:rgba(149, 177, 163, 0.6)!important;// $primary!important;
+
+                     -webkit-transition: 0.2s ease-in-out !important;
+                     transition: 0.2s ease-in-out !important;
+                }
+            }
+
+            &.omdbapi-product {
+                .spinner-loading > div {
+                    background-color:#fff!important;
+                }
+            }
+            
+            
+
+
             .tags,
             .keywords {
                 font-size: smaller;

@@ -89,6 +89,7 @@
          <div class="d-flex card-body px-1 justify-content-center pt-0">
          <div class="btn-sm btn card-link px-2" (click)="loadLink(item.owner); clicked=i" 
          [ngClass]="{'btn-warning':item.flickerLink===undefined,'btn-success':item.flickerLink!==undefined}">
+        
          <div class="spinner-loading" *ngIf='clicked==i && item.flickerLink===undefined'>
             <div class="rect1"></div>
             <div class="rect2"></div>
@@ -96,6 +97,7 @@
             <div class="rect4"></div>
             <div class="rect5"></div>
           </div>
+
               <span  *ngIf='clicked!==i && item.flickerLink===undefined'>flickr</span>
               <a *ngIf='item.flickerLink!==undefined' href="{{item.flickerLink}}" class="text-white" target="_blank">flickr >></a>
             </div>
@@ -148,17 +150,18 @@
   </div><!--product-row -->
   
     
-  <div class="product-row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="omdbapi" && !is_imdbID'>
+  <div class="product-row justify-content-md-center mt-4 mb-4 anim-f " *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="omdbapi" && !is_imdbID'>
    
-    <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap item-inx-{{i}} px-1"
+    <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f product-col-content product-wrap  omdbapi-product item-inx-{{i}} px-1"
       *ngFor="let item of omdbapiData | search:'Title,imdbID' :searchModel; let i = index;">
-
-      <div class="card bg-trans my-2  card w-100"> 
+    
+      <div class="card bg-trans my-2  card w-100" 
+       [ngClass]='{"product-updated":item.Director!==undefined}'> 
 
       <image  class="p-2" [src]='item.Poster' [alt]="item.Title" [title]='item.Title'></image> 
 
         <h6  class="card-header p-2 text-center"><span class="text-info cf">title:</span> {{item.Title}}</h6>
-         <div class="card-body">
+         <div class="card-body pb-2">
 
             <p class="card-text mb-1"><span class="text-info cf">Type:</span> {{item.Type}}</p>
             <p class="card-text mb-1"><span class="text-info cf">Year:</span> {{item.Year}}</p>
@@ -169,11 +172,31 @@
                       </span>
               </span>      
             </p>
-             
+
+           
+            <div class="card-text mb-1 mt-3  text-center">             
+                 <div class="btn btn-sm btn-info card-link px-3" 
+                      (click)="getimdbData(item.imdbID);getimdbClicked=i;">
+                      <div class="spinner-loading" *ngIf='getimdbClicked==i && item.Director===undefined'>
+                        <div class="rect1"></div>
+                        <div class="rect2"></div>
+                        <div class="rect3"></div>
+                        <div class="rect4"></div>
+                        <div class="rect5"></div>
+                      </div>
+                      <span *ngIf='item.Director===undefined && getimdbClicked!==i'>Get imDB</span>
+                    <a *ngIf='item.Director!==undefined' class="text-white" 
+                      [routerLink]="['/product/omdbapi-imdbID', item.imdbID]">View imDB</a>                
+                
+                </div><!--btn-->
+
+            </div> 
+
  
         </div>
          <div class="d-flex card-body px-1 justify-content-center pt-0">
-        <button type="button" class="btn btn-sm btn-dark card-link px-4" (click)="goto(niceName(item.Title));">View</button>
+        <button *ngIf="item.Director===undefined && getimdbClicked!==i" type="button" class="btn btn-sm btn-dark card-link px-4" 
+        (click)="goto(niceName(item.Title));">View</button>
       </div>
       </div> 
     </div>
@@ -184,7 +207,7 @@
   <div class="row justify-content-md-center mt-4 mb-4 anim-f" *ngIf='DataLoaded===true && PAGE_DEFAULTS.apiName=="omdbapi" && is_imdbID===true'>
    
     <div [@makeLargerAnimation]='state'  indexchange (currinx)='getIndex($event)' [indexNow]="i" class="anim-f col-md-6 col-lg-7 col-sm-12 product-imdbID product-wrap item-inx-{{i}} px-1"
-      *ngFor="let item of omdbapiData;  let i = index;">
+      *ngFor="let item of omdbapiimdbIDData;  let i = index;">
 
       <div class="card bg-trans my-2  card w-100"> 
 

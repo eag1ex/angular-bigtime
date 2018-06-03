@@ -38,6 +38,8 @@ export class MyGlobals implements IMyGlobals {
         'punkapi.data': null,
         'flickr.data': null,
         'gettyimages.data': null,
+        'omdbapi.data': null,
+        'omdbapiimdbID.data':null,
 
         APP_LOADED: false,
         current_page: '',
@@ -66,8 +68,14 @@ export class MyGlobals implements IMyGlobals {
      * @param params 
      */
     getData(data: any = false, params: any = false): Observable<Models[]> {
-
-        var _data = data || this.glob[this.glob.selected_apiName + '.data'];
+        
+        var data_exception = params.imdbID;
+        var default_glob_data;
+        
+        if(params.imdbID) default_glob_data = this.glob[`${this.glob.selected_apiName}imdbID.data`];          
+        else  default_glob_data = this.glob[this.glob.selected_apiName + '.data'];        
+        
+        var _data = data || default_glob_data;
         if (!_data || data.length < 1) {
             this._router.navigate(['/products']);
             // this.logger.log('Something bad _data is null',true)

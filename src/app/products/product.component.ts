@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../_shared/services/data.service';
 import { LoggerService } from '../_shared/services/logger.service';
-import { BeersModel, FlickrPhotoModel, GettyImages, OmdbapiModel } from '../_shared/services/models';
+import { BeersModel, FlickrPhotoModel, GettyImages, OmdbapiModel,Omdbapi_imdbID } from '../_shared/services/models';
 import { MyGlobals } from '../_shared/myglobals';
 import { EventEmitService } from '../_shared/services/eventEmmiter.service';
 import * as _ from "lodash";
@@ -86,7 +86,7 @@ export class ProductComponent implements OnInit {
     this.searchSubscription = appEmmiter.subscribe(msg => {
       if (msg.eventType == 'onSearch') {
         if (_.isObject(msg)) {
-          console.log('what is onSearch msg',msg)
+         // console.log('what is onSearch msg',msg)
           this.PAGE_DEFAULTS.searchAPIcheck = msg.searchAPIcheck;
           this.searchItems(msg.event, msg.searchVal, msg.type, msg.searchAPIcheck, msg.imdbID);
           // imdbID
@@ -160,7 +160,7 @@ export class ProductComponent implements OnInit {
           }
 
           this.getMyHttpRequest(search_val, this.PAGE_DEFAULTS.apiName);
-          this.logger.log(`searching api results with: ${search_val.search_by_name}`)
+          this.logger.log(`searching api results with: ${search_val.search_by_name || search_val.imdbID}`)
 
         } else if (!search_val) {
           this.logger.log(`you entered no search value, defauling to paged`)
@@ -266,9 +266,9 @@ export class ProductComponent implements OnInit {
 
     setTimeout(() => {
       var append = (imdbID)? '-imdbID':'';
-        
-        var _gotourl = `/product/${this.PAGE_DEFAULTS.apiName}${append}` + '/' + nr;
-        console.log('what is the goto url ',_gotourl)
+
+        var _gotourl = `/product/${this.PAGE_DEFAULTS.apiName}${append}` + '/' + nr; 
+       // console.log('what is the goto url ',_gotourl)
       this._router.navigate([_gotourl]);
     }, 300)
 
@@ -323,6 +323,7 @@ export class ProductComponent implements OnInit {
     if (nr) {
       (this._globals.payload as any).paged = nr;
       this.routeName = { paged: parseInt(nr) };
+      this.lastSearch = this.lastSearch || (this._globals.payload as any).lastSearch;
       if (this.lastSearch) {
         //add last search val to pass to next page
         this.routeName.search_by_name = this.niceName(this.lastSearch.toLowerCase());
@@ -346,7 +347,7 @@ export class ProductComponent implements OnInit {
    */
   dofetch(paged: any = false, apiName: any = false) {
     /// get page param  
-
+    
     this.PAGE_DEFAULTS.apiName = apiName || (this._globals.payload as any).apiName || this.PAGE_DEFAULTS.apiName;
     paged = paged || (this._globals.payload as any).paged;
 
@@ -408,10 +409,10 @@ export class ProductComponent implements OnInit {
    */
   filterTag(apiName, paged: number = 1) {
 
-    if (!apiName) return false;
+   // if (!apiName) return false;
 
     this.searchModel = '';
-    this.PAGE_DEFAULTS.apiName = apiName;
+    this.PAGE_DEFAULTS.apiName = apiName || this._globals.glob.selected_apiName;
 
     console.log('-- filterTag to fetch for apiName: ', apiName)
     this.lastSearchBefore = '';
@@ -468,12 +469,13 @@ export class ProductComponent implements OnInit {
 
     // tells the search directive to display loading icon, cool!!
     if (routeName.searchAPI) this.onSearchQBackToDirective({ loading: true })
+    this._globals.glob.selected_apiName = apiName;
     this.is_imdbID = (routeName.imdbID)? true:false;  
     this.ErrorData = false;
     this.DataLoaded = false;
     this.lastSearch = false;
     console.log('Getting new data ...');
-    console.log(' this.is_imdbID ', this.is_imdbID )
+
     routeName.per_page = this.PAGE_DEFAULTS.per_page as any;
 
     if (!routeName) {
@@ -485,14 +487,25 @@ export class ProductComponent implements OnInit {
     this.dataService.getHttpRequest(routeName, apiName).subscribe(
       data => {
 
+      
         this.DataLoaded = true; // show results
-        this[`${apiName}Data`] = data; // dirty, dynamic setting
-         console.log(`what is ${apiName} data`,this[apiName+'Data']); 
+        if(this.is_imdbID){
 
-        this._globals.glob[`${apiName}.data`] = data;
+              this[`${apiName}imdbIDData`] = data; // dirty, dynamic setting
+              //console.log(`what is ${apiName} data`,this[apiName+'Data']); 
+              this._globals.glob[`${apiName}imdbID.data`] = data;
+        }else{           
+              this[`${apiName}Data`] = data; // dirty, dynamic setting
+              this._globals.glob[`${apiName}.data`] = data; 
+        }
+
+      
+
         this.searchModel = ''; // reset filter
         /// remember our serch queries
         this.lastSearch = routeName.originalName || this.lastSearchBefore || this._globals.api_random_search_val;
+        (this._globals.payload as any).lastSearch = this.lastSearch;
+        
         this.onSearchQBackToDirective({ reset: true })
 
       },
@@ -521,31 +534,61 @@ export class ProductComponent implements OnInit {
    * @param apiName 
    */
   getFlickerLink(routeName: IRouteName, apiName: string) {
-    this.linkLoaded = 0;
+
     this.dataService.getFlickerLink(routeName, apiName).subscribe(
       data => {
-        this.linkLoaded = 1;
-        this.updateModelData(data);
+        this.updateModelData(data,'flickerLink');
       },
       (errorMsg: any) => {
-        this.linkLoaded = 0;
         console.log('getFlickerLink errorMsg', errorMsg)
       }
     );
   }
 
-  private updateModelData(newData) {
+  getimdbData(imdbID){
+      var payload = { imdbID: imdbID, s: imdbID } as any;
+       this.dataService.getItemimdbData(payload,'omdbapi').subscribe(
+      data => {
+
+        this.updateModelData(data[0],'imdbID',(newData)=>{
+            this._globals.glob[`omdbapiimdbID.data`] = newData;
+        }); 
+      
+      },
+      (errorMsg: any) => {
+         console.log('errorMsg getimdbData',errorMsg)
+      }
+    );
+  }
+
+
+
+  private updateModelData(newData, key,cb:any=false) {
     var selected_api = this.PAGE_DEFAULTS.apiName;
 
     var update = this[`${selected_api}Data`].map((item, index) => {
-      if (item.owner.indexOf(newData.nsid) !== -1) {
-        item.flickerLink = newData.url;
-        console.log(`updated user: ${newData.nsid}`)
+      var inxOf;
+
+      if (selected_api == 'flickr') {
+        inxOf = item.owner.indexOf(newData.nsid) !== -1;
+        if (inxOf) item[key] = newData.url;
       }
+      if (selected_api == 'omdbapi') {
+        inxOf = item[key].indexOf(newData[key]) !== -1;
+        if (inxOf) {
+          item = newData;
+          if(typeof cb==='function') cb([item]) 
+        }
+      }
+
+      if (inxOf) console.log(`updated item: ${item.nsid || item.Title}`)
+     
       return item;
     })
+
     this._globals.glob[`${selected_api}.data`] = this[`${selected_api}Data`] = update;
-    // console.log('what is the updated model',this[`${selected_api}Data`])
+    console.log('what is the updated model', this[`${selected_api}Data`])
+
   }
 };
 

@@ -58,6 +58,7 @@ export class DataService {
     */
     
     if (params.imdbID && single) set_key = `${apiName}-imdbID:${params.imdbID}`;
+    if (params.imdbID && !single) return false;
 
     //{apiName}:paged:1:lastSearch:example_name  << always first page
     if (params.parent_page) set_key = `${apiName}:paged:${1}`;
@@ -75,7 +76,7 @@ export class DataService {
 
     if (params.lastSearch && !single) set_key = set_key + `:lastsearch:${params.lastSearch}`;
    
-    console.log('getStorage ',set_key)
+    //console.log('getStorage ',set_key)
 
     getStorage = this.lStorage.getItem(set_key);
     return getStorage;
@@ -95,6 +96,8 @@ export class DataService {
   
     //{apiName}-imdbID:tt0371746  << 
     if (params.imdbID && single) set_key = `${apiName}-imdbID:${params.imdbID}`;
+    if (params.imdbID && !single) return false;
+
     //{apiName}:paged:1:lastSearch:example_search  << always first page
     if (params.parent_page) set_key = `${apiName}:paged:${1}`;
 
@@ -109,7 +112,7 @@ export class DataService {
 
     if (params.lastSearch && !single) set_key = set_key + `:lastsearch:${params.lastSearch}`;
     
-    console.log('setStorage ',set_key)
+   // console.log('setStorage ',set_key)
     setStorage = this.lStorage.setItem(set_key, data);
     return setStorage;
   }
@@ -135,7 +138,7 @@ export class DataService {
 
       if (errorData.images == undefined) {
         return {
-          error: true,
+          error: true, 
           message: 'no results found',
           apiName: apiName
         };
@@ -204,12 +207,15 @@ export class DataService {
     var _paramsReturn = this.apiManager.buildRespCall(apiName, params, this._globals as IMyGlobals);
 
     var paramsForLocalStorage = params;
+    if(_paramsReturn.lastSearch){
+       paramsForLocalStorage.lastSearch = _paramsReturn.lastSearch;
+    }
     
-    paramsForLocalStorage.lastSearch = _paramsReturn.lastSearch;
     var checkLocalstorage = this.checkLocalstorage(apiName, paramsForLocalStorage);
 
     if (checkLocalstorage !== false && checkLocalstorage !== null && !params.searchAPI) {
       this.logger.log(`getting data for ${apiName} from localstorage!!`)
+     // console.log(`getting data for ${apiName} from localstorage!! `,checkLocalstorage);
       return checkLocalstorage;
     }
 
@@ -289,6 +295,8 @@ export class DataService {
 
   /**
    * extended to getHttpRequest(..)
+   *  nice error handling implemented
+   * 
    * @param originalParams 
    * @param paramsReturn 
    * @param _apiName 
@@ -321,26 +329,64 @@ export class DataService {
         return checked_data as any;
       })
       .do((dat) => {
+
         this.setLocalStorage(_apiName, originalParams, dat); // magic happens!
        
         return dat;
       })
       .catch((error: any) => {
-        
-      /**
-       * todo handle error responseson timeout or connection error
-       * net::ERR_CONNECTION_RESET
-       * Response with status: 0
-       */
 
-        this.logger.log(error, true)
-        return Observable.throw(error || 'Upps error getting data, api or localstorage!');
+        /**
+         * error responseson timeout or connection error
+         * net::ERR_CONNECTION_RESET
+         * Response with status: 0
+         */
+        if (error.toString()) {
+          var err_str = error.toString();
+          var checkErr = ['net::ERR_CONNECTION_RESET', 'Response with status: 0'].filter((item, inx) => {
+            return err_str.indexOf(item) !== -1;
+          })
+          if (checkErr.length > 0) {
+            return Observable.throw({response:checkErr, message:'possibly no internet connection..'});
+          }
+
+        } else {
+          this.logger.log(error, true)
+          return Observable.throw(error || 'Upps error getting data, api or localstorage!');
+        }
+
       });
 
   }
 
+  getItemimdbData(params: IRouteName, apiName: string = ''): Observable<Omdbapi_imdbID[]> {
 
-  getFlickerLink(params: IRouteName, apiName: string = 'punkapi'): Observable<any[]> {
+    var _paramsReturn = this.apiManager.buildRespCall(apiName, params, this._globals as IMyGlobals);
+    if (_paramsReturn.error) {
+      var nice_print = (_paramsReturn.error) ? JSON.stringify(_paramsReturn) : _paramsReturn;
+      return Observable.throw(`api error for ${apiName}: ${nice_print}`);
+    }
+
+    return this.http.get(_paramsReturn.url)
+      .map((response: any) => {
+
+        var checker = this.errorHandler(response.json(), apiName);
+        if (checker) {
+          throw checker as any;
+        }
+        return [response.json()] as any;
+      })
+      .do((dat) => {
+        console.log('getItemimdbData ',dat)
+        return dat;
+      })
+      .catch((error: any) => {
+        this.logger.log(error, true)
+        return Observable.throw(error || 'Upps error getting data, api or localstorage!');
+      });
+  }
+
+  getFlickerLink(params: IRouteName, apiName: string = ''): Observable<any[]> {
 
     var _paramsReturn = this.apiManager.buildRespCall(apiName, params, this._globals as IMyGlobals);
     if (_paramsReturn.error) {
