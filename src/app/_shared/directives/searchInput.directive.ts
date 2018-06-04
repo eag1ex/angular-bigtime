@@ -3,7 +3,7 @@ import { EventEmitService } from '../services/eventEmmiter.service';
 
 @Component({
   selector: 'search-input',
-  template: template(),
+  templateUrl: './searchInput.directive.html',
 })
 export class SearchInputDirective implements OnInit {
   titleDisplay: number;
@@ -154,46 +154,4 @@ export class SearchInputDirective implements OnInit {
 
   ngOnInit() {
   }
-}
-
-function template() {
-
-  return `
-    <div class="input-group mb-1 search-wrap">
-          <div class="sk-circle search-loading-icon" *ngIf='loading===true'>
-              <div class="sk-circle1 sk-child"></div>
-              <div class="sk-circle2 sk-child"></div>
-              <div class="sk-circle3 sk-child"></div>
-              <div class="sk-circle4 sk-child"></div>
-              <div class="sk-circle5 sk-child"></div>
-              <div class="sk-circle6 sk-child"></div>
-              <div class="sk-circle7 sk-child"></div>
-              <div class="sk-circle8 sk-child"></div>
-              <div class="sk-circle9 sk-child"></div>
-              <div class="sk-circle10 sk-child"></div>
-              <div class="sk-circle11 sk-child"></div>
-              <div class="sk-circle12 sk-child"></div>
-            </div>
-
-
-              <div class="input-group-prepend">
-                  <div class="input-group-text px-3">
-                  <input type="checkbox" [checked]="searchAPIcheck" (change)="liveAPIchange(); searchAPIcheck = !searchAPIcheck" />  
-                  </div>
-              </div>
-
-
-             <input 
-            (keydown)="searchItems($event,search.value,'keydown');" 
-            (focusout)="searchItems($event,search.value,'focusout');"
-      
-            [(ngModel)]="searchtext" #search 
-             [placeholder]="placeHolder"
-             class="form-control p-1 ml-3"
-             aria-label="Search" 
-             type="text">
-            
-    </div>
-     <p class="search-api-check mb-1 p-1 pl-2" [ngClass]="{'show-search-api-check':searchAPIcheck===true}" >Search API!</p>
- `;
 };

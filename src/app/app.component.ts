@@ -33,7 +33,6 @@ export class AppComponent implements OnInit{
   public APP_LOADED = false;
   private subscription;
   public displaySearchInput=false;
-  public selected_apiName;
   public onAnyEventToComponent;
   constructor(private _globals: MyGlobals, private emmiter: EventEmitService, 
     private _router: Router, private logger: LoggerService,

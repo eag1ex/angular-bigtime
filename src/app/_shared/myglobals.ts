@@ -33,7 +33,7 @@ export class MyGlobals implements IMyGlobals {
     glob = {
         items_per_page: 10,
         searchSubscription: null,
-
+ 
         /// stored data before LocalStorage
         'punkapi.data': null,
         'flickr.data': null,
@@ -43,9 +43,9 @@ export class MyGlobals implements IMyGlobals {
 
         APP_LOADED: false,
         current_page: '',
-        selected_apiName: 'punkapi'// preset dynamicly changed
+        selected_apiName: 'punkapi'
     };
-    payload: object = {};
+    payload: any = {};
     api_random_search_val: any = '';
 
     api_support: Array<any> = new ApiList().list().reduce((outp, val, inx) => {
@@ -68,13 +68,8 @@ export class MyGlobals implements IMyGlobals {
      * @param params 
      */
     getData(data: any = false, params: any = false): Observable<Models[]> {
-        
-        var data_exception = params.imdbID;
-        var default_glob_data;
-        
-        if(params.imdbID) default_glob_data = this.glob[`${this.glob.selected_apiName}imdbID.data`];          
-        else  default_glob_data = this.glob[this.glob.selected_apiName + '.data'];        
-        
+         
+        var  default_glob_data = this.glob[this.payload.apiName + '.data'];  // example: omdbapiimdbID.data          
         var _data = data || default_glob_data;
         if (!_data || data.length < 1) {
             this._router.navigate(['/products']);
@@ -91,7 +86,7 @@ export class MyGlobals implements IMyGlobals {
 
                 if (params) {
                     // magic happens!
-                    this.dataService.setLocalStorage(this.glob.selected_apiName, params, data, true);
+                    this.dataService.setLocalStorage(this.payload.apiName, params, data, true);
                 }
                 return d;
             })

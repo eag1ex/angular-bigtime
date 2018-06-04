@@ -27,20 +27,20 @@ export class ProductItemComponent implements OnInit {
     private _router: Router,
     private _globals: MyGlobals) {
 
-    _globals.glob.current_page = this.PAGE_DEFAULTS.pageName;   
-    this.PAGE_DEFAULTS.pageTitle = "product: "+_globals.glob.selected_apiName;
-    ///find page reference against our apiList, in case we reload the page and the data is coming from local storage
-    var apiByhref= new GlobalReuse().findApiNameFromUrl(this._globals.api_support);
-    this.PAGE_DEFAULTS.apiName = apiByhref || _globals.glob.selected_apiName;
+ 
+  }
+    
+  setVars(paramID,paramApiName){
+    this._globals.glob.current_page = this.PAGE_DEFAULTS.pageName;   
+    this.PAGE_DEFAULTS.pageTitle = "product: "+paramApiName;
+    this.PAGE_DEFAULTS.apiName = paramApiName;
   }
 
-
   ngOnInit() {
-    const param = this._route.snapshot.paramMap.get('id');
-    if (param) {
-      this.routName = param;
-      const id = +param;
-    }
+    const paramID = this._route.snapshot.paramMap.get('id');
+    const paramApiName = this._route.snapshot.paramMap.get('apiname');
+    this.setVars(paramID,paramApiName)
+
 
     var prod = this._route.snapshot.data['product'];
     if (prod.length > 0) {

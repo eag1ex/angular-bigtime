@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/toPromise';
 import { MyGlobals } from '../myglobals';
 import { DataService } from './data.service';
-import { GlobalReuse } from '../global.reuse';
+import { GlobalReuse } from '../global.reuse'; 
 
 /**
  * this is the data transition layer module/resolver, 
@@ -22,26 +22,13 @@ export class TransactionResolver implements Resolve<any> {
   ) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
-
+  
     var res, final;
     var _id = route.params.id;
-    var imdbID_id = route.params.imdbID;
- 
-    /// this will not work if reloading the page, because the value will be set to preset value for what we are looking for
-    var apiNam= this._globals.glob.selected_apiName; 
-    var  GReuse = new GlobalReuse();
-    var apiByhref= GReuse.findApiNameFromUrl(this._globals.api_support); 
-
-    var apiName = apiByhref||apiNam; // in this order
-    var has_imdbID =(imdbID_id)? imdbID_id:false;//GReuse.findInUrl('imdbID') as any;
-
-    if(has_imdbID){
-       apiName = 'omdbapi';//'imdbID' //  //${val.name}-imdbID << set in product.module routes
-      (this._globals.payload as any).apiName = apiName; // fixes the api route as it is part of it.
-    }  
- 
-   //console.log('route.params.id',has_imdbID)
-
+    var imdbID_id = route.params.imdbid;
+    var apiName= route.params.apiname;
+    var has_imdbID =(imdbID_id)? imdbID_id:false;
+    this._globals.payload.apiName = apiName;
     /**
      * check for localstorage data
      */

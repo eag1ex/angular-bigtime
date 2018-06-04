@@ -46,7 +46,7 @@ export class LocalStorageService {
  
    }
  
-  get localStorage() {
+  private get localStorage() {
     return window.localStorage;
   }
 

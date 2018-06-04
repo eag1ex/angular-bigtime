@@ -25,7 +25,7 @@ export interface IMyGlobals {
     'gettyimages.data': any,
     APP_LOADED: any,
     current_page: string,
-    selected_apiName: string
+  //  selected_apiName: string
   },
   payload: Object,
   api_random_search_val: any;

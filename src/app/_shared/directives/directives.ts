@@ -36,7 +36,7 @@ export class indexChangeDirective implements OnInit {
 
 @Component({
   selector: 'page-title',
-  template: PageTitleTemplate(),
+  template: `<h1 class="display-{{titleDisplay}} p-2">{{title}}</h1>`
 })
 export class PageTitleDirective implements OnInit {
 
@@ -59,7 +59,4 @@ export class PageTitleDirective implements OnInit {
   }
 };
 
-function PageTitleTemplate() {
-  return `<h1 class="display-{{titleDisplay}} p-2">{{title}}</h1>`;
-};
 

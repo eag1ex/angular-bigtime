@@ -38,7 +38,7 @@ export class ProductComponent implements OnInit {
   public exec_search = false;
   private searchSubscription: any;
   private searchModel: string;
-  private ErrorData: any = false;
+  public ErrorData: any = false;
   public available_apis: Array<any>;
   public lastSearch: any = false;
   doingPaged: boolean = false;
@@ -73,8 +73,6 @@ export class ProductComponent implements OnInit {
     this.available_apis = _globals.api_support;
     // set pagename globals
     _globals.glob.current_page = this.PAGE_DEFAULTS.pageName;
-    // preset default api name for current component// same for :paged as well
-    _globals.glob.selected_apiName = this.PAGE_DEFAULTS.apiName;
 
 
     /**
@@ -256,18 +254,15 @@ export class ProductComponent implements OnInit {
    */
   goto(nr: any,imdbID:boolean=false) {
 
-    // preset default api name for current component// same for paged as well
-    this._globals.glob.selected_apiName = this.PAGE_DEFAULTS.apiName;
-
     if (nr === '' || nr === undefined) return;
     if (nr === 0) nr = 1;
    
     nr = nr.replace(/ /g, ""); //just in case strip spaces
 
     setTimeout(() => {
-      var append = (imdbID)? '-imdbID':'';
+      var append = (imdbID)? 'imdb/':'';
 
-        var _gotourl = `/product/${this.PAGE_DEFAULTS.apiName}${append}` + '/' + nr; 
+        var _gotourl = `/product/${this.PAGE_DEFAULTS.apiName}/${append}`  + nr; 
        // console.log('what is the goto url ',_gotourl)
       this._router.navigate([_gotourl]);
     }, 300)
@@ -351,6 +346,7 @@ export class ProductComponent implements OnInit {
     this.PAGE_DEFAULTS.apiName = apiName || (this._globals.payload as any).apiName || this.PAGE_DEFAULTS.apiName;
     paged = paged || (this._globals.payload as any).paged;
 
+
     this.fetchEvent(paged).then((whichOrder: any) => {
       if (whichOrder === false) {
         return Promise.reject('no route found!');
@@ -409,17 +405,16 @@ export class ProductComponent implements OnInit {
    */
   filterTag(apiName, paged: number = 1) {
 
-   // if (!apiName) return false;
 
     this.searchModel = '';
-    this.PAGE_DEFAULTS.apiName = apiName || this._globals.glob.selected_apiName;
-
+    this.PAGE_DEFAULTS.apiName = apiName;
     console.log('-- filterTag to fetch for apiName: ', apiName)
     this.lastSearchBefore = '';
     /// can call fetch because it will not call oninit, where fetch is also called, no double events
     if (this.paged_is) {
       this.dofetch(paged, apiName);
     } else {
+     
       /// not on paged so send payload for oninit
       (this._globals.payload as any).apiName = apiName;
       (this._globals.payload as any).paged = paged;
@@ -469,7 +464,8 @@ export class ProductComponent implements OnInit {
 
     // tells the search directive to display loading icon, cool!!
     if (routeName.searchAPI) this.onSearchQBackToDirective({ loading: true })
-    this._globals.glob.selected_apiName = apiName;
+
+    
     this.is_imdbID = (routeName.imdbID)? true:false;  
     this.ErrorData = false;
     this.DataLoaded = false;
@@ -587,7 +583,6 @@ export class ProductComponent implements OnInit {
     })
 
     this._globals.glob[`${selected_api}.data`] = this[`${selected_api}Data`] = update;
-    console.log('what is the updated model', this[`${selected_api}Data`])
 
   }
 };
