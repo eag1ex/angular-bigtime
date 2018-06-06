@@ -16,25 +16,35 @@ export class ServerAuthentication {
     constructor(private http: Http, private storage:LocalStorageService) {
     }
     
-    httpRequest(): Observable<any[]> {
-       // this.storage.getItem('auth-token');
-        var headers = new Headers();
-        headers.append('Authorization', token);
-        headers.append('Content-Type', 'application/json');
-        var options = new RequestOptions({ headers: headers });
+    logout() {
+        var url = 'http://localhost:8080/signout';
+        return this.httpRequest(url);
+    }
 
-        return this.http.get('paramsReturn.url', options)
+    checkSession() {
+
+        var url = 'http://localhost:8080/checkSession';
+        return this.httpRequest(url)
+    }
+
+    private httpRequest(url:any=false): Observable<any[]> {
+       // this.storage.getItem('auth-token');
+      //  var headers = new Headers();
+     //   headers.append('Authorization', token);
+  //      headers.append('Content-Type', 'application/json');
+   //     var options = new RequestOptions({ headers: headers });
+
+        return this.http.get(url)
             .map((response: any) => {
 
                 return response.json() as any;
             })
             .do((dat) => {
-
                 return dat;
             })
             .catch((error: any) => {
+                console.error('ServerAuthentication ',error)
                 return Observable.throw(error || 'Upps error getting data, api or localstorage!');
             });
-
     }
 }

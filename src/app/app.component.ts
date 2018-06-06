@@ -12,6 +12,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LoggerService } from './_shared/services/logger.service';
 import { fadeInAnimation } from './_shared/animations';
 
+import {ServerAuthentication} from './_shared/services/server.authentication';
+
 @Component({
   selector: 'app-root', 
   templateUrl: './app.component.html',
@@ -27,16 +29,19 @@ export class AppComponent implements OnInit{
     a: '[ Picky ]',
     b: ''
   };
+
   private removeOldClass:string;
   public currentPageName:string;
   public app_dynamic_title:string;
   public APP_LOADED = false;
   private subscription;
+  public sessionExpired:boolean = false;
   public displaySearchInput=false;
   public onAnyEventToComponent;
   constructor(private _globals: MyGlobals, private emmiter: EventEmitService, 
     private _router: Router, private logger: LoggerService,
-    private renderer: Renderer, private element: ElementRef
+    private renderer: Renderer, private element: ElementRef,
+    private servAuthentication:ServerAuthentication
   ) {
 
 
@@ -85,6 +90,9 @@ export class AppComponent implements OnInit{
       if (val.constructor.name === 'NavigationEnd') {
         this.currentPageName =_globals.glob.current_page;
         this.setBackgroundClass(_globals.glob.selected_apiName); // double check
+
+        // check session
+        this.checkSession();
       }
 
        
@@ -106,7 +114,24 @@ export class AppComponent implements OnInit{
     });
   }
 
- 
+  checkSession(){
+
+    this.servAuthentication.checkSession().subscribe((data)=>{
+        console.log(data);
+        this.sessionExpired = false;
+    },(err)=>{
+      console.error(err);
+      this.sessionExpired = true;
+    })
+  }
+
+  loggout(){
+    this.servAuthentication.logout().subscribe((data)=>{
+      console.log(data);
+    },(err)=>{
+       console.error(err);
+    })
+  }
 
   setBackgroundClass(className: any = false) {
     //console.log('what is his.element.nativeElement',this.element.nativeElement)

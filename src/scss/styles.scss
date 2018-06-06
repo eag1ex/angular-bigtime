@@ -25,6 +25,9 @@
             a.navbar-brand {
                 font-size: 1.8rem;
             }
+            .loggout-btn{
+                opacity: 0.8;
+            }
         }
         &.flickrBG {
             background-color: $flickrBG !important;

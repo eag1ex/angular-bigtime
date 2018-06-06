@@ -41,6 +41,7 @@ import { EventEmitService } from './_shared/services/eventEmmiter.service';
 import { TransactionResolver } from './_shared/services/transaction.resolver';
 import { LocalStorageService } from './_shared/services/local-storage.service';
 import {ApiManagerService} from './_shared/services/api-manager/api-manager.service';
+import {ServerAuthentication} from './_shared/services/server.authentication';
 
 
 /**
@@ -93,7 +94,8 @@ import {ApiManagerService} from './_shared/services/api-manager/api-manager.serv
     TransactionResolver, 
     ApiManagerService,
     DataService, 
-    EventEmitService
+    EventEmitService,
+    ServerAuthentication
   ],
   bootstrap: [AppComponent]
 })
