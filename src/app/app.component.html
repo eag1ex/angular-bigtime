@@ -17,7 +17,7 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
    
-                  <a *ngIf="sessionExpired===false" class="btn btn-sm btn-primary loggout-btn" href="#" (click)="loggout()">logout <span class="sr-only">(current)</span></a>
+                  <button type='button' *ngIf="sessionExpired===false" class="btn btn-sm btn-primary loggout-btn" (click)="loggout()">logout <span class="sr-only">(current)</span></button>
                   <span *ngIf="sessionExpired===true" class="text-danger ">Session expired</span>
                
                 </li>
