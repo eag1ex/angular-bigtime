@@ -43,7 +43,7 @@ export class ServerAuthentication {
                 return dat;
             })
             .catch((error: any) => {
-                console.error('ServerAuthentication ',error)
+              //  console.error('ServerAuthentication ',error)
                 return Observable.throw(error || 'Upps error getting data, api or localstorage!');
             });
     }

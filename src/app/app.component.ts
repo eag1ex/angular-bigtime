@@ -117,7 +117,7 @@ export class AppComponent implements OnInit{
   checkSession(){
 
     this.servAuthentication.checkSession().subscribe((data)=>{
-        console.log(data);
+       // console.log(data);
         this.sessionExpired = false;
     },(err)=>{
       console.error(err);
@@ -127,7 +127,7 @@ export class AppComponent implements OnInit{
 
   loggout(){
     this.servAuthentication.logout().subscribe((data)=>{
-      console.log(data);
+     // console.log(data);
     },(err)=>{
        console.error(err);
     })

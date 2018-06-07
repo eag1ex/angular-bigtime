@@ -8,6 +8,9 @@
 # dependencies
 /node_modules
 
+#ignore app api list
+#/src/app/api-list.ts
+
 # IDEs and editors
 /.idea
 .project

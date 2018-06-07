@@ -23,8 +23,7 @@ var punkapi = {
 }
 
 /**
-
-https://api.flickr.com/services/rest/?api_key=1754e3e5724bd7c66c732b835083c8df&method=flickr.photos.search&tags=portrait%2Cmug&content_type=1&media=photos&extras=extras%3Durl_s%2Curl_m%2Cdate_upload%2Cdate_taken%2Cowner_name%2Clast_update%2Ctags%2Cviews%2Ctitle&format=json&nojsoncallback=1&orientation=square&per_page=10&page=1
+https://api.flickr.com/services/rest/?api_key=1b3ce830eb65d7fd478ab155ca9fa110&method=flickr.photos.search&tags=portrait%2Cmug&content_type=1&media=photos&extras=extras%3Durl_s%2Curl_m%2Cdate_upload%2Cdate_taken%2Cowner_name%2Clast_update%2Ctags%2Cviews%2Ctitle&format=json&nojsoncallback=1&orientation=square&per_page=10&page=1
  */
    
 var flickr = {
@@ -32,7 +31,7 @@ var flickr = {
   'name': 'flickr',
   'apiURL': '',
   'api': 'https://api.flickr.com/services/rest',
-  'api_key': '1754e3e5724bd7c66c732b835083c8df',
+  'api_key': '1b3ce830eb65d7fd478ab155ca9fa110',
   'query_params': {
     'method': "flickr.photos.search",// flickr.photos.getPopular, flickr.photos.getFavorites                    
     'text': "",// what to search
@@ -65,7 +64,7 @@ var gettyimages = {
   'api': 'https://api.gettyimages.com/v3/search',
   'prefix':'images/creative',
   'header_params':true,
-  'Api-Key': '734uv72r6de98em86u5rkwe5',
+  'Api-Key': 'n7xxd9s4acmhd8gfcqnnzqzm',
   'query_params': {   
     'file_types':'jpg',
     'graphical_styles':'photography',
@@ -81,7 +80,7 @@ var gettyimages = {
 
 
 /**
- available params at: https://www.omdbapi.com/?apikey=86d5e34b&s=guardians&type=movie&r=json&page=2&plot=full
+ available params at: https://www.omdbapi.com/?apikey=a3142555&s=guardians&type=movie&r=json&page=2&plot=full
  i: A valid IMDb ID (e.g. tt1285016)
  t: movie title
  s: search
@@ -96,7 +95,7 @@ var omdbapi = {
   'name': 'omdbapi',
   'apiURL': '',
   'api': 'https://www.omdbapi.com',
-  'apikey': '86d5e34b',
+  'apikey': 'a3142555',
   'query_params': {
     'r':'json',
     'plot':'full',                 
