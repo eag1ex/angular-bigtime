@@ -18,14 +18,14 @@ export class ServerAuthentication {
     
     logout() {
         //var url = 'http://localhost:8080/signout';
-        var url = 'http://nodejs-mongo-persistent-picky.1d35.starter-us-east-1.openshiftapps.com/signout';
+        var url = 'http://nodejs-mongo-persistent-picky2.1d35.starter-us-east-1.openshiftapps.com/signout';
         return this.httpRequest(url);
     }
 
     checkSession() {
 
         //var url = 'http://localhost:8080/checkSession';
-        var url  = 'http://nodejs-mongo-persistent-picky.1d35.starter-us-east-1.openshiftapps.com/checkSession'
+        var url  = 'http://nodejs-mongo-persistent-picky2.1d35.starter-us-east-1.openshiftapps.com/checkSession'
         return this.httpRequest(url)
     }
 
