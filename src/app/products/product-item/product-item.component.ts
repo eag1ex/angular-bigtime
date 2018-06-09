@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BeersModel, FlickrPhotoModel,OmdbapiModel, GettyImages } from '../../_shared/services/models';
 import { MyGlobals } from '../../_shared/myglobals';
 import { GlobalReuse } from '../../_shared/global.reuse';
-
+import { EventEmitService } from '../../_shared/services/eventEmmiter.service';
 
 @Component({
   selector: 'product-item',
@@ -25,7 +25,9 @@ export class ProductItemComponent implements OnInit {
 
   constructor(private _route: ActivatedRoute,
     private _router: Router,
-    private _globals: MyGlobals) {
+    private _globals: MyGlobals,
+    private appEmmiter:EventEmitService
+  ) {
 
  
   }
@@ -45,6 +47,11 @@ export class ProductItemComponent implements OnInit {
     var prod = this._route.snapshot.data['product'];
     if (prod.length > 0) {
       this.productData = prod[0];
+
+    setTimeout(() => { 
+      this.appEmmiter.next({ isProductPageName:this.PAGE_DEFAULTS.pageName});
+    }, 100)
+
 
        /// check and update data keys
       this.productData = this.sortData(()=>{

@@ -24,6 +24,7 @@ import { IRouteName } from '../_shared/interfaces';
 
 export class ProductComponent implements OnInit {
   state: string = 'large';
+  private getHttpRequestSubscription:any=null;
   public in_clipboard:any={};
   public indexPerRow: number = 0;
   is_imdbID:boolean = false;
@@ -82,6 +83,12 @@ export class ProductComponent implements OnInit {
      */
 
     this.searchSubscription = appEmmiter.subscribe(msg => {
+
+      if(msg.eventType=='BackToDirective'){
+      //   this.searchSubscription.unsubscribe(); 
+       //  console.log('searchSubscription unsubscribe')
+         return;
+      }
       if (msg.eventType == 'onSearch') {
         if (_.isObject(msg)) {
          // console.log('what is onSearch msg',msg)
@@ -107,6 +114,7 @@ export class ProductComponent implements OnInit {
    */
   onSearchQBackToDirective(data) {
     data.eventType = 'BackToDirective';
+    data.apiName = this.PAGE_DEFAULTS.apiName;
     this.appEmmiter.next(data);
   }
 
@@ -262,7 +270,7 @@ export class ProductComponent implements OnInit {
     setTimeout(() => {
       var append = (imdbID)? 'imdb/':'';
 
-        var _gotourl = `/product/${this.PAGE_DEFAULTS.apiName}/${append}`  + nr; 
+        var _gotourl = `/product-item/${this.PAGE_DEFAULTS.apiName}/${append}`  + nr; 
        // console.log('what is the goto url ',_gotourl)
       this._router.navigate([_gotourl]);
     }, 300)
@@ -341,8 +349,14 @@ export class ProductComponent implements OnInit {
    * @param apiName 
    */
   dofetch(paged: any = false, apiName: any = false) {
-    /// get page param  
+
+    /// unsubscribe from previous this.getHttpRequestSubscription
+    if(this.getHttpRequestSubscription){
+      this.getHttpRequestSubscription.unsubscribe();
+      //console.log('unsubscribe from getHttpRequestSubscription')
+    }
     
+   /// get page param  
     this.PAGE_DEFAULTS.apiName = apiName || (this._globals.payload as any).apiName || this.PAGE_DEFAULTS.apiName;
     paged = paged || (this._globals.payload as any).paged;
 
@@ -368,15 +382,17 @@ export class ProductComponent implements OnInit {
     this.dataService._globs = this._globals;
 
     setTimeout(() => {
-      this.appEmmiter.next({ bgChange: true, apiName: this.PAGE_DEFAULTS.apiName });
+      this.appEmmiter.next({ bgChange: true, apiName: this.PAGE_DEFAULTS.apiName, isProductPageName:this.PAGE_DEFAULTS.pageName });
     }, 100)
 
   }
 
   updateTitle() {
     this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.apiName + ' API' + " | " + this.PAGE_DEFAULTS.pageName;
+    
     setTimeout(() => {
       this.appEmmiter.next({ updateTitle: this.PAGE_DEFAULTS.pageTitle, apiName: this.PAGE_DEFAULTS.apiName });
+       this.appEmmiter.next({ eventType:'BackToDirective',apiName: this.PAGE_DEFAULTS.apiName});
     }, 100)
 
   }
@@ -462,6 +478,7 @@ export class ProductComponent implements OnInit {
 
   getMyHttpRequest(routeName: IRouteName, apiName: string) {
 
+
     // tells the search directive to display loading icon, cool!!
     if (routeName.searchAPI) this.onSearchQBackToDirective({ loading: true })
 
@@ -480,7 +497,7 @@ export class ProductComponent implements OnInit {
       return false
     }
 
-    this.dataService.getHttpRequest(routeName, apiName).subscribe(
+    this.getHttpRequestSubscription = this.dataService.getHttpRequest(routeName, apiName).subscribe(
       data => {
 
       

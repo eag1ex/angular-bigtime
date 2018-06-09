@@ -314,7 +314,7 @@ export class DataService {
     if (paramsReturn.lastSearch) {
       originalParams.lastSearch = paramsReturn.lastSearch
     }
-
+    
     return this.http.get(paramsReturn.url, with_headers)
       .map((response: any) => {
 

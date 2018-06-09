@@ -1,7 +1,5 @@
 
-// avoide any console errors
-declare var jquery:any;
-declare var $ :any; 
+
 
 import { Component, Input, Output, OnInit, EventEmitter,Renderer,ElementRef  } from '@angular/core';
 import { MyGlobals } from './_shared/myglobals';
@@ -29,26 +27,47 @@ export class AppComponent implements OnInit{
     a: '[ Picky ]',
     b: ''
   };
-
+  public displaySearchInput = false;
   private removeOldClass:string;
   public currentPageName:string;
   public app_dynamic_title:string;
   public APP_LOADED = false;
   private subscription;
   public sessionExpired:boolean = false;
-  public displaySearchInput=false;
+
   public onAnyEventToComponent;
   constructor(private _globals: MyGlobals, private emmiter: EventEmitService, 
     private _router: Router, private logger: LoggerService,
-    private renderer: Renderer, private element: ElementRef,
+    private renderer: Renderer, private element: ElementRef, 
     private servAuthentication:ServerAuthentication
   ) {
 
 
     this.onAnyEventToComponent = emmiter.subscribe(msg => {
+      /// just in case app.component swollowed the event first we bubble it down to directive
+     
+       if(msg.eventType=='BackToDirective'){
+      //   this.onAnyEventToComponent.unsubscribe(); 
+       //  console.log('onAnyEventToComponent unsubscribe')
+         return;
+       }
+
       if (msg.bgChange) {
         this.setBackgroundClass(msg.apiName);
-      } 
+      }
+
+      if(msg.isProductPageName){
+
+       this.displaySearchInput = false;
+       this.currentPageName =msg.isProductPageName;
+       _globals.glob.current_page = this.currentPageName;
+      }
+
+      if(msg.isProductPageName=='products'){
+          this.displaySearchInput = true;
+
+      }
+
       if(msg.updateTitle){
          this.app_dynamic_title =msg.updateTitle;
       }
@@ -57,17 +76,20 @@ export class AppComponent implements OnInit{
     }, (complete) => {
      // console.log('what is the complete', complete)
     });  
+  
 
-
-   
     _router.events.subscribe((val: any) => {
-      this.currentPageName=null
-      
+
       /// unsubscripte if not on products to avoid memory leaks!
       if (val.url) {
         if (val.url.indexOf('products') == -1) {
           if (_globals.glob.searchSubscription !== null) {
             _globals.glob.searchSubscription.unsubscribe();
+             this.onAnyEventToComponent.unsubscribe(); 
+
+             if(_globals.glob.searchActionSubscription){
+               _globals.glob.searchActionSubscription.unsubscribe();
+             }
             logger.log(`unsubscribed form searchSubscription`)
           }
         }
@@ -76,25 +98,42 @@ export class AppComponent implements OnInit{
 
       /// page ready last event
       if (val.constructor.name === 'NavigationStart') {
-
-        setTimeout(() => {
-          $(window).scrollTop(0);
-        }, 500)
-
         // set current page name value
-       
-
          //console.log('--- what is the current page name ',this.currentPageName)
       }
 
       if (val.constructor.name === 'NavigationEnd') {
-        this.currentPageName =_globals.glob.current_page;
+
+         setTimeout(() => {
+          window.scrollBy( 0, 0 );
+        }, 500)
+
+        // this dont always work in production for some reason
+        if(val.urlAfterRedirects.indexOf('products')!==-1){
+        
+          this.currentPageName ='products';
+          _globals.glob.current_page = this.currentPageName;
+           this.displaySearchInput = true;
+
+        }
+
+       // this.currentPageName =_globals.glob.current_page;
         this.setBackgroundClass(_globals.glob.selected_apiName); // double check
 
         // check session
         this.checkSession();
       }
 
+      if (val.urlAfterRedirects !== undefined) {
+        if (val.urlAfterRedirects.indexOf('product-item') !== -1) {
+          this.currentPageName = 'single-product';
+          _globals.glob.current_page = this.currentPageName;
+          this.displaySearchInput = false;
+          console.log('what is the fucking state', this.currentPageName)
+          console.log('what is the fucking event',val.constructor.name)
+        }
+
+      }
        
       // 
       // val.constructor.name / val.url
@@ -115,8 +154,10 @@ export class AppComponent implements OnInit{
   }
 
   checkSession(){
+    var chekSession =this.servAuthentication.checkSession();
+    if(!chekSession) return ;
 
-    this.servAuthentication.checkSession().subscribe((data)=>{
+    chekSession.subscribe((data)=>{
        // console.log(data);
         this.sessionExpired = false;
     },(err)=>{
@@ -126,7 +167,9 @@ export class AppComponent implements OnInit{
   }
 
   loggout(){
-    this.servAuthentication.logout().subscribe((data)=>{
+    var logout = this.servAuthentication.logout();
+    if(!logout) return ;
+    logout.subscribe((data)=>{
      // console.log(data);
     },(err)=>{
        console.error(err);
@@ -134,6 +177,7 @@ export class AppComponent implements OnInit{
   }
 
   setBackgroundClass(className: any = false) {
+
     //console.log('what is his.element.nativeElement',this.element.nativeElement)
     if(this.removeOldClass){
       this.element.nativeElement.classList.remove(this.removeOldClass);
@@ -155,18 +199,25 @@ export class AppComponent implements OnInit{
 
     this.APP_LOADED=true;
     this._globals.glob.APP_LOADED =this.APP_LOADED;
-    $('.angular-preloader-wrap').removeClass('show').addClass('hide',()=>{
-      $('#angular-app').removeClass('hide').addClass('show');
-    })
-    setTimeout(()=>{
-      $('.angular-preloader-wrap').addClass('displayNone');
-    },300)
-    
-    // footer
-    $('footer').addClass('show');
-    this.logger.log('angular loaded');
+      let doc = document;
+      let body = doc.getElementsByTagName('body')[0];
+      // remove from loading to loaded
+      body.classList.remove("angular-loading");  
+      body.classList.remove("angular-loaded");
+      body.classList.add("angular-loaded");
 
     setTimeout(()=>{
+      var preloader = doc.getElementById('angular-pre-wrap');
+        preloader.classList.remove('displayNone');
+        preloader.classList.add('displayNone');  
+    },300) 
+
+    // footer 
+    var footer = doc.getElementsByTagName('footer')[0];
+    footer.classList.add("show");
+    this.logger.log('angular loaded');
+
+   setTimeout(()=>{
       this.displaySearchInput = true;
     },2000)
 
@@ -180,7 +231,8 @@ export class AppComponent implements OnInit{
   }
   
   ngOnInit() {
-     this.setBackgroundClass();
+    this.emmiter.next({eventType:'BackToDirective',apiName:this._globals.glob.selected_apiName});
+    this.setBackgroundClass();
     this.angularOnLoaded();
    
   }

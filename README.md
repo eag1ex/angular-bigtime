@@ -64,6 +64,7 @@ $/ ng g service new-service # new service
 ```
 #!python
 $/ npm start # alternativly `ng serve`
+$/ npm run build:prod #production ./dist folder
 ```
 
 
@@ -81,13 +82,14 @@ $/ npm start # alternativly `ng serve`
 * Bootstrap 4 `https://getbootstrap.com/`
 * Angular 6 CLI `https://github.com/angular/angular-cli`
 * Compass/Sass `http://compass-style.org/reference/compass/`
-* RXJS,SASS/COMPASS, Bootstrap 4, Jquery Light, Lodash, LocalStorage (management, smart storage), Rest API, API-MANAGER, api dynamic integration, dynamic routes
+* RXJS,SASS/COMPASS, Bootstrap 4, Lodash, LocalStorage (management, smart storage), Rest API, API-MANAGER, api dynamic integration, dynamic routes
 * GettyImages, Flickr, OMBD >> Restful/API client integration, HTTP/As Observalbe, 
 * Model Interfaces, API/ Model decorators, data Model decorators, error mock validation
 * Live Search, filter Search
 * Services: IX/UX animation, @angular/animations, TransactionResolver (product-item data resolver), event emmiters, global services
 * @pipe's/filters 
 * Progresive modular integration.
+* Production ready and optimized
 
 
 #### APP HIERARCHY

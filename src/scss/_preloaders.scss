@@ -22,14 +22,19 @@ app-root {
     transition: 0.1s linear all !important;
 }
 
-.angular-preloader-wrap {
-    opacity: 0;
-    &.show {
-        opacity: 1;
-    }
-    &.hide {
+.angular-loaded {
+    .angular-preloader-wrap {
         opacity: 0;
     }
+}
+.angular-loading{
+     .angular-preloader-wrap {
+        opacity: 1;
+    }
+}
+
+.angular-preloader-wrap {
+
     &.displayNone {
         // set tis with timeout
         opacity: 0;

@@ -5,17 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta charset="utf-8">
   <title>[ Picky ]</title>
-  <base href="/app">
-
+  <base href="/app"> 
+  <script>
+       var APP_URL = "<%=APP_URL%>" || false;
+</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
-<body>
+<body class="angular-loading">
 
   <div id="wrap">
 
-    <div class='angular-preloader-wrap show'>
+    <div class='angular-preloader-wrap' id="angular-pre-wrap">
       <div id="angular-preloader" class="bounce-spinner">
         <div class="double-bounce1"></div>
         <div class="double-bounce2"></div>

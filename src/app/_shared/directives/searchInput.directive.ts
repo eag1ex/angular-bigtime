@@ -1,6 +1,6 @@
 import { Component, Input, Output, HostBinding, OnInit, EventEmitter } from '@angular/core';
 import { EventEmitService } from '../services/eventEmmiter.service';
-
+import { MyGlobals } from '../../_shared/myglobals';
 @Component({
   selector: 'search-input',
   templateUrl: './searchInput.directive.html',
@@ -14,8 +14,14 @@ export class SearchInputDirective implements OnInit {
   placeHolder: string;
   haltSearch: boolean; false;
   public searchAPIcheck: boolean = false;
-  constructor(/*private elm: ElementRef, */private onSearchAction: EventEmitService/*, private renderer: Renderer*/) {
+  constructor(/*private elm: ElementRef, */
+    private onSearchAction: EventEmitService,
+    /*, private renderer: Renderer*/
+    private globs: MyGlobals
+  ) {
 
+     this.apiName = this.globs.glob.selected_apiName; // needed for production build
+     console.log('this.apiName ',this.apiName )
     /// 
     /*
     renderer.listen(elm.nativeElement, 'focusout', (event) => {
@@ -40,14 +46,15 @@ export class SearchInputDirective implements OnInit {
     // we could bind it to on change eventi know, but this give more flexibility to what we want to communicate  and what type of data :)
     this.searchAction = onSearchAction.subscribe(msg => {
 
-      if (msg.apiName) {
-        this.apiName = msg.apiName;
-        this.placeHoldermessage(this.apiName);
-      }
+      globs.glob.searchActionSubscription = this.searchAction;
 
       if (msg.eventType == 'BackToDirective') {
+        if (msg.apiName) {
+            this.apiName = msg.apiName;
+            this.placeHoldermessage(this.apiName);
+          }
+ 
         if (msg.reset) {
-          //  console.log('received BackToDirective!')
           this.searchtext = '';
           this.searchAPIcheck = false;
           this.loading = false;
@@ -153,5 +160,7 @@ export class SearchInputDirective implements OnInit {
   }
 
   ngOnInit() {
+     this.apiName = this.globs.glob.selected_apiName; // needed for production build
+     this.placeHoldermessage(this.apiName);
   }
 };

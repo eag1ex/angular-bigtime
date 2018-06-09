@@ -10,20 +10,20 @@ import { TransactionResolver } from '../_shared/services/transaction.resolver';
 var _routesObj = [
   { path: 'products', component: ProductComponent },
 
-   { path: 'product/:apiname/:id', component: ProductItemComponent, resolve: {
+   { path: 'product-item/:apiname/:id', component: ProductItemComponent, resolve: {
                   product: TransactionResolver
                 } 
   },
 
-  { path: 'product/:apiname/imdb/:imdbid', component: ProductItemComponent, resolve: {
+  { path: 'product-item/:apiname/imdb/:imdbid', component: ProductItemComponent, resolve: {
                   product: TransactionResolver
                 } 
   },
   { path: 'products/paged/:paged', component: ProductComponent },
   { path: 'products/paged', redirectTo: 'products', pathMatch: 'full' },
-  { path: 'product/**', redirectTo: 'products', pathMatch: 'full' },
-  { path: 'product/:apiname', redirectTo: 'products', pathMatch: 'full' },
-  { path: 'product/:apiname/imdb', redirectTo: 'products', pathMatch: 'full' },
+  { path: 'product-item/**', redirectTo: 'products', pathMatch: 'full' },
+  { path: 'product-item/:apiname', redirectTo: 'products', pathMatch: 'full' },
+  { path: 'product-item/:apiname/imdb', redirectTo: 'products', pathMatch: 'full' },
   { path: '**', redirectTo: 'products', pathMatch: 'full'}
 ]
 

@@ -1,3 +1,5 @@
+declare var APP_URL:any;
+
 import { Injectable } from '@angular/core';
 import { Headers, Http, RequestOptions } from '@angular/http';
 
@@ -14,18 +16,22 @@ import { LocalStorageService } from './local-storage.service';
 export class ServerAuthentication {
 
     constructor(private http: Http, private storage:LocalStorageService) {
+        // check APP_URL
+        if(APP_URL.indexOf('<%=APP_URL%>')!==-1){
+            APP_URL = false;
+        }
+       
     }
     
     logout() {
-        //var url = 'http://localhost:8080/signout';
-        var url = 'http://nodejs-mongo-persistent-picky2.1d35.starter-us-east-1.openshiftapps.com/signout';
+        if(!APP_URL) return false as any;
+        var url = APP_URL +'/signout';
         return this.httpRequest(url);
     }
 
     checkSession() {
-
-        //var url = 'http://localhost:8080/checkSession';
-        var url  = 'http://nodejs-mongo-persistent-picky2.1d35.starter-us-east-1.openshiftapps.com/checkSession'
+        if(!APP_URL) return false as any;
+        var url  = APP_URL+'/checkSession';
         return this.httpRequest(url)
     }
 
