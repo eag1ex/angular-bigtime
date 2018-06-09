@@ -47,8 +47,6 @@ export class AppComponent implements OnInit{
       /// just in case app.component swollowed the event first we bubble it down to directive
      
        if(msg.eventType=='BackToDirective'){
-      //   this.onAnyEventToComponent.unsubscribe(); 
-       //  console.log('onAnyEventToComponent unsubscribe')
          return;
        }
 
@@ -61,11 +59,11 @@ export class AppComponent implements OnInit{
        this.displaySearchInput = false;
        this.currentPageName =msg.isProductPageName;
        _globals.glob.current_page = this.currentPageName;
+
       }
 
       if(msg.isProductPageName=='products'){
           this.displaySearchInput = true;
-
       }
 
       if(msg.updateTitle){
@@ -75,26 +73,12 @@ export class AppComponent implements OnInit{
          this.logger.log(`what is the err ${err}`,true); 
     }, (complete) => {
      // console.log('what is the complete', complete)
-    });  
+    },_globals);
+
+     this._globals.glob.onAnyEventToComponent =  this.onAnyEventToComponent;
+    
   
-
     _router.events.subscribe((val: any) => {
-
-      /// unsubscripte if not on products to avoid memory leaks!
-      if (val.url) {
-        if (val.url.indexOf('products') == -1) {
-          if (_globals.glob.searchSubscription !== null) {
-            _globals.glob.searchSubscription.unsubscribe();
-             this.onAnyEventToComponent.unsubscribe(); 
-
-             if(_globals.glob.searchActionSubscription){
-               _globals.glob.searchActionSubscription.unsubscribe();
-             }
-            logger.log(`unsubscribed form searchSubscription`)
-          }
-        }
-
-      }
 
       /// page ready last event
       if (val.constructor.name === 'NavigationStart') {
@@ -129,8 +113,6 @@ export class AppComponent implements OnInit{
           this.currentPageName = 'single-product';
           _globals.glob.current_page = this.currentPageName;
           this.displaySearchInput = false;
-          console.log('what is the fucking state', this.currentPageName)
-          console.log('what is the fucking event',val.constructor.name)
         }
 
       }
@@ -227,11 +209,11 @@ export class AppComponent implements OnInit{
   /// broadcast this message to product component
   onSearch(data) {
     data.eventType = 'onSearch';
-    this.emmiter.next(data);
+    this.emmiter.next(data, false);
   }
   
   ngOnInit() {
-    this.emmiter.next({eventType:'BackToDirective',apiName:this._globals.glob.selected_apiName});
+    this.emmiter.next({apiName:this._globals.glob.selected_apiName, from:"appComponent"}, false);
     this.setBackgroundClass();
     this.angularOnLoaded();
    

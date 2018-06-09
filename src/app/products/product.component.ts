@@ -85,8 +85,6 @@ export class ProductComponent implements OnInit {
     this.searchSubscription = appEmmiter.subscribe(msg => {
 
       if(msg.eventType=='BackToDirective'){
-      //   this.searchSubscription.unsubscribe(); 
-       //  console.log('searchSubscription unsubscribe')
          return;
       }
       if (msg.eventType == 'onSearch') {
@@ -98,12 +96,12 @@ export class ProductComponent implements OnInit {
         }
       }
 
-
     }, (err) => {
       this.logger.log(`what is the err ${err}`, true);
     }, (complete) => {
       // console.log('what is the complete', complete)
-    });
+    },_globals);
+    this._globals.glob.searchSubscription = this.searchSubscription;
 
 
   }
@@ -115,7 +113,8 @@ export class ProductComponent implements OnInit {
   onSearchQBackToDirective(data) {
     data.eventType = 'BackToDirective';
     data.apiName = this.PAGE_DEFAULTS.apiName;
-    this.appEmmiter.next(data);
+    data.from ='productComponent';
+    this.appEmmiter.next(data,false);
   }
 
   getKeywords(obj) {
@@ -273,8 +272,9 @@ export class ProductComponent implements OnInit {
         var _gotourl = `/product-item/${this.PAGE_DEFAULTS.apiName}/${append}`  + nr; 
        // console.log('what is the goto url ',_gotourl)
       this._router.navigate([_gotourl]);
+      
     }, 300)
-
+    this.appEmmiter.next({},'unsubscribe',['directiveSearchSubscription','searchSubscription'])
   }
 
   // not using this at moment
@@ -353,7 +353,6 @@ export class ProductComponent implements OnInit {
     /// unsubscribe from previous this.getHttpRequestSubscription
     if(this.getHttpRequestSubscription){
       this.getHttpRequestSubscription.unsubscribe();
-      //console.log('unsubscribe from getHttpRequestSubscription')
     }
     
    /// get page param  
@@ -377,24 +376,18 @@ export class ProductComponent implements OnInit {
       this.getMyHttpRequest(this.routeName, this.PAGE_DEFAULTS.apiName);
     })
 
-    this.updateTitle();
-    this._globals.glob.searchSubscription = this.searchSubscription;
+    var updateTitle = this.updateTitle();
     this.dataService._globs = this._globals;
 
     setTimeout(() => {
-      this.appEmmiter.next({ bgChange: true, apiName: this.PAGE_DEFAULTS.apiName, isProductPageName:this.PAGE_DEFAULTS.pageName });
+      this.appEmmiter.next({ updateTitle:updateTitle,bgChange: true, apiName: this.PAGE_DEFAULTS.apiName, isProductPageName:this.PAGE_DEFAULTS.pageName,from:'productComponent' },false);
     }, 100)
 
   }
 
   updateTitle() {
-    this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.apiName + ' API' + " | " + this.PAGE_DEFAULTS.pageName;
-    
-    setTimeout(() => {
-      this.appEmmiter.next({ updateTitle: this.PAGE_DEFAULTS.pageTitle, apiName: this.PAGE_DEFAULTS.apiName });
-       this.appEmmiter.next({ eventType:'BackToDirective',apiName: this.PAGE_DEFAULTS.apiName});
-    }, 100)
-
+    this.PAGE_DEFAULTS.pageTitle = this.PAGE_DEFAULTS.apiName + ' API' + " | " + this.PAGE_DEFAULTS.pageName; 
+    return this.PAGE_DEFAULTS.pageTitle;
   }
 
   /**

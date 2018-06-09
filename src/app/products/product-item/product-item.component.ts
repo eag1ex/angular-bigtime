@@ -49,7 +49,7 @@ export class ProductItemComponent implements OnInit {
       this.productData = prod[0];
 
     setTimeout(() => { 
-      this.appEmmiter.next({ isProductPageName:this.PAGE_DEFAULTS.pageName});
+      this.appEmmiter.next({ isProductPageName:this.PAGE_DEFAULTS.pageName, from:'itemComponent'});
     }, 100)
 
 

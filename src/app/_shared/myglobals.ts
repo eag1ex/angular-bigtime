@@ -33,7 +33,8 @@ export class MyGlobals implements IMyGlobals {
     glob = {
         items_per_page: 10,
         searchSubscription: null,
-        searchActionSubscription:null,
+        onAnyEventToComponent:null,
+        directiveSearchSubscription:null,
         /// stored data before LocalStorage
         'punkapi.data': null,
         'flickr.data': null,

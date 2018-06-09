@@ -7,7 +7,7 @@ import { MyGlobals } from '../../_shared/myglobals';
 })
 export class SearchInputDirective implements OnInit {
   titleDisplay: number;
-  searchAction: any;
+  directiveSearchSubscription: any;
   apiName: string;
   loading: boolean = false;
   searchtext: string;
@@ -21,34 +21,10 @@ export class SearchInputDirective implements OnInit {
   ) {
 
      this.apiName = this.globs.glob.selected_apiName; // needed for production build
-     console.log('this.apiName ',this.apiName )
-    /// 
-    /*
-    renderer.listen(elm.nativeElement, 'focusout', (event) => {
-
-      if (this.searchAPIcheck && this.searchtext.length > 2) {
-        //  console.log('doHaltAndWait searchElm focusout!');
-    
-      }
-
-    });
-
-    renderer.listen(elm.nativeElement, 'keydown', (event) => {
-      if (event.keyCode == 13 && this.searchtext.length > 2) {
-        if (this.searchAPIcheck) {
-          //    console.log('doHaltAndWait searchElm keydown!');
-         
-        }
-      }
-    });
-    */
 
     // we could bind it to on change eventi know, but this give more flexibility to what we want to communicate  and what type of data :)
-    this.searchAction = onSearchAction.subscribe(msg => {
+    this.directiveSearchSubscription = onSearchAction.subscribe(msg => {
 
-      globs.glob.searchActionSubscription = this.searchAction;
-
-      if (msg.eventType == 'BackToDirective') {
         if (msg.apiName) {
             this.apiName = msg.apiName;
             this.placeHoldermessage(this.apiName);
@@ -63,19 +39,12 @@ export class SearchInputDirective implements OnInit {
           this.loading = true;
         }
 
-        if (msg.dofocusout) {
-          //renderer.invokeElementMethod(elm.nativeElement, 'focusout', []);
-          // elm.nativeElement.
-        }
-        //
-        //  console.log('did the directive receive onSearchAction?? ', msg)
-      }
-
     }, (err) => {
       console.error('--- onSearchAction error', err)
     }, (complete) => {
       // console.log('what is the complete', complete)
-    });
+    },globs);  
+       globs.glob.directiveSearchSubscription = this.directiveSearchSubscription;
   }
 
 
@@ -106,6 +75,7 @@ export class SearchInputDirective implements OnInit {
       placeholder = `${whichSearch} title, or imdbID:ttxxx`;
     }
     this.placeHolder = placeholder;
+
   }
 
 
@@ -125,7 +95,7 @@ export class SearchInputDirective implements OnInit {
   liveAPIchange() {
 
     setTimeout(() => {
-      this.placeHoldermessage()
+      this.placeHoldermessage();
     }, 200)
 
   }
