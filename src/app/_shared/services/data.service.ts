@@ -16,7 +16,7 @@ import { BeersModel, FlickrPhotoModel, Models, GettyImages, OmdbapiModel,Omdbapi
 import { LoggerService } from './logger.service';
 import { LocalStorageService } from './local-storage.service';
 import { ApiManagerService } from './api-manager/api-manager.service';
-
+import {ServerAuthentication} from '../../_shared/services/server.authentication';
 // interfaces
 import { IRouteName, IMyGlobals } from '../interfaces';
 
@@ -27,12 +27,14 @@ import { IRouteName, IMyGlobals } from '../interfaces';
 })
 export class DataService {
   public punkapiData: Array<any>;
+  private checkSessionSubscription;
   public _globs: any;
   constructor(
     private http: Http,
     private logger: LoggerService,
     private lStorage: LocalStorageService,
-    private apiManager: ApiManagerService
+    private apiManager: ApiManagerService,
+    private servAuthentication:ServerAuthentication
   ) {
 
 
@@ -47,37 +49,27 @@ export class DataService {
     if (!params) return null;
     var getStorage: any = null;
     var set_key;
-    /*
-    var matched= ['parent_page','paged','byName','search_by_name'].filter((item, inx)=>{
-       return params.indexOf(item)!==-1;
-    }).length> 0 ? matched:false;
-
-    var match_logic = 
-
-    if(matched){
-    }
-    */
-    
-    if (params.imdbID && single) set_key = `${apiName}-imdbID:${params.imdbID}`;
+  
+    set_key = apiName;
+    if (params.imdbID && single) set_key =set_key+`-imdbID:${params.imdbID}`;
     if (params.imdbID && !single) return false;
 
     //{apiName}:paged:1:lastSearch:example_name  << always first page
-    if (params.parent_page) set_key = `${apiName}:paged:${1}`;
+    if (params.parent_page) set_key = set_key+`:paged:${1}`;
 
     // {apiName}:paged:${paged}:lastSearch:example_name
-    if (params.paged) set_key = `${apiName}:paged:${params.paged}`;
+    if (params.paged) set_key = set_key+`:paged:${params.paged}`;
 
     // {apiName}:search_by_name:lastSearch:example_name
     // {apiName}:byName:lastSearch:example_name
     var searchBy = params.byName || params.search_by_name;
     if (searchBy) {
-      set_key = `${apiName}:name:${searchBy}`;
+      set_key = set_key+`:name:${searchBy}`;
     }
 
 
     if (params.lastSearch && !single) set_key = set_key + `:lastsearch:${params.lastSearch}`;
    
-    //console.log('getStorage ',set_key)
 
     getStorage = this.lStorage.getItem(set_key);
     return getStorage;
@@ -96,19 +88,20 @@ export class DataService {
     var set_key;
   
     //{apiName}-imdbID:tt0371746  << 
-    if (params.imdbID && single) set_key = `${apiName}-imdbID:${params.imdbID}`;
+    set_key =apiName;
+    if (params.imdbID && single) set_key = set_key+`-imdbID:${params.imdbID}`;
     if (params.imdbID && !single) return false;
 
     //{apiName}:paged:1:lastSearch:example_search  << always first page
-    if (params.parent_page) set_key = `${apiName}:paged:${1}`;
+    if (params.parent_page) set_key = set_key+`:paged:${1}`;
 
     // {apiName}:paged:${paged}:lastSearch:example_search
-    if (params.paged) set_key = `${apiName}:paged:${params.paged}`;
+    if (params.paged) set_key = set_key+`:paged:${params.paged}`;
 
     // {apiName}:item:name:search_by_name:lastSearch:example_search
     if (params.search_by_name || params.byName) {
       var byName = params.search_by_name || params.byName;
-      set_key = `${apiName}:name:${byName}`;
+      set_key = set_key+`:name:${byName}`;
     }
 
     if (params.lastSearch && !single) set_key = set_key + `:lastsearch:${params.lastSearch}`;
@@ -209,13 +202,16 @@ export class DataService {
 
   getHttpRequest(params: IRouteName, apiName: string = 'punkapi'): Observable<any[]> {
 
+    // are we allowed,
+    this.checkSession();
+
     var _paramsReturn = this.apiManager.buildRespCall(apiName, params, this._globals as IMyGlobals);
 
     var paramsForLocalStorage = params;
     if(_paramsReturn.lastSearch){
        paramsForLocalStorage.lastSearch = _paramsReturn.lastSearch;
     }
-    
+
     var checkLocalstorage = this.checkLocalstorage(apiName, paramsForLocalStorage);
 
     if (checkLocalstorage !== false && checkLocalstorage !== null && !params.searchAPI) {
@@ -298,8 +294,18 @@ export class DataService {
   }
 
 
-private setTimeoutrequest
+private checkSession(){
+    var chekSession =this.servAuthentication.checkSession();
+    if(!chekSession) return ;
+    if( this.checkSessionSubscription){
+       this.checkSessionSubscription.unsubscribe();
+    }
+    this.checkSessionSubscription = chekSession.subscribe((data)=>{
 
+    },(err)=>{
+      console.error(err);
+    })
+  }
   /**
    * extended to getHttpRequest(..)
    *  nice error handling implemented

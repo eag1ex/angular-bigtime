@@ -154,12 +154,11 @@
             }
             
             
-
-
-            .tags,
-            .keywords {
+            .card-text{
                 font-size: smaller;
             }
+
+          
             .card {
                 @include border-radius(6px, 6px);
                 img {
@@ -240,6 +239,7 @@
                     @include input-placeholder {
                         color: #bbb;
                         font-style: italic;
+                        font-size: 15px;
                     }
                 }
             }

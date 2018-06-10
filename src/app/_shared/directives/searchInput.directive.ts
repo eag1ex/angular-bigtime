@@ -57,7 +57,7 @@ export class SearchInputDirective implements OnInit {
     apiName = apiName || this.apiName;
 
     var placeholder = "";
-    var whichSearch = (this.searchAPIcheck) ? 'API search:' : 'search:';
+    var whichSearch = (this.searchAPIcheck) ? 'API search:' : 'filter:';
 
     if (!apiName) {
       this.placeHolder = `${whichSearch} title`;
