@@ -2,6 +2,11 @@
  responsive only declaration here!
 */
   @media (max-width: 575.98px) {
+
+    html search-input .sk-circle.search-loading-icon{
+        right:76px !important;
+    }
+
       product-item {
           a.navigate-back {
               font-size: larger !important;
@@ -10,7 +15,7 @@
               margin-bottom: 0 !important;
           }
           img.product-img {
-              max-width: 150px !important;
+              max-width: 200px !important;
           }
       }
       .pagination {
@@ -21,10 +26,10 @@
                   text-align: center !important;
               }
               &.previous-link {
-                  min-width: 100px !important;
+                  min-width: 60px !important;
               }
               &.next-link {
-                  min-width: 100px !important;
+                  min-width: 60px !important;
               }
           }
       }

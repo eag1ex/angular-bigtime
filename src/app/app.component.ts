@@ -80,6 +80,10 @@ export class AppComponent implements OnInit{
   
     _router.events.subscribe((val: any) => {
 
+       setTimeout(() => {
+          window.scrollTo(0, 0);
+        }, 500)
+
       /// page ready last event
       if (val.constructor.name === 'NavigationStart') {
         // set current page name value
@@ -88,9 +92,7 @@ export class AppComponent implements OnInit{
 
       if (val.constructor.name === 'NavigationEnd') {
 
-         setTimeout(() => {
-          window.scrollBy( 0, 0 );
-        }, 500)
+        
 
         // this dont always work in production for some reason
         if(val.urlAfterRedirects.indexOf('products')!==-1){

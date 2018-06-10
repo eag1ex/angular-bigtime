@@ -9,7 +9,7 @@ It has a localstorage integration for any subsequent views to the same page/quer
 API's have feature's to display random results uppon every load. You can filter thru the results, and search the live API as well > then filter thru it. `Please read more about the details below.!`
 
 * Important: You need to register your own api keys to use in development, and purchase for production. 
-Demo dev site will be available soon for you to test/run without any registration required. 
+* Demo dev site is available, at [ Developed by Eaglex ](http://eaglex.net)
 
 
 #### flickr

@@ -12,6 +12,7 @@ export class SearchInputDirective implements OnInit {
   loading: boolean = false;
   searchtext: string;
   placeHolder: string;
+  displayClickSearch:boolean=false; 
   haltSearch: boolean; false;
   public searchAPIcheck: boolean = false;
   constructor(/*private elm: ElementRef, */
@@ -112,14 +113,20 @@ export class SearchInputDirective implements OnInit {
       return false;
   }
 
-  searchItems(event, searchVal, type) {
+  searchItems(event, searchVal, type) { 
+
     if (this.searchtext == '') {
       searchVal = '';
+    }
+    if(this.searchtext.length >2){
+      this.displayClickSearch = true;
+    }else{
+      this.displayClickSearch =false;
     }
     // handle_imdbID
     var emmit_req = {
       event: event,
-      searchVal: searchVal,
+      searchVal: searchVal || this.searchtext,
       type: type, 
       searchAPIcheck:this.searchAPIcheck
     }

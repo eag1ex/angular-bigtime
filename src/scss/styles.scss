@@ -76,8 +76,9 @@
         .item-container {
             img.product-img {
                 max-width: 70%;
-                &.image-from-flickrm,
-                &.image-from-gettyimages {
+                &.image-from-flickr,
+                &.image-from-gettyimages,
+                &.image-from-omdbapi {
                     max-width: 100% !important;
                 }
             }
@@ -101,6 +102,7 @@
             }
         }
         .available_apis {
+            text-align: center;
             button {
                 color: $body-color;
                 &.active {
@@ -196,6 +198,14 @@
     }
 
     html search-input {
+        .click-search{
+            position: absolute;
+            z-index: 1111;
+            right:0px;
+            background: none!important;
+        }
+
+
         position: absolute; // top: -110px;
         @include border-radius(0px 0px 10px 10px); //@include box-shadow(rgba(0, 0, 0, 0.1) 0 0 100px 5px inset); 
         @include box-shadow(rgba(0, 0, 0, 0.2) 0 0 70px, rgba(255, 255, 255, 0.4) 0 0 50px 5px inset);

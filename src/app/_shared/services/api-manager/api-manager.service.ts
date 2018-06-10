@@ -208,13 +208,13 @@ export class ApiManagerService extends GlobalReuse {
         search: 'phrase',
         page: 'page',
         per_page: 'page_size',
-        randomTitles: ['technology', 'galaxy', 'crime', 'war', 'poland', 'love', 'drugs', 'strong man', 'future', 'kungfu', 'creative', 'celebrity', 'china', 'bangkok', 'thailand']
+        randomTitles: ['technology', 'galaxy','fashion', 'tatoo', 'war', 'poland', 'yoga', 'development', 'strong man', 'future', 'kungfu', 'creative', 'celebrity', 'china', 'bangkok', 'thailand']
         
       },
       'omdbapi': {
         search: 's',
         page: 'page',
-        randomTitles: ['bruce lee', 'kill bill', 'war', 'killer', 'ladies', 'sexy', 'iron man', 'start wars', 'the matrix', 'ip man', 'rambo'],
+        randomTitles: ['bruce lee', 'kill bill', 'Mission Impossible', 'Transporter', 'hulk', 'iron man', 'start wars', 'the matrix', 'ip man', 'rambo'],
         imdbID:'i'
         //   per_page: 'page_size'
 
@@ -230,7 +230,7 @@ export class ApiManagerService extends GlobalReuse {
         search: 'text',
         page: 'page',
         per_page: 'per_page',
-        randomTitles: ['bruce lee', 'kill bill', 'killer', 'war', 'ladies', 'sexy', 'strong man', 'start wars', 'the matrix', 'kungfu', 'rambo', 'galaxy']
+        randomTitles: ['bruce lee', 'kill bill', 'weapons', 'world war', 'fashion model', 'yoga', 'strong man', 'start wars', 'the matrix', 'kungfu', 'rambo', 'galaxy']
       }
     }
 

@@ -14,28 +14,30 @@ import { LocalStorageService } from './local-storage.service';
     providedIn: 'root'
 })
 export class ServerAuthentication {
-
+    private APP_URL:any='';
     constructor(private http: Http, private storage:LocalStorageService) {
         // check APP_URL
         if(APP_URL.indexOf('<%=APP_URL%>')!==-1){
-            APP_URL = false;
+            this.APP_URL = false;
+        }else{
+            this.APP_URL = APP_URL;
         }
        
     }
     
     logout() {
-        if(!APP_URL) return false as any;
-        var url = APP_URL +'/signout';
-        return this.httpRequest(url);
+        if(!this.APP_URL) return false as any;
+        var url = this.APP_URL +'/signout';
+        return this.httpRequest(url,'logout');
     }
 
     checkSession() {
-        if(!APP_URL) return false as any;
-        var url  = APP_URL+'/checkSession';
-        return this.httpRequest(url)
+        if(!this.APP_URL) return false as any;
+        var url  = this.APP_URL+'/checkSession';
+        return this.httpRequest(url,'checkSession')
     }
 
-    private httpRequest(url:any=false): Observable<any[]> {
+    private httpRequest(url:any=false, type:any=false): Observable<any[]> {
        // this.storage.getItem('auth-token');
       //  var headers = new Headers();
      //   headers.append('Authorization', token);
@@ -48,9 +50,21 @@ export class ServerAuthentication {
                 return response.json() as any;
             })
             .do((dat) => {
+                
+                  if(type=='logout'){
+                        setTimeout(()=>{
+                            window.location.href=this.APP_URL+'/login'
+                        },100)
+                }
                 return dat;
             })
             .catch((error: any) => {
+                if(type=='checkSession'){
+                        setTimeout(()=>{
+                            window.location.href=this.APP_URL+'/login'
+                        },100)
+                }
+               
               //  console.error('ServerAuthentication ',error)
                 return Observable.throw(error || 'Upps error getting data, api or localstorage!');
             });

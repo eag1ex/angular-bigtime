@@ -1,4 +1,6 @@
 <div class="input-group mb-1 search-wrap">
+
+
     <div class="sk-circle search-loading-icon" *ngIf='loading===true'>
         <div class="sk-circle1 sk-child"></div>
         <div class="sk-circle2 sk-child"></div>
@@ -14,13 +16,18 @@
         <div class="sk-circle12 sk-child"></div>
     </div>
 
-
+    
     <div class="input-group-prepend">
         <div class="input-group-text px-3">
             <input type="checkbox" [checked]="searchAPIcheck" (change)="liveAPIchange(); searchAPIcheck = !searchAPIcheck" />
         </div>
     </div>
 
+        <div [ngClass]='{"showMe":displayClickSearch && searchAPIcheck,"hideMe":!displayClickSearch || !searchAPIcheck}' 
+        class="input-group-text p-1 pr-2 d-block d-sm-none  d-none d-sm-block d-md-none click-search">
+            <button type="button" (click)="searchItems($event,searchtext,'click');" class="btn btn-sm btn-info opc">Search</button>
+        </div>
+ 
 
     <input (keydown)="searchItems($event,search.value,'keydown');" (focusout)="searchItems($event,search.value,'focusout');"
         [(ngModel)]="searchtext" #search [placeholder]="placeHolder" class="form-control p-1 ml-3" aria-label="Search" type="text">

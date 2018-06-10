@@ -176,6 +176,13 @@ export class ProductComponent implements OnInit {
       })
     }
 
+     if (type == 'click' && val.length > 2) {
+           exec();
+            setTimeout(() => {
+              this.exec_search = false;
+            },500)
+           
+     }
 
     if (type == 'focusout' && val.length > 2) {
 
@@ -223,6 +230,10 @@ export class ProductComponent implements OnInit {
   private whichSearch(type, event, cb) {
 
     switch (type as string) {
+      case 'click':
+            this.searchtext.inx++;
+            cb();
+          break;
       case 'keydown':
         if (event.keyCode == 13 && this.searchtext.inx < 1) {
           cb();

@@ -8,6 +8,8 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/debounceTime';
+
 
 import * as _ from "lodash";
 import { BeersModel, FlickrPhotoModel, Models, GettyImages, OmdbapiModel,Omdbapi_imdbID } from './models';
@@ -125,6 +127,10 @@ export class DataService {
   errorHandler(errorData: any, apiName: string): object {
 
     if (apiName == 'omdbapi') {
+      if(errorData.Response==='False' || errorData.Error){
+        return errorData;
+      }
+
       if (errorData.Error !== undefined && !errorData.imdbID) {
         return errorData;
       }
@@ -292,6 +298,8 @@ export class DataService {
   }
 
 
+private setTimeoutrequest
+
   /**
    * extended to getHttpRequest(..)
    *  nice error handling implemented
@@ -315,17 +323,21 @@ export class DataService {
       originalParams.lastSearch = paramsReturn.lastSearch
     }
     
+    // 
     return this.http.get(paramsReturn.url, with_headers)
+      .timeout(10000)
       .map((response: any) => {
-
         var checker = this.errorHandler(response.json(), _apiName);
+
         if (checker) {
           throw checker as any;
-        }
+        }else{
 
         var d = dataCallBack(response.json());
         var checked_data = this.returnMaxAllowed(d);
         return checked_data as any;
+        }
+
       })
       .do((dat) => {
 
@@ -340,21 +352,25 @@ export class DataService {
          * net::ERR_CONNECTION_RESET
          * Response with status: 0
          */
-        if (error.toString()) {
-          var err_str = error.toString();
+ 
+          var err_str = ( Object.keys(  JSON.parse(JSON.stringify(error))  ).length>0 ) ?  JSON.stringify(error):error.toString();
+
           var checkErr = ['net::ERR_CONNECTION_RESET', 'Response with status: 0'].filter((item, inx) => {
             return err_str.indexOf(item) !== -1;
           })
+
           if (checkErr.length > 0) {
             return Observable.throw({response:checkErr, message:'possibly no internet connection..'});
           }
+          if(err_str.indexOf('Timeout has occurred')!==-1){
+             return Observable.throw({message:"Timeout has occurred. Try again", error:true});
+          }
+        
 
-        } else {
-          this.logger.log(error, true)
+         this.logger.log(error, true)
           return Observable.throw(error || 'Upps error getting data, api or localstorage!');
-        }
-
       });
+    
 
   }
 

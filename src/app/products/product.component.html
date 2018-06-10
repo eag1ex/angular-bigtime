@@ -30,13 +30,13 @@
               
 
   <div *ngIf='DataLoaded===true' class="product-row justify-content-md-center mt-4 mb-2 anim-f">
-    <div class="col-auto available_apis"  >                      
-      <a  [routerLink]="['/products/paged',1]" (click)="clicked=i; filterTag(api);" [ngClass]='{"btn-info active": i==clicked || PAGE_DEFAULTS.apiName===api, "btn-outline-info":i!=clicked }' *ngFor="let api of available_apis; let i=index;"  class="m-1 btn-sm" >{{api}}</a>
+    <div class="available_apis m-auto"  >                      
+      <a  [routerLink]="['/products/paged',1]" (click)="clicked=i; filterTag(api);" [ngClass]='{"btn-info active": i==clicked || PAGE_DEFAULTS.apiName===api, "btn-outline-info":i!=clicked }' *ngFor="let api of available_apis; let i=index;"  class="m-0 btn-sm" >{{api}}</a>
     </div>
   </div>                                 
 
     <div *ngIf='DataLoaded===true && lastSearch' class="product-row justify-content-md-center mt-1 anim-f">
-      <div class="col-auto w-100">
+      <div class="col-md-6 col-sm-12">
          <div class='last_search text-center'><small class="text-light bg-info px-2 py-1 mt-2"><span class="text-info">Last search:&nbsp;</span>{{lastSearch}}</small></div>
       </div>
     </div>
@@ -58,9 +58,9 @@
           <p class="card-text mb-1 tags"><span class="text-info cf">tags:</span> {{item.tagline}}</p>
 
         </div>
-         <div class="d-flex card-body px-1 justify-content-center pt-0">
+         <div class="d-flex card-body px-1 pb-1 justify-content-center pt-0">
          
-        <button type="button" class="btn-sm btn btn-dark card-link px-4" (click)="goto(niceName(item.name));">View</button>
+        <button type="button" class="btn-sm btn btn-dark card-link p-1 w-100 opc" (click)="goto(niceName(item.name));">View</button>
       </div>
       </div>
      
@@ -86,8 +86,8 @@
           <p class="card-text mb-1 tags"><span class="text-info cf">tags:</span> {{descLimit(mCommas(item.tags))}}</p>
  
         </div>
-         <div class="d-flex card-body px-1 justify-content-center pt-0">
-         <div class="btn-sm btn card-link px-2" (click)="loadLink(item.owner); clicked=i" 
+         <div class="d-flex card-body px-1 justify-content-center pt-0 pb-1">
+         <div class="btn-sm btn card-link px-2 opc" (click)="loadLink(item.owner); clicked=i" 
          [ngClass]="{'btn-warning':item.flickerLink===undefined,'btn-success':item.flickerLink!==undefined}">
         
          <div class="spinner-loading" *ngIf='clicked==i && item.flickerLink===undefined'>
@@ -101,8 +101,9 @@
               <span  *ngIf='clicked!==i && item.flickerLink===undefined'>flickr</span>
               <a *ngIf='item.flickerLink!==undefined' href="{{item.flickerLink}}" class="text-white" target="_blank">flickr >></a>
             </div>
-        <button  type="button" class="btn btn-sm btn-dark card-link px-4" (click)="goto(niceName(item.title|| item.ownername));">View</button>
+
       </div>
+                  <button  type="button" class="m-1 btn btn-sm btn-dark card-link px-4 opc" (click)="goto(niceName(item.title|| item.ownername));">View</button>
       </div>
      
     </div>
@@ -138,9 +139,9 @@
  
         </div>
          <div class="d-flex card-body px-1 justify-content-center pt-0">
-        <button type="button" class="btn btn-sm btn-dark card-link px-4" (click)="goto(niceName(item.title||item.artist));">View</button>
+       
       </div>
-
+         <button type="button" class="btn btn-sm btn-dark card-link px-4 m-1 opc" (click)="goto(niceName(item.title||item.artist));">View</button>
 
       </div>
      
@@ -175,7 +176,7 @@
 
            
             <div class="card-text mb-1 mt-3  text-center">             
-                 <div class="btn btn-sm btn-info card-link px-3" 
+                 <div class="btn btn-sm btn-info card-link px-3 w-100" 
                       (click)="getimdbData(item.imdbID);getimdbClicked=i;">
                       <div class="spinner-loading" *ngIf='getimdbClicked==i && item.Director===undefined'>
                         <div class="rect1"></div>
@@ -192,8 +193,8 @@
             </div> 
  
         </div>
-         <div class="d-flex card-body px-1 justify-content-center pt-0">
-        <button *ngIf="item.Director===undefined && getimdbClicked!==i" type="button" class="btn btn-sm btn-dark card-link px-4" 
+         <div class="d-flex card-body px-1 pb-1 justify-content-center pt-0">
+        <button *ngIf="item.Director===undefined && getimdbClicked!==i" type="button" class="btn btn-sm btn-dark card-link px-4 w-100 opc" 
         (click)="goto(niceName(item.Title));">View</button>
       </div>
       </div> 
@@ -227,7 +228,7 @@
             <p class="card-text mb-1 "><span class="text-info cf">Writer:</span> {{descLimit(item.Writer)}}</p>    
         </div>
          <div class="d-flex card-body px-1 justify-content-center pt-0">
-        <button type="button" class="btn btn-sm btn-dark card-link px-4" (click)="goto(item.imdbID,true);">View Full</button>
+        <button type="button" class="btn btn-sm btn-dark card-link px-4 opc" (click)="goto(item.imdbID,true);">View Full</button>
       </div>
       </div> 
     </div>
@@ -235,16 +236,12 @@
   </div><!--product-row -->
 
 
-
-
-
-
   <!-- row-->
 </div>
 <!-- product-container-->
 <div class="cf"></div>
 
-<div class="row justify-content-md-center mb-2 mt-3 pb-3" *ngIf="DataLoaded!==false">
+<div class="row justify-content-md-center mb-2 mt-3 pb-3" *ngIf="DataLoaded!==false && !ErrorData">
   <div class="col-12">
     <nav class="">
 
