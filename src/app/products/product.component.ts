@@ -406,7 +406,7 @@ export class ProductComponent implements OnInit {
    * @param startOver 
    */
   starOver(startOver = true) {
-    this.filterTag(this.PAGE_DEFAULTS.apiName, 1);
+    this.filterTag(this.PAGE_DEFAULTS.apiName, 1, true);
   }
 
 
@@ -423,7 +423,7 @@ export class ProductComponent implements OnInit {
    * @param apiName 
    * @param paged 
    */
-  filterTag(apiName, paged: number = 1) {
+  filterTag(apiName, paged: number = 1, isReset=false) {
 
 
     this.searchModel = '';
@@ -431,6 +431,10 @@ export class ProductComponent implements OnInit {
     console.log('-- filterTag to fetch for apiName: ', apiName)
     this.lastSearchBefore = '';
     /// can call fetch because it will not call oninit, where fetch is also called, no double events
+   if(isReset==true){
+      this.dofetch(paged, apiName);
+   }
+   
     if (this.paged_is) {
       this.dofetch(paged, apiName);
     } else {
