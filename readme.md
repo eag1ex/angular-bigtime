@@ -1,8 +1,18 @@
-# Picky ( BigTime Search API ()
+# Picky ( BigTime Search API )
 
 #### - [ Developed by Eaglex ](http://eaglex.net)
 
-- This is a premium product, under license, and not for distribution.
+#### <span style="color:red">Latest updates</span>
+
+<i>Project demo is now available on github pages: </i>
+<br>
+
+[ >> BigTime Search API <<](https://eag1ex.github.io/angular-bigtime/)
+
+<img  src="./screens/picky-search-api_2.png" width="400"/>
+
+<img  src="./screens/picky-search-api_4.png" width="400"/>
+<br>
 
 #### DESCRIPTION
 
