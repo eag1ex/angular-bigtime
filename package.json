@@ -26,9 +26,12 @@
     "start": "ng serve",
     "build": "ng build",
     "build:prod": "ng build --prod",
+    "build:github": "ng build --prod --base-href https://eag1ex.github.io/angular-bigtime/",
+    "deploy:github": "gh-pages -d build -d dist/picky-search",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "serve": "serve"
   },
   "private": true,
   "dependencies": {
@@ -54,6 +57,7 @@
     "@angular/compiler-cli": "^6.0.0",
     "@angular/language-service": "^6.0.0",
     "@schematics/angular": "^0.6.3",
+    "@types/gh-pages": "^6.1.0",
     "@types/jasmine": "~2.8.6",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
@@ -61,6 +65,7 @@
     "codelyzer": "~4.2.1",
     "compass": "^0.1.1",
     "compass-mixins": "^0.12.10",
+    "gh-pages": "^6.1.1",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~1.7.1",
@@ -77,6 +82,6 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": "8"
+    "node": "10"
   }
 }

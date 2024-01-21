@@ -1,0 +1,4 @@
+{
+  "public": "./dist/picky-search",
+  "rewrites": [{ "source": "**", "destination": "/index.html" }]
+}
