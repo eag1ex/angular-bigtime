@@ -2,7 +2,17 @@
 
 #### - [ Developed by Eaglex ](http://eaglex.net)
 
-#### <span style="color:red">Latest updates</span>
+#### DESCRIPTION
+
+This is an advanced API Search application which allows to intergrade dynamic Restful/API using only client with Angular 6 and (Angular CLI 6). Currently it supports `PunkAPI`, `Getty Images API`, `Flickr API`, and `OMDB API (Movie DB)`. It can be extended to any number of new image type Restful/API's, and non image for data reference. There are two pages, main products page which can toggle apis, and the product-itme/single page which lists all of item values in json format.
+
+It has a localstorage integration for any subsequent views to the same page/query.
+API's have feature's to display random results upon every load. You can filter thru the results, and search the live API as well > then filter thru it. `Please read more about the details below.!`
+
+- Important: You need to register your own api keys to use in development, and purchase for production.
+- Demo dev site is available, at [ Developed by Eaglex ](http://eaglex.net)
+
+### <span style="color:red">Latest updates</span>
 
 <i>Project demo is now available on github pages: </i>
 <br>
@@ -13,16 +23,6 @@
 
 <img  src="./screens/picky-search-api_4.png" width="400"/>
 <br>
-
-#### DESCRIPTION
-
-This is an advanced API Search application which allows to integrade dynamic Restful/API using only client with Angular 6 and (Angular CLI 6). Currently it supports `PunkAPI`, `Getty Images API`, `Flickr API`, and `OMDB API (Movie DB)`. It can be extended to any number of new image type Restful/API's, and non image for data reference. There are two pages, main products page which can toggle apis, and the product-itme/single page which lists all of item values in json format.
-
-It has a localstorage integration for any subsequent views to the same page/query.
-API's have feature's to display random results upon every load. You can filter thru the results, and search the live API as well > then filter thru it. `Please read more about the details below.!`
-
-- Important: You need to register your own api keys to use in development, and purchase for production.
-- Demo dev site is available, at [ Developed by Eaglex ](http://eaglex.net)
 
 #### flickr
 
@@ -88,7 +88,7 @@ $/ npm run build:prod #production ./dist folder
 - flickr API: `https://www.flickr.com/services/developer/api/` << you need account and api_key to enable flickr for your development purpouses only, need to purchase license to use in production!
 - punkapi: `https://punkapi.com/documentation/v2` << it is free to use, but it has timeout limits, which it will show you.
 - gettyimages API: `https://api.gettyimages.com/swagger/ui/index` and `https://api.gettyimages.com/swagger/ui/index` << you need account and Api-Key to enable gettyimages for your development purposes only, need to purchase license to use in production!
-- OMBD API Movie DB: `https://www.omdbapi.com` << you need account and apikey to enable omdbapi for your development purpouses only, im not sure about the specifics of the production license, you have to enquire about it your self
+- OMBD API Movie DB: `https://www.omdbapi.com` << you need account and apikey to enable omdbapi for your development purposes only, im not sure about the specifics of the production license, you have to enquire about it your self
 
 #### TECHNOLOGY/STACK
 
@@ -106,7 +106,7 @@ $/ npm run build:prod #production ./dist folder
 
 #### APP HIERARCHY
 
-```js
+```sh
     <<<< declaration of services at [AppModule] level;
     [AppComponent] >> < SearchInputDirective > < EventEmitService > < MyGlobals >
         [ProductComponent] >> < ApiManagerService >< DataService > < LocalStorageService > < EventEmitService > < MyGlobals >

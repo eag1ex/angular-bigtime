@@ -27,7 +27,7 @@
     "build": "ng build",
     "build:prod": "ng build --prod",
     "build:github": "ng build --prod --base-href https://eag1ex.github.io/angular-bigtime/",
-    "deploy:github": "gh-pages -d build -d dist/picky-search",
+    "deploy:github": "gh-pages -d dist/picky-search",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
